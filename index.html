@@ -252,13 +252,14 @@ button:disabled { cursor: default; }
 .searchbox .inp { padding-left: 42px; }
 
 /* Drawer, sheets, dialogs */
-.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; animation: fade .18s ease; }
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; }
+.scrim.anim { animation: fade .2s ease; }
 .drawer {
   position: fixed; left: 0; top: 0; bottom: 0; width: min(304px, 84vw); z-index: 41; background: var(--sheet);
   border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px;
   padding: calc(24px + env(safe-area-inset-top, 0px)) 14px calc(20px + env(safe-area-inset-bottom, 0px));
-  animation: slidein .22s ease;
 }
+.drawer.anim { animation: slidein .28s cubic-bezier(.2, .8, .2, 1); }
 .prof { display: flex; align-items: center; gap: 14px; padding: 6px 8px 20px; }
 .avatar {
   width: 52px; height: 52px; border-radius: 999px; background: var(--surface-2); color: var(--text);
@@ -277,8 +278,9 @@ button:disabled { cursor: default; }
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; margin: 0 auto; max-width: 560px;
   background: var(--sheet); border: 1px solid var(--line); border-bottom: none; border-radius: 20px 20px 0 0;
   padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px;
-  max-height: 92vh; overflow-y: auto; animation: rise .22s ease;
+  max-height: 92vh; overflow-y: auto;
 }
+.sheet.anim { animation: rise .3s cubic-bezier(.2, .8, .2, 1); }
 .sheet h2 { margin: 0; font-size: 20px; }
 .sheethead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .dialog {
@@ -475,6 +477,61 @@ table.st tfoot td:first-child { padding: 0 12px; font-size: 12px; color: var(--m
 .spark.dense { gap: 1px; }
 .spark.dense i { min-width: 0; border-radius: 1px; }
 
+
+/* ---------- Feel: press feedback, glow, small celebrations ---------- */
+button { transition: transform .14s cubic-bezier(.2, .8, .2, 1), background-color .2s ease, border-color .2s ease, box-shadow .3s ease, color .2s ease, opacity .2s ease; }
+button:active:not(:disabled) { transform: scale(.96); }
+.heat:active:not(:disabled), .hopen:active:not(:disabled) { transform: none; }
+.card.habit, .slide, .crow { transition: transform .2s cubic-bezier(.2, .8, .2, 1), border-color .3s ease, box-shadow .3s ease; }
+.card.habit:active, .crow:active { transform: scale(.99); }
+@media (hover: hover) {
+  .card.habit:hover, .slide:hover, .crow:hover {
+    border-color: color-mix(in srgb, var(--c) 40%, var(--line));
+    box-shadow: 0 10px 34px -16px color-mix(in srgb, var(--c) 60%, transparent);
+  }
+  .nav:hover, .li:hover:not(:disabled), .tpl button:hover { background: var(--surface-2); }
+  .ib:hover:not(:disabled) { border-color: var(--faint); }
+}
+.chk.on { box-shadow: 0 0 22px -6px color-mix(in srgb, var(--c) 80%, transparent); }
+.btn.accent { box-shadow: 0 8px 26px -12px color-mix(in srgb, var(--c, #FFFFFF) 80%, transparent); }
+.hc.on { box-shadow: 0 0 6px -2px color-mix(in srgb, var(--c) 70%, transparent); }
+.dd.on { box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--c) 90%, transparent); }
+.daybar .fill { transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+.daybar .fill.full { background: linear-gradient(90deg, #22C55E, #06B6D4); box-shadow: 0 0 14px -2px rgba(34, 197, 94, .7); }
+.li:active:not(:disabled), .nav:active { background: var(--surface-2); }
+
+main.enter, .onb.enter { animation: enter .32s cubic-bezier(.2, .8, .2, 1); }
+.fx-in { animation: enter .3s cubic-bezier(.2, .8, .2, 1); }
+.fx-pop { animation: pop .42s cubic-bezier(.2, .9, .3, 1.35), ring .7s ease-out; }
+.fx-pop svg path { stroke-dasharray: 26; stroke-dashoffset: 26; animation: draw .34s .1s ease forwards; }
+.fx-shake { animation: shake .42s ease; }
+.fx-cell { animation: cell .55s cubic-bezier(.2, .9, .3, 1.35); }
+.fx-star { animation: star .45s cubic-bezier(.2, .9, .3, 1.4); }
+.fx-drop { animation: drop .45s ease; }
+.fx-pill { animation: pill .3s cubic-bezier(.2, .9, .3, 1.3); }
+.fx-glow { animation: glow 1.3s ease; }
+@keyframes enter { from { opacity: 0; transform: translateY(10px); } }
+@keyframes pop { 0% { transform: scale(.82); } 55% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@keyframes ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 65%, transparent); } to { box-shadow: 0 0 0 16px transparent; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+@keyframes cell { 0% { transform: scale(.5); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes star { 0% { transform: scale(.7) rotate(-12deg); } 60% { transform: scale(1.22) rotate(6deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes drop { 0% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0, 0, 0, .35); } 100% { transform: scale(1); } }
+@keyframes pill { 0% { transform: scale(.9); } 100% { transform: scale(1); } }
+@keyframes glow { 0% { filter: brightness(1); } 30% { filter: brightness(1.6); box-shadow: 0 0 24px 2px rgba(34, 197, 94, .8); } 100% { filter: brightness(1); } }
+.dialog.anim { animation: dialogIn .26s cubic-bezier(.2, .9, .3, 1.2); }
+@keyframes dialogIn { from { opacity: 0; transform: translate(-50%, -46%) scale(.94); } }
+
+/* Language picker on start screens, settings switch */
+.langpick { align-self: flex-end; width: 116px; margin-bottom: -12px; }
+.langpick .seg button { height: 32px; font-size: 13px; }
+.switch { position: relative; width: 52px; height: 32px; flex: none; padding: 0; border-radius: 999px; border: none; background: var(--surface-2); }
+.switch span { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 999px; background: var(--muted); transition: transform .25s cubic-bezier(.2, .8, .2, 1), background-color .25s ease; }
+.switch[aria-checked="true"] { background: #22C55E; }
+.switch[aria-checked="true"] span { transform: translateX(20px); background: #FFFFFF; }
+.switch:active:not(:disabled) { transform: none; }
+
 :root { padding-top: env(safe-area-inset-top, 0px); }
 </style>
 </head>
@@ -498,29 +555,50 @@ const ICON_CATALOG=[{"n":"dumbbell","k":"Hantel Gym Krafttraining Fitness","c":"
 
 // ---------- constants ----------
 const LS_KEY = 'habit-tracker-v1';
-const WD = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-const WD_LONG = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-const MON_S = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-const COLORS = [
-  ['#EF4444', 'Rot'], ['#F97316', 'Orange'], ['#F59E0B', 'Bernstein'], ['#EAB308', 'Gelb'], ['#84CC16', 'Limette'],
-  ['#22C55E', 'Grün'], ['#10B981', 'Smaragd'], ['#14B8A6', 'Türkis'], ['#06B6D4', 'Cyan'], ['#0EA5E9', 'Himmelblau'],
-  ['#3B82F6', 'Blau'], ['#6366F1', 'Indigo'], ['#8B5CF6', 'Violett'], ['#A855F7', 'Lila'], ['#D946EF', 'Fuchsia'],
-  ['#EC4899', 'Pink'], ['#F43F5E', 'Rose'], ['#64748B', 'Schiefer'], ['#6B7280', 'Grau'], ['#71717A', 'Zink'], ['#78716C', 'Stein'],
+// ---------- language (English default, German optional) ----------
+const LANG_KEY = 'habit-tracker-lang';
+let LANG = 'en';
+const T = (de, en) => (LANG === 'de' ? de : en);
+const L10N = {
+  de: {
+    WD: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+    WD_LONG: ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'],
+    MON: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+    MON_S: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+  },
+  en: {
+    WD: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+    WD_LONG: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    MON: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    MON_S: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  },
+};
+let WD = L10N.en.WD, WD_LONG = L10N.en.WD_LONG, MON = L10N.en.MON, MON_S = L10N.en.MON_S;
+function setLang(l) {
+  LANG = l === 'de' ? 'de' : 'en';
+  ({ WD, WD_LONG, MON, MON_S } = L10N[LANG]);
+  document.documentElement.lang = LANG;
+}
+const COLOR_LIST = [
+  ['#EF4444', 'Rot', 'Red'], ['#F97316', 'Orange', 'Orange'], ['#F59E0B', 'Bernstein', 'Amber'], ['#EAB308', 'Gelb', 'Yellow'], ['#84CC16', 'Limette', 'Lime'],
+  ['#22C55E', 'Grün', 'Green'], ['#10B981', 'Smaragd', 'Emerald'], ['#14B8A6', 'Türkis', 'Teal'], ['#06B6D4', 'Cyan', 'Cyan'], ['#0EA5E9', 'Himmelblau', 'Sky'],
+  ['#3B82F6', 'Blau', 'Blue'], ['#6366F1', 'Indigo', 'Indigo'], ['#8B5CF6', 'Violett', 'Violet'], ['#A855F7', 'Lila', 'Purple'], ['#D946EF', 'Fuchsia', 'Fuchsia'],
+  ['#EC4899', 'Pink', 'Pink'], ['#F43F5E', 'Rose', 'Rose'], ['#64748B', 'Schiefer', 'Slate'], ['#6B7280', 'Grau', 'Gray'], ['#71717A', 'Zink', 'Zinc'], ['#78716C', 'Stein', 'Stone'],
 ];
-const ICON_CATS = [
-  ['all', 'Alle'], ['sport', 'Sport'], ['health', 'Gesundheit'], ['food', 'Ernährung'], ['mind', 'Lernen'],
-  ['work', 'Arbeit'], ['home', 'Alltag'], ['creative', 'Kreativ'], ['social', 'Sozial'], ['nature', 'Natur'],
-  ['money', 'Finanzen'], ['quit', 'Abgewöhnen'],
+const COLORS_L = () => COLOR_LIST.map(([c, de, en]) => [c, T(de, en)]);
+const ICON_CATS_L = () => [
+  ['all', T('Alle', 'All')], ['sport', 'Sport'], ['health', T('Gesundheit', 'Health')], ['food', T('Ernährung', 'Food')], ['mind', T('Lernen', 'Learning')],
+  ['work', T('Arbeit', 'Work')], ['home', T('Alltag', 'Everyday')], ['creative', T('Kreativ', 'Creative')], ['social', T('Sozial', 'Social')], ['nature', T('Natur', 'Nature')],
+  ['money', T('Finanzen', 'Money')], ['quit', T('Abgewöhnen', 'Quit')],
 ];
-const DEFAULT_ATTRS = [
-  ['Fokus', '#A855F7'], ['Energie', '#F97316'], ['Stimmung', '#EC4899'], ['Schlaf', '#3B82F6'], ['Produktivität', '#22C55E'],
+const DEFAULT_ATTRS_L = () => [
+  [T('Fokus', 'Focus'), '#A855F7'], [T('Energie', 'Energy'), '#F97316'], [T('Stimmung', 'Mood'), '#EC4899'], [T('Schlaf', 'Sleep'), '#3B82F6'], [T('Produktivität', 'Productivity'), '#22C55E'],
 ];
-const TEMPLATES = [
-  { name: 'Kampfsport-Training', desc: 'Muay Thai, MMA oder Ringen', icon: 'swords', color: '#F97316', type: 'build' },
-  { name: 'Lesen', desc: 'Mindestens 20 Seiten', icon: 'book-open', color: '#3B82F6', type: 'build' },
-  { name: 'Wasser trinken', desc: 'Mindestens 3 Liter', icon: 'glass-water', color: '#06B6D4', type: 'build' },
-  { name: 'Nicht rauchen', desc: '', icon: 'cigarette-off', color: '#22C55E', type: 'quit' },
+const TEMPLATES_L = () => [
+  { name: T('Kampfsport-Training', 'Martial arts training'), desc: T('Muay Thai, MMA oder Ringen', 'Muay Thai, MMA or wrestling'), icon: 'swords', color: '#F97316', type: 'build' },
+  { name: T('Lesen', 'Read'), desc: T('Mindestens 20 Seiten', 'At least 20 pages'), icon: 'book-open', color: '#3B82F6', type: 'build' },
+  { name: T('Wasser trinken', 'Drink water'), desc: T('Mindestens 3 Liter', 'At least 3 liters'), icon: 'glass-water', color: '#06B6D4', type: 'build' },
+  { name: T('Nicht rauchen', 'No smoking'), desc: '', icon: 'cigarette-off', color: '#22C55E', type: 'quit' },
 ];
 const STAR_PATH = 'M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z';
 
@@ -534,10 +612,10 @@ const wday = k => (new Date(dnum(k) * 864e5).getUTCDay() + 6) % 7;
 const todayK = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
 const isKey = k => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k);
 const daysInMonth = (y, m) => new Date(y, m, 0).getDate();
-const fmtLong = k => { const [, m, d] = ymd(k); return WD_LONG[wday(k)] + ', ' + d + '. ' + MON[m - 1]; };
-const fmtShort = k => { const [, m, d] = ymd(k); return d + '. ' + MON[m - 1]; };
-const num = (n, dec = 1) => (Math.round(n * 10 ** dec) / 10 ** dec).toFixed(dec).replace('.', ',');
-const pct = r => Math.round(r * 100) + ' %';
+const fmtLong = k => { const [, m, d] = ymd(k); return LANG === 'de' ? WD_LONG[wday(k)] + ', ' + d + '. ' + MON[m - 1] : WD_LONG[wday(k)] + ', ' + MON[m - 1] + ' ' + d; };
+const fmtShort = k => { const [, m, d] = ymd(k); return LANG === 'de' ? d + '. ' + MON[m - 1] : MON[m - 1] + ' ' + d; };
+const num = (n, dec = 1) => { const s = (Math.round(n * 10 ** dec) / 10 ** dec).toFixed(dec); return LANG === 'de' ? s.replace('.', ',') : s; };
+const pct = r => Math.round(r * 100) + (LANG === 'de' ? ' %' : '%');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -551,10 +629,11 @@ const cvars = c => `--c:${c};--cbg:${hexA(c, 0.16)}`;
 const icon = (name, size = 20, sw = 2) =>
   `<svg class="i" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS['circle-check']}</svg>`;
 const plural = (n, one, many) => n === 1 ? one : many;
+const dayNum = (d, m) => (LANG === 'de' ? `${d}.${m}.` : `${m}/${d}`);
 
 // ---------- state ----------
 function blank() {
-  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', habitIds: [], attrs: [] }, habits: {}, scores: {} };
+  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', lang: '', haptics: true, habitIds: [], attrs: [] }, habits: {}, scores: {} };
 }
 
 function normHabit(h, id) {
@@ -568,7 +647,7 @@ function normHabit(h, id) {
   return {
     _t: Number(h._t) || 0,
     id,
-    name: String(h.name || 'Gewohnheit').slice(0, 60),
+    name: String(h.name || 'Habit').slice(0, 60),
     desc: String(h.desc || '').slice(0, 80),
     icon: ICONS[h.icon] ? h.icon : 'circle-check',
     color: /^#[0-9a-f]{6}$/i.test(h.color) ? h.color : '#F97316',
@@ -590,6 +669,8 @@ function normalize(r) {
   s.meta.onboarded = !!m.onboarded;
   s.meta.theme = ['dark', 'light', 'system'].includes(m.theme) ? m.theme : 'system';
   s.meta.layout = ['list', 'swipe', 'compact'].includes(m.layout) ? m.layout : 'list';
+  s.meta.lang = ['en', 'de'].includes(m.lang) ? m.lang : '';
+  s.meta.haptics = m.haptics !== false;
   s.meta.attrs = Array.isArray(m.attrs) ? m.attrs.filter(a => a && a.id && a.name).map(a => ({
     id: String(a.id), name: String(a.name).slice(0, 30), color: /^#[0-9a-f]{6}$/i.test(a.color) ? a.color : '#A855F7',
   })) : [];
@@ -975,6 +1056,7 @@ document.addEventListener('focusout', () => {
 });
 
 function applyTheme() {
+  if (S.meta.lang) setLang(S.meta.lang);
   const t = S.meta.theme;
   const root = document.documentElement;
   if (t === 'dark' || t === 'light') root.setAttribute('data-app-theme', t); else root.removeAttribute('data-app-theme');
@@ -998,11 +1080,11 @@ function toast(msg) {
 // ---------- shared view pieces ----------
 function header({ left = 'menu', title, sub = '', right = '' }) {
   const l = left === 'menu'
-    ? `<button class="ib" data-a="openDrawer" aria-label="Menü öffnen">${icon('menu')}</button>`
+    ? `<button class="ib" data-a="openDrawer" aria-label="${T('Menü öffnen', 'Open menu')}">${icon('menu')}</button>`
     : left === 'back'
-      ? `<button class="ib" data-a="back" aria-label="Zurück">${icon('chevron-left')}</button>`
+      ? `<button class="ib" data-a="back" aria-label="${T('Zurück', 'Back')}">${icon('chevron-left')}</button>`
       : left === 'close'
-        ? `<button class="ib" data-a="back" aria-label="Schließen">${icon('x')}</button>` : '';
+        ? `<button class="ib" data-a="back" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button>` : '';
   // left === 'none' renders no button
   return `<header class="top">${l}<div class="tt">${sub ? `<small>${esc(sub)}</small>` : ''}<h1>${esc(title)}</h1></div>${right}</header>`;
 }
@@ -1026,19 +1108,20 @@ function viewOnboarding() {
   }
   const ready = cloud.ready;
   return `<div class="onb">
+    <div class="langpick">${seg('setLang', LANG, [['en', 'EN'], ['de', 'DE']], `aria-label="${T('Sprache', 'Language')}"`)}</div>
     <div class="deco" aria-hidden="true">${deco}</div>
     <div class="stack" style="gap:12px">
-      <span class="label">Willkommen</span>
-      <h1>Wie heißt du?</h1>
-      <p>Dein Name erscheint oben auf deiner Startseite. Danach legst du deine ersten Gewohnheiten an.</p>
+      <span class="label">${T('Willkommen', 'Welcome')}</span>
+      <h1>${T('Wie heißt du?', 'What should we call you?')}</h1>
+      <p>${T('Dein Name erscheint oben auf deiner Startseite. Danach legst du deine ersten Gewohnheiten an.', 'Your name shows up at the top of your home screen. Next, you add your first habits.')}</p>
     </div>
     <form class="field" data-form="onboard" autocomplete="off">
-      <label for="onb-name">Dein Name</label>
-      <input id="onb-name" class="inp" data-bind="onboardName" value="${esc(ui.onboardName)}" maxlength="40" placeholder="Vorname" autocomplete="given-name">
+      <label for="onb-name">${T('Dein Name', 'Your name')}</label>
+      <input id="onb-name" class="inp" data-bind="onboardName" value="${esc(ui.onboardName)}" maxlength="40" placeholder="${T('Vorname', 'First name')}" autocomplete="given-name">
     </form>
     <div class="end">
-      <button id="onb-go" class="btn primary block" data-a="finishOnboarding" ${ui.onboardName.trim() && ready ? '' : 'disabled'}>${ready ? 'Los geht\'s' : 'Lade deine Daten …'}</button>
-      <span class="hint">Du kannst den Namen später in den Einstellungen ändern.</span>
+      <button id="onb-go" class="btn primary block" data-a="finishOnboarding" ${ui.onboardName.trim() && ready ? '' : 'disabled'}>${ready ? T('Los geht\'s', 'Get started') : T('Lade deine Daten …', 'Loading your data …')}</button>
+      <span class="hint">${T('Du kannst den Namen später in den Einstellungen ändern.', 'You can change it later in Settings.')}</span>
     </div>
   </div>`;
 }
@@ -1050,9 +1133,9 @@ function habitCard(h) {
   const slipToday = quit && !!h.log[t];
   const doneToday = !quit && !!h.log[t];
   const chk = quit
-    ? `<button class="chk ${slipToday ? 'slip' : ''}" data-a="toggleToday" data-id="${h.id}" aria-pressed="${slipToday}" aria-label="${slipToday ? 'Rückfall heute zurücknehmen' : 'Rückfall heute eintragen'}: ${esc(h.name)}">${icon('x', 22, 3)}</button>`
-    : `<button class="chk ${doneToday ? 'on' : ''}" data-a="toggleToday" data-id="${h.id}" aria-pressed="${doneToday}" aria-label="${esc(h.name)} heute ${doneToday ? 'nicht erledigt' : 'erledigt'}">${icon('check', 22, 3)}</button>`;
-  const sub = h.desc || (quit ? 'Zählt automatisch · tippe nur bei Rückfall' : 'Täglich');
+    ? `<button class="chk ${slipToday ? 'slip' : ''}" data-a="toggleToday" data-id="${h.id}" aria-pressed="${slipToday}" aria-label="${slipToday ? T('Rückfall heute zurücknehmen', 'Undo today\'s slip') : T('Rückfall heute eintragen', 'Log a slip today')}: ${esc(h.name)}">${icon('x', 22, 3)}</button>`
+    : `<button class="chk ${doneToday ? 'on' : ''}" data-a="toggleToday" data-id="${h.id}" aria-pressed="${doneToday}" aria-label="${esc(h.name)}: ${doneToday ? T('heute nicht erledigt', 'mark not done today') : T('heute erledigt', 'mark done today')}">${icon('check', 22, 3)}</button>`;
+  const sub = h.desc || (quit ? T('Zählt automatisch · tippe nur bei Rückfall', 'Counts automatically · tap only if you slip') : T('Täglich', 'Daily'));
   // heatmap: 26 weeks, newest on the right; narrow screens clip the oldest weeks
   const W = 26, thisMon = addD(t, -wday(t)), startMon = addD(thisMon, -(W - 1) * 7);
   let heat = '';
@@ -1072,18 +1155,18 @@ function habitCard(h) {
   }
   return `<article class="card habit" data-hold="${h.id}" style="${cvars(h.color)}">
     <div class="hrow">
-      <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${esc(h.name)} öffnen">
+      <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${T('Öffnen', 'Open')}: ${esc(h.name)}">
         <span class="hic">${icon(h.icon, 22)}</span>
-        <span class="htx"><b>${h.pinned ? `<span class="pinmark" aria-label="Angepinnt">${icon('pin', 13, 2.5)}</span>` : ''}${esc(h.name)}</b><span>${esc(sub)}</span></span>
+        <span class="htx"><b>${h.pinned ? `<span class="pinmark" aria-label="${T('Angepinnt', 'Pinned')}">${icon('pin', 13, 2.5)}</span>` : ''}${esc(h.name)}</b><span>${esc(sub)}</span></span>
       </button>
       ${chk}
     </div>
     <div class="metrics">
-      <div class="metric">${icon('flame', 16)}<b>${st.cur}</b><span>${quit ? 'Tage' : 'Streak'}</span></div>
-      <div class="metric">${icon('trophy', 16)}<b>${st.best}</b><span>Rekord</span></div>
-      <div class="metric">${icon(quit ? 'rotate-ccw' : 'circle-check', 16)}<b>${quit ? st.relapses : st.total}</b><span>${quit ? 'Rückfälle' : 'Gesamt'}</span></div>
+      <div class="metric">${icon('flame', 16)}<b>${st.cur}</b><span>${quit ? T('Tage', 'days') : 'Streak'}</span></div>
+      <div class="metric">${icon('trophy', 16)}<b>${st.best}</b><span>${T('Rekord', 'Best')}</span></div>
+      <div class="metric">${icon(quit ? 'rotate-ccw' : 'circle-check', 16)}<b>${quit ? st.relapses : st.total}</b><span>${quit ? T('Rückfälle', 'Slips') : T('Gesamt', 'Total')}</span></div>
     </div>
-    <button class="heat" data-a="openHabit" data-id="${h.id}" tabindex="-1" aria-label="Verlauf von ${esc(h.name)} öffnen">${heat}</button>
+    <button class="heat" data-a="openHabit" data-id="${h.id}" tabindex="-1" aria-label="${T('Verlauf öffnen', 'Open history')}: ${esc(h.name)}">${heat}</button>
   </article>`;
 }
 
@@ -1105,30 +1188,30 @@ function heatHtml(h, weeks, big) {
     }
     heat += '</div>';
   }
-  return `<button class="heat${big ? ' big' : ''}" data-a="openHabit" data-id="${h.id}" tabindex="-1" aria-label="Verlauf von ${esc(h.name)} öffnen">${heat}</button>`;
+  return `<button class="heat${big ? ' big' : ''}" data-a="openHabit" data-id="${h.id}" tabindex="-1" aria-label="${T('Verlauf öffnen', 'Open history')}: ${esc(h.name)}">${heat}</button>`;
 }
 function todayBtn(h, block) {
   const t = todayK(), quit = h.type === 'quit';
   if (!block) return '';
   if (quit) return h.log[t]
-    ? `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('rotate-ccw', 18)} Rückfall heute zurücknehmen</button>`
-    : `<button class="btn danger block" data-a="toggleToday" data-id="${h.id}">${icon('x', 18, 2.5)} Rückfall heute eintragen</button>`;
+    ? `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('rotate-ccw', 18)} ${T('Rückfall heute zurücknehmen', 'Undo today\'s slip')}</button>`
+    : `<button class="btn danger block" data-a="toggleToday" data-id="${h.id}">${icon('x', 18, 2.5)} ${T('Rückfall heute eintragen', 'Log a slip today')}</button>`;
   return h.log[t]
-    ? `<button class="btn accent block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 3)} Heute erledigt</button>`
-    : `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 2.5)} Heute abhaken</button>`;
+    ? `<button class="btn accent block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 3)} ${T('Heute erledigt', 'Done today')}</button>`
+    : `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 2.5)} ${T('Heute abhaken', 'Check off today')}</button>`;
 }
 function swipeCard(h) {
   const st = hStats(h), quit = h.type === 'quit';
   return `<article class="card slide" data-hold="${h.id}" style="${cvars(h.color)}">
-    <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${esc(h.name)} öffnen">
+    <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${T('Öffnen', 'Open')}: ${esc(h.name)}">
       <span class="hic big">${icon(h.icon, 28)}</span>
-      <span class="htx"><b class="bigname">${h.pinned ? `<span class="pinmark" aria-label="Angepinnt">${icon('pin', 14, 2.5)}</span>` : ''}${esc(h.name)}</b><span>${esc(h.desc || (quit ? 'Abgewöhnen' : 'Täglich'))}</span></span>
+      <span class="htx"><b class="bigname">${h.pinned ? `<span class="pinmark" aria-label="${T('Angepinnt', 'Pinned')}">${icon('pin', 14, 2.5)}</span>` : ''}${esc(h.name)}</b><span>${esc(h.desc || (quit ? T('Abgewöhnen', 'Quit') : T('Täglich', 'Daily')))}</span></span>
     </button>
     ${todayBtn(h, true)}
     <div class="tiles">
-      <div class="tile">${icon('flame', 18)}<span class="v">${st.cur}</span><span class="k">${quit ? 'Tage clean' : 'Streak'}</span></div>
-      <div class="tile">${icon('trophy', 18)}<span class="v">${st.best}</span><span class="k">Rekord</span></div>
-      <div class="tile">${icon(quit ? 'rotate-ccw' : 'circle-check', 18)}<span class="v">${quit ? st.relapses : st.total}</span><span class="k">${quit ? 'Rückfälle' : 'Gesamt'}</span></div>
+      <div class="tile">${icon('flame', 18)}<span class="v">${st.cur}</span><span class="k">${quit ? T('Tage clean', 'Days clean') : 'Streak'}</span></div>
+      <div class="tile">${icon('trophy', 18)}<span class="v">${st.best}</span><span class="k">${T('Rekord', 'Best')}</span></div>
+      <div class="tile">${icon(quit ? 'rotate-ccw' : 'circle-check', 18)}<span class="v">${quit ? st.relapses : st.total}</span><span class="k">${quit ? T('Rückfälle', 'Slips') : T('Gesamt', 'Total')}</span></div>
     </div>
     ${heatHtml(h, 26, true)}
   </article>`;
@@ -1141,14 +1224,14 @@ function compactRow(h) {
     let cls = 'dd';
     if (!pre) { if (hOk(h, k, t)) cls += ' on'; else if (quit && h.log[k]) cls += ' slip'; }
     if (k === t) cls += ' td';
-    const state = pre ? 'vor dem Start' : quit ? (h.log[k] ? 'Rückfall' : 'clean') : (h.log[k] ? 'erledigt' : 'offen');
-    days += `<button class="${cls}" data-a="toggleDay" data-id="${h.id}" data-k="${k}" ${pre ? 'disabled' : ''} aria-label="${esc(h.name)}, ${WD_LONG[wday(k)]} ${ymd(k)[2]}.: ${state}"><small>${WD[wday(k)]}</small><b>${ymd(k)[2]}</b></button>`;
+    const state = pre ? T('vor dem Start', 'before start') : quit ? (h.log[k] ? T('Rückfall', 'slip') : 'clean') : (h.log[k] ? T('erledigt', 'done') : T('offen', 'open'));
+    days += `<button class="${cls}" data-a="toggleDay" data-id="${h.id}" data-k="${k}" ${pre ? 'disabled' : ''} aria-label="${esc(h.name)}, ${fmtShort(k)}: ${state}"><small>${WD[wday(k)]}</small><b>${ymd(k)[2]}</b></button>`;
   }
   return `<article class="card crow" data-hold="${h.id}" style="${cvars(h.color)}">
     <div class="ctop">
-      <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${esc(h.name)} öffnen">
+      <button class="hopen" data-a="openHabit" data-id="${h.id}" aria-label="${T('Öffnen', 'Open')}: ${esc(h.name)}">
         <span class="hic sm">${icon(h.icon, 17)}</span>
-        <span class="htx"><b>${h.pinned ? `<span class="pinmark" aria-label="Angepinnt">${icon('pin', 12, 2.5)}</span>` : ''}${esc(h.name)}</b></span>
+        <span class="htx"><b>${h.pinned ? `<span class="pinmark" aria-label="${T('Angepinnt', 'Pinned')}">${icon('pin', 12, 2.5)}</span>` : ''}${esc(h.name)}</b></span>
       </button>
       <span class="metric">${icon('flame', 15)}<b>${st.cur}</b></span>
     </div>
@@ -1159,9 +1242,9 @@ function sortRow(h, i, n) {
   return `<div class="srow" data-id="${h.id}" data-group="${h.pinned ? 'p' : 'n'}" style="${cvars(h.color)}">
     <span class="grip" data-drag="${h.id}" aria-hidden="true">${icon('grip-vertical', 20)}</span>
     <span class="hic sm">${icon(h.icon, 17)}</span>
-    <span class="sname">${h.pinned ? `<span class="pinmark" aria-label="Angepinnt">${icon('pin', 12, 2.5)}</span>` : ''}${esc(h.name)}</span>
-    <button class="ib ghost" data-a="sortStep" data-id="${h.id}" data-v="-1" aria-label="${esc(h.name)} nach oben" ${i === 0 ? 'disabled' : ''}>${icon('chevron-up', 18)}</button>
-    <button class="ib ghost" data-a="sortStep" data-id="${h.id}" data-v="1" aria-label="${esc(h.name)} nach unten" ${i === n - 1 ? 'disabled' : ''}>${icon('chevron-down', 18)}</button>
+    <span class="sname">${h.pinned ? `<span class="pinmark" aria-label="${T('Angepinnt', 'Pinned')}">${icon('pin', 12, 2.5)}</span>` : ''}${esc(h.name)}</span>
+    <button class="ib ghost" data-a="sortStep" data-id="${h.id}" data-v="-1" aria-label="${T('Nach oben', 'Move up')}: ${esc(h.name)}" ${i === 0 ? 'disabled' : ''}>${icon('chevron-up', 18)}</button>
+    <button class="ib ghost" data-a="sortStep" data-id="${h.id}" data-v="1" aria-label="${T('Nach unten', 'Move down')}: ${esc(h.name)}" ${i === n - 1 ? 'disabled' : ''}>${icon('chevron-down', 18)}</button>
   </div>`;
 }
 function viewHabits() {
@@ -1170,22 +1253,22 @@ function viewHabits() {
   const name = S.meta.name || '';
   if (ui.sorting && list.length) {
     const pinned = list.filter(h => h.pinned), rest = list.filter(h => !h.pinned);
-    return header({ left: 'none', title: 'Reihenfolge', right: `<button class="btn primary" style="height:44px;padding:0 18px;font-size:15px" data-a="sortDone">Fertig</button>` }) +
+    return header({ left: 'none', title: T('Reihenfolge', 'Reorder'), right: `<button class="btn primary" style="height:44px;padding:0 18px;font-size:15px" data-a="sortDone">${T('Fertig', 'Done')}</button>` }) +
       `<main class="stack">
-        <p class="hint" style="margin:0 4px">Zieh eine Gewohnheit am Griff nach oben oder unten, oder nutz die Pfeile. Angepinnte bleiben immer oben.</p>
-        ${pinned.length ? `<span class="label" style="margin:4px 4px 0">Angepinnt</span><div class="sgroup">${pinned.map((h, i) => sortRow(h, i, pinned.length)).join('')}</div>` : ''}
-        ${rest.length ? `${pinned.length ? '<span class="label" style="margin:4px 4px 0">Weitere</span>' : ''}<div class="sgroup">${rest.map((h, i) => sortRow(h, i, rest.length)).join('')}</div>` : ''}
+        <p class="hint" style="margin:0 4px">${T('Zieh eine Gewohnheit am Griff nach oben oder unten, oder nutz die Pfeile. Angepinnte bleiben immer oben.', 'Drag a habit by its handle, or use the arrows. Pinned habits always stay on top.')}</p>
+        ${pinned.length ? `<span class="label" style="margin:4px 4px 0">${T('Angepinnt', 'Pinned')}</span><div class="sgroup">${pinned.map((h, i) => sortRow(h, i, pinned.length)).join('')}</div>` : ''}
+        ${rest.length ? `${pinned.length ? `<span class="label" style="margin:4px 4px 0">${T('Weitere', 'Others')}</span>` : ''}<div class="sgroup">${rest.map((h, i) => sortRow(h, i, rest.length)).join('')}</div>` : ''}
       </main>`;
   }
   ui.sorting = false;
-  const right = `<button class="ib solid" data-a="newHabit" aria-label="Neue Gewohnheit">${icon('plus', 20, 2.5)}</button>`;
+  const right = `<button class="ib solid" data-a="newHabit" aria-label="${T('Neue Gewohnheit', 'New habit')}">${icon('plus', 20, 2.5)}</button>`;
   let body;
   if (!list.length) {
     body = `<div class="card empty">
-      <h2>Noch keine Gewohnheiten</h2>
-      <p class="hint" style="margin:0">Leg deine erste an oder starte mit einer Vorlage. Du kannst alles danach anpassen.</p>
-      <div class="tpl">${TEMPLATES.map((tp, i) => `<button data-a="useTemplate" data-i="${i}" style="${cvars(tp.color)}"><span class="hic">${icon(tp.icon, 18)}</span><span>${esc(tp.name)}</span></button>`).join('')}</div>
-      <button class="btn primary" data-a="newHabit">${icon('plus', 18, 2.5)} Eigene Gewohnheit</button>
+      <h2>${T('Noch keine Gewohnheiten', 'No habits yet')}</h2>
+      <p class="hint" style="margin:0">${T('Leg deine erste an oder starte mit einer Vorlage. Du kannst alles danach anpassen.', 'Create your first one or start from a template. You can change everything later.')}</p>
+      <div class="tpl">${TEMPLATES_L().map((tp, i) => `<button data-a="useTemplate" data-i="${i}" style="${cvars(tp.color)}"><span class="hic">${icon(tp.icon, 18)}</span><span>${esc(tp.name)}</span></button>`).join('')}</div>
+      <button class="btn primary" data-a="newHabit">${icon('plus', 18, 2.5)} ${T('Eigene Gewohnheit', 'Custom habit')}</button>
     </div>`;
   } else {
     const ok = list.filter(h => hOk(h, t, t)).length;
@@ -1200,15 +1283,15 @@ function viewHabits() {
     } else {
       content = list.map(habitCard).join('');
     }
-    body = `<div class="daybar" aria-label="${ok} von ${list.length} heute geschafft">
-        <div class="track"><div class="fill" style="width:${Math.round(ok / list.length * 100)}%"></div></div>
-        <span class="num">${ok} von ${list.length} heute geschafft</span>
+    body = `<div class="daybar" aria-label="${T(`${ok} von ${list.length} heute geschafft`, `${ok} of ${list.length} done today`)}">
+        <div class="track"><div class="fill${ok === list.length ? ' full' : ''}" data-w="${Math.round(ok / list.length * 100)}"></div></div>
+        <span class="num">${T(`${ok} von ${list.length} heute geschafft`, `${ok} of ${list.length} done today`)}</span>
       </div>
-      ${seg('layout', layout, [['list', `${icon('layout-list', 16)}Liste`], ['swipe', `${icon('gallery-horizontal-end', 16)}Wischen`], ['compact', `${icon('rows-3', 16)}Kompakt`]], 'aria-label="Ansicht"')}
+      ${seg('layout', layout, [['list', `${icon('layout-list', 16)}${T('Liste', 'List')}`], ['swipe', `${icon('gallery-horizontal-end', 16)}${T('Wischen', 'Swipe')}`], ['compact', `${icon('rows-3', 16)}${T('Kompakt', 'Compact')}`]], `aria-label="${T('Ansicht', 'View')}"`)}
       ${content}
-      <p class="hint" style="text-align:center;margin:4px 0 0">Gedrückt halten zum Anpinnen oder Verschieben.</p>`;
+      <p class="hint" style="text-align:center;margin:4px 0 0">${T('Gedrückt halten zum Anpinnen oder Verschieben.', 'Press and hold a habit to pin or move it.')}</p>`;
   }
-  return header({ title: name ? `Hallo, ${name}` : 'Gewohnheiten', sub: fmtLong(t), right }) + `<main class="stack">${body}</main>`;
+  return header({ title: name ? T(`Hallo, ${name}`, `Hi, ${name}`) : T('Gewohnheiten', 'Habits'), sub: fmtLong(t), right }) + `<main class="stack">${body}</main>`;
 }
 function habitMenuHtml() {
   const h = S.habits[ui.habitMenu];
@@ -1219,21 +1302,21 @@ function habitMenuHtml() {
   return `<div class="scrim" data-a="closeOverlay"></div>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hm-t" style="${cvars(h.color)}">
     <div class="sheethead"><div style="display:flex;align-items:center;gap:12px;min-width:0"><span class="hic">${icon(h.icon, 20)}</span><h2 id="hm-t" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.name)}</h2></div>
-      <button class="ib" data-a="closeOverlay" aria-label="Schließen">${icon('x')}</button></div>
+      <button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button></div>
     <div class="list">
-      <button class="li" data-a="hmPin"><span>${h.pinned ? 'Lösen' : 'Anpinnen'}</span>${icon(h.pinned ? 'pin-off' : 'pin', 18)}</button>
-      <button class="li" data-a="hmMove" data-v="top" ${gi === 0 ? 'disabled' : ''}><span>Ganz nach oben</span>${icon('arrow-up-to-line', 18)}</button>
-      <button class="li" data-a="hmMove" data-v="bottom" ${gi === group.length - 1 ? 'disabled' : ''}><span>Ganz nach unten</span>${icon('arrow-down-to-line', 18)}</button>
-      <button class="li" data-a="hmSort" ${list.length < 2 ? 'disabled' : ''}><span>Reihenfolge ändern</span>${icon('grip-vertical', 18)}</button>
-      <button class="li" data-a="hmEdit"><span>Bearbeiten</span>${icon('pencil', 18)}</button>
-      <button class="li" data-a="hmArchive"><span>Archivieren</span>${icon('archive', 18)}</button>
+      <button class="li" data-a="hmPin"><span>${h.pinned ? T('Lösen', 'Unpin') : T('Anpinnen', 'Pin to top')}</span>${icon(h.pinned ? 'pin-off' : 'pin', 18)}</button>
+      <button class="li" data-a="hmMove" data-v="top" ${gi === 0 ? 'disabled' : ''}><span>${T('Ganz nach oben', 'Move to top')}</span>${icon('arrow-up-to-line', 18)}</button>
+      <button class="li" data-a="hmMove" data-v="bottom" ${gi === group.length - 1 ? 'disabled' : ''}><span>${T('Ganz nach unten', 'Move to bottom')}</span>${icon('arrow-down-to-line', 18)}</button>
+      <button class="li" data-a="hmSort" ${list.length < 2 ? 'disabled' : ''}><span>${T('Reihenfolge ändern', 'Reorder')}</span>${icon('grip-vertical', 18)}</button>
+      <button class="li" data-a="hmEdit"><span>${T('Bearbeiten', 'Edit')}</span>${icon('pencil', 18)}</button>
+      <button class="li" data-a="hmArchive"><span>${T('Archivieren', 'Archive')}</span>${icon('archive', 18)}</button>
     </div>
   </div>`;
 }
 
 function viewDetail() {
   const h = S.habits[ui.detailId];
-  if (!h) { return header({ left: 'back', title: 'Nicht gefunden' }) + '<p class="hint">Diese Gewohnheit gibt es nicht mehr.</p>'; }
+  if (!h) { return header({ left: 'back', title: T('Nicht gefunden', 'Not found') }) + `<p class="hint">${T('Diese Gewohnheit gibt es nicht mehr.', 'This habit no longer exists.')}</p>`; }
   const t = todayK();
   const st = hStats(h);
   const quit = h.type === 'quit';
@@ -1251,40 +1334,40 @@ function viewDetail() {
     let cls = 'cd';
     if (!future && !pre) { if (hOk(h, k, t)) cls += ' on'; else if (quit && h.log[k]) cls += ' slip'; }
     if (k === t) cls += ' td';
-    const state = future ? 'in der Zukunft' : pre ? 'vor dem Start' : quit ? (h.log[k] ? 'Rückfall' : 'clean') : (h.log[k] ? 'erledigt' : 'offen');
-    cells += `<button class="${cls}" data-a="toggleDay" data-k="${k}" ${future || pre ? 'disabled' : ''} aria-label="${d}. ${MON[m - 1]}: ${state}"><span>${d}</span></button>`;
+    const state = future ? T('in der Zukunft', 'in the future') : pre ? T('vor dem Start', 'before start') : quit ? (h.log[k] ? T('Rückfall', 'slip') : 'clean') : (h.log[k] ? T('erledigt', 'done') : T('offen', 'open'));
+    cells += `<button class="${cls}" data-a="toggleDay" data-k="${k}" ${future || pre ? 'disabled' : ''} aria-label="${fmtShort(k)}: ${state}"><span>${d}</span></button>`;
   }
   const slipToday = quit && !!h.log[t];
   const doneToday = !quit && !!h.log[t];
   const mainBtn = quit
     ? (slipToday
-      ? `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('rotate-ccw', 18)} Rückfall heute zurücknehmen</button>`
-      : `<button class="btn danger block" data-a="toggleToday" data-id="${h.id}">${icon('x', 18, 2.5)} Rückfall heute eintragen</button>`)
+      ? `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('rotate-ccw', 18)} ${T('Rückfall heute zurücknehmen', 'Undo today\'s slip')}</button>`
+      : `<button class="btn danger block" data-a="toggleToday" data-id="${h.id}">${icon('x', 18, 2.5)} ${T('Rückfall heute eintragen', 'Log a slip today')}</button>`)
     : (doneToday
-      ? `<button class="btn accent block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 3)} Heute erledigt</button>`
-      : `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 2.5)} Heute abhaken</button>`);
-  const typeText = quit ? `Abgewöhnen · seit ${fmtShort(h.start)}${h.start.slice(0, 4) !== t.slice(0, 4) ? ' ' + h.start.slice(0, 4) : ''}` : 'Aufbauen · täglich';
+      ? `<button class="btn accent block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 3)} ${T('Heute erledigt', 'Done today')}</button>`
+      : `<button class="btn soft block" data-a="toggleToday" data-id="${h.id}">${icon('check', 20, 2.5)} ${T('Heute abhaken', 'Check off today')}</button>`);
+  const typeText = quit ? `${T('Abgewöhnen · seit', 'Quit · since')} ${fmtShort(h.start)}${h.start.slice(0, 4) !== t.slice(0, 4) ? ' ' + h.start.slice(0, 4) : ''}` : T('Aufbauen · täglich', 'Build · daily');
   return header({ left: 'back', title: '', right: `<button class="ib" data-a="editHabit" data-id="${h.id}" aria-label="Bearbeiten">${icon('pencil', 18)}</button>` }) +
     `<main class="stack" style="${cvars(h.color)}">
       <div class="hero"><span class="hic">${icon(h.icon, 30)}</span><div style="min-width:0"><h2>${esc(h.name)}</h2><p>${esc(h.desc ? h.desc + ' · ' : '')}${typeText}</p></div></div>
       ${mainBtn}
       <div class="tiles">
-        <div class="tile">${icon('flame', 18)}<span class="v">${st.cur}</span><span class="k">${quit ? 'Tage clean' : 'Aktueller Streak'}</span></div>
-        <div class="tile">${icon('trophy', 18)}<span class="v">${st.best}</span><span class="k">Bester Streak</span></div>
-        <div class="tile">${icon(quit ? 'rotate-ccw' : 'circle-check', 18)}<span class="v">${quit ? st.relapses : st.total}</span><span class="k">${quit ? 'Rückfälle' : 'Erledigt gesamt'}</span></div>
+        <div class="tile">${icon('flame', 18)}<span class="v">${st.cur}</span><span class="k">${quit ? T('Tage clean', 'Days clean') : T('Aktueller Streak', 'Current streak')}</span></div>
+        <div class="tile">${icon('trophy', 18)}<span class="v">${st.best}</span><span class="k">${T('Bester Streak', 'Best streak')}</span></div>
+        <div class="tile">${icon(quit ? 'rotate-ccw' : 'circle-check', 18)}<span class="v">${quit ? st.relapses : st.total}</span><span class="k">${quit ? T('Rückfälle', 'Slips') : T('Erledigt gesamt', 'Total done')}</span></div>
       </div>
       <section class="card stack" style="gap:10px">
         <div class="calhead">
-          <button class="ib ghost" data-a="detailMonth" data-v="-1" aria-label="Vorheriger Monat">${icon('chevron-left')}</button>
+          <button class="ib ghost" data-a="detailMonth" data-v="-1" aria-label="${T('Vorheriger Monat', 'Previous month')}">${icon('chevron-left')}</button>
           <b>${MON[m - 1]} ${y}</b>
-          <button class="ib ghost" data-a="detailMonth" data-v="1" aria-label="Nächster Monat" ${atCurrent ? 'disabled' : ''}>${icon('chevron-right')}</button>
+          <button class="ib ghost" data-a="detailMonth" data-v="1" aria-label="${T('Nächster Monat', 'Next month')}" ${atCurrent ? 'disabled' : ''}>${icon('chevron-right')}</button>
         </div>
         <div class="cal">${cells}</div>
-        <p class="hint" style="margin:4px 0 0;text-align:center">${quit ? 'Tippe auf einen Tag, um einen Rückfall einzutragen oder zu entfernen.' : 'Tippe auf einen Tag, um ihn nachträglich abzuhaken.'}</p>
+        <p class="hint" style="margin:4px 0 0;text-align:center">${quit ? T('Tippe auf einen Tag, um einen Rückfall einzutragen oder zu entfernen.', 'Tap a day to add or remove a slip.') : T('Tippe auf einen Tag, um ihn nachträglich abzuhaken.', 'Tap a day to check it off afterwards.')}</p>
       </section>
       <div class="row2">
-        <button class="btn soft" data-a="archiveHabit" data-id="${h.id}">${icon('archive', 18)} Archivieren</button>
-        <button class="btn danger" data-a="deleteHabit" data-id="${h.id}">Löschen</button>
+        <button class="btn soft" data-a="archiveHabit" data-id="${h.id}">${icon('archive', 18)} ${T('Archivieren', 'Archive')}</button>
+        <button class="btn danger" data-a="deleteHabit" data-id="${h.id}">${T('Löschen', 'Delete')}</button>
       </div>
     </main>`;
 }
@@ -1294,42 +1377,42 @@ function viewEdit() {
   if (!e) return '';
   const isNew = !e.id;
   const t = todayK();
-  return header({ left: 'close', title: isNew ? 'Neue Gewohnheit' : 'Bearbeiten' }) +
+  return header({ left: 'close', title: isNew ? T('Neue Gewohnheit', 'New habit') : T('Bearbeiten', 'Edit habit') }) +
     `<main class="stack" style="gap:18px;${cvars(e.color)}">
       <div class="iconpick">
-        <button class="bigic" data-a="openIcons" aria-label="Icon ändern">${icon(e.icon, 38)}<span class="pen">${icon('pencil', 13, 2.5)}</span></button>
-        <button class="linkbtn" data-a="openIcons">Icon ändern</button>
+        <button class="bigic" data-a="openIcons" aria-label="${T('Icon ändern', 'Change icon')}">${icon(e.icon, 38)}<span class="pen">${icon('pencil', 13, 2.5)}</span></button>
+        <button class="linkbtn" data-a="openIcons">${T('Icon ändern', 'Change icon')}</button>
       </div>
       <div class="field"><label for="f-name">Name</label>
-        <input id="f-name" class="inp" data-bind="edit.name" value="${esc(e.name)}" maxlength="60" placeholder="z. B. 50 Liegestütze" autocomplete="off"></div>
-      <div class="field"><label for="f-desc">Beschreibung (optional)</label>
-        <input id="f-desc" class="inp" data-bind="edit.desc" value="${esc(e.desc)}" maxlength="80" placeholder="z. B. direkt nach dem Aufstehen" autocomplete="off"></div>
-      <div class="field"><span class="flabel">Farbe</span>
-        <div class="colors">${COLORS.map(([c, n]) => `<button data-a="pickColor" data-c="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${c === e.color}"></button>`).join('')}</div></div>
-      <div class="field"><span class="flabel">Art der Gewohnheit</span>
-        ${seg('pickType', e.type, [['build', 'Aufbauen', !isNew], ['quit', 'Abgewöhnen', !isNew]])}
+        <input id="f-name" class="inp" data-bind="edit.name" value="${esc(e.name)}" maxlength="60" placeholder="${T('z. B. 50 Liegestütze', 'e.g. 50 push-ups')}" autocomplete="off"></div>
+      <div class="field"><label for="f-desc">${T('Beschreibung (optional)', 'Description (optional)')}</label>
+        <input id="f-desc" class="inp" data-bind="edit.desc" value="${esc(e.desc)}" maxlength="80" placeholder="${T('z. B. direkt nach dem Aufstehen', 'e.g. right after waking up')}" autocomplete="off"></div>
+      <div class="field"><span class="flabel">${T('Farbe', 'Color')}</span>
+        <div class="colors">${COLORS_L().map(([c, n]) => `<button data-a="pickColor" data-c="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${c === e.color}"></button>`).join('')}</div></div>
+      <div class="field"><span class="flabel">${T('Art der Gewohnheit', 'Habit type')}</span>
+        ${seg('pickType', e.type, [['build', T('Aufbauen', 'Build'), !isNew], ['quit', T('Abgewöhnen', 'Quit'), !isNew]])}
         <p class="hint" style="margin:2px 4px 0">${e.type === 'quit'
-          ? '<b style="color:var(--text)">Abgewöhnen:</b> Jeder Tag zählt automatisch als geschafft. Du tippst nur, wenn du rückfällig wirst.'
-          : '<b style="color:var(--text)">Aufbauen:</b> Du tippst an jedem Tag, an dem du es geschafft hast.'}${isNew ? '' : ' Die Art lässt sich nach dem Anlegen nicht mehr ändern.'}</p></div>
-      ${e.type === 'quit' ? `<div class="field"><label for="f-start">Clean seit</label>
+          ? T('<b style="color:var(--text)">Abgewöhnen:</b> Jeder Tag zählt automatisch als geschafft. Du tippst nur, wenn du rückfällig wirst.', '<b style="color:var(--text)">Quit:</b> Every day counts as a win automatically. You only tap when you slip.')
+          : T('<b style="color:var(--text)">Aufbauen:</b> Du tippst an jedem Tag, an dem du es geschafft hast.', '<b style="color:var(--text)">Build:</b> Tap on every day you did it.')}${isNew ? '' : T(' Die Art lässt sich nach dem Anlegen nicht mehr ändern.', ' The type can\'t be changed after creating the habit.')}</p></div>
+      ${e.type === 'quit' ? `<div class="field"><label for="f-start">${T('Clean seit', 'Clean since')}</label>
         <input id="f-start" class="inp" type="date" data-bind="edit.start" value="${esc(e.start)}" max="${t}"></div>` : ''}
-      <div class="savebar"><button id="save-habit" class="btn accent block" data-a="saveHabit" ${e.name.trim() ? '' : 'disabled'}>${isNew ? 'Gewohnheit anlegen' : 'Speichern'}</button></div>
+      <div class="savebar"><button id="save-habit" class="btn accent block" data-a="saveHabit" ${e.name.trim() ? '' : 'disabled'}>${isNew ? T('Gewohnheit anlegen', 'Create habit') : T('Speichern', 'Save')}</button></div>
     </main>`;
 }
 
 function iconGridHtml() {
   const q = ui.iconQuery.trim().toLowerCase();
   const items = ICON_CATALOG.filter(i => q ? (i.n.includes(q) || i.k.toLowerCase().includes(q)) : (ui.iconCat === 'all' || i.c === ui.iconCat));
-  if (!items.length) return `<p class="hint" style="grid-column:1/-1">Kein Icon gefunden. Versuch es mit einem anderen Wort, z. B. „Sport“ oder „Buch“.</p>`;
+  if (!items.length) return `<p class="hint" style="grid-column:1/-1">${T('Kein Icon gefunden. Versuch es mit einem anderen Wort, z. B. „Sport“ oder „Buch“.', 'No icon found. Try another word, like “sport” or “book”.')}</p>`;
   return items.map(i => `<button data-a="pickIcon" data-n="${i.n}" aria-label="${esc(i.k.split(' ')[0])}" aria-pressed="${ui.edit && ui.edit.icon === i.n}">${icon(i.n, 24)}</button>`).join('');
 }
 function viewIcons() {
   const e = ui.edit;
   if (!e) return '';
-  return header({ left: 'back', title: 'Icon wählen' }) +
+  return header({ left: 'back', title: T('Icon wählen', 'Choose icon') }) +
     `<main class="stack" style="${cvars(e.color)}">
-      <div class="searchbox">${icon('search', 18)}<input id="icon-q" class="inp" data-bind="iconQuery" value="${esc(ui.iconQuery)}" placeholder="Icons suchen, z. B. Buch" aria-label="Icons suchen" autocomplete="off"></div>
-      <div class="chips" role="group" aria-label="Kategorien">${ICON_CATS.map(([v, l]) => `<button class="chip" data-a="iconCat" data-v="${v}" aria-pressed="${!ui.iconQuery.trim() && ui.iconCat === v}">${l}</button>`).join('')}</div>
+      <div class="searchbox">${icon('search', 18)}<input id="icon-q" class="inp" data-bind="iconQuery" value="${esc(ui.iconQuery)}" placeholder="${T('Icons suchen, z. B. Buch', 'Search icons, e.g. book')}" aria-label="${T('Icons suchen', 'Search icons')}" autocomplete="off"></div>
+      <div class="chips" role="group" aria-label="${T('Kategorien', 'Categories')}">${ICON_CATS_L().map(([v, l]) => `<button class="chip" data-a="iconCat" data-v="${v}" aria-pressed="${!ui.iconQuery.trim() && ui.iconCat === v}">${l}</button>`).join('')}</div>
       <div id="icon-grid" class="igrid">${iconGridHtml()}</div>
     </main>`;
 }
@@ -1383,24 +1466,24 @@ function barsHtml(buckets, { valueOf, max, gridLabels }) {
 function viewStatsHabits() {
   const P = ui.statsPeriod;
   const d = habitPeriod(P);
-  const periodSeg = seg('statsPeriod', P, [['7', 'Woche'], ['30', '30 Tage'], ['year', 'Jahr']]);
-  if (!d.per.length) return periodSeg + `<div class="card"><p class="hint" style="margin:0">Leg zuerst eine Gewohnheit an. Dann siehst du hier, wie oft du sie schaffst.</p></div>`;
+  const periodSeg = seg('statsPeriod', P, [['7', T('Woche', 'Week')], ['30', T('30 Tage', '30 days')], ['year', T('Jahr', 'Year')]]);
+  if (!d.per.length) return periodSeg + `<div class="card"><p class="hint" style="margin:0">${T('Leg zuerst eine Gewohnheit an. Dann siehst du hier, wie oft du sie schaffst.', 'Create a habit first. Then you\'ll see here how often you stick to it.')}</p></div>`;
   d.buckets.forEach(b => { b.text = b.el ? pct(b.ok / b.el) : ''; b.aria = b.id; });
   const bestCur = d.per.slice().sort((a, b) => b.st.cur - a.st.cur)[0];
   const sorted = d.per.slice().sort((a, b) => b.rate - a.rate);
-  const titles = { '7': 'Erfüllungsquote pro Tag', '30': 'Erfüllungsquote pro Tag', year: 'Erfüllungsquote pro Monat' };
+  const titles = { '7': T('Erfüllungsquote pro Tag', 'Completion rate per day'), '30': T('Erfüllungsquote pro Tag', 'Completion rate per day'), year: T('Erfüllungsquote pro Monat', 'Completion rate per month') };
   return periodSeg + `
     <div class="kpis">
-      <div class="kpi"><span class="v">${d.rate == null ? '–' : pct(d.rate)}</span><span class="k">Erfüllungsquote</span></div>
-      <div class="kpi"><span class="v">${d.ok}</span><span class="k">Geschaffte Tage</span></div>
-      <div class="kpi"><span class="v">${bestCur.st.cur}</span><span class="k">Bester Streak gerade · ${esc(bestCur.h.name)}</span></div>
+      <div class="kpi"><span class="v">${d.rate == null ? '–' : pct(d.rate)}</span><span class="k">${T('Erfüllungsquote', 'Completion rate')}</span></div>
+      <div class="kpi"><span class="v">${d.ok}</span><span class="k">${T('Geschaffte Tage', 'Days done')}</span></div>
+      <div class="kpi"><span class="v">${bestCur.st.cur}</span><span class="k">${T('Bester Streak gerade', 'Top streak now')} · ${esc(bestCur.h.name)}</span></div>
     </div>
     <section class="card">
-      <div class="cardhead"><b>${titles[P]}</b><span>über alle Gewohnheiten</span></div>
+      <div class="cardhead"><b>${titles[P]}</b><span>${T('über alle Gewohnheiten', 'across all habits')}</span></div>
       ${barsHtml(d.buckets, { valueOf: b => b.el ? b.ok / b.el : null, max: 1, gridLabels: [[0.5, '50 %'], [1, '100 %']] })}
     </section>
     <section class="card">
-      <div class="cardhead"><b>Pro Gewohnheit</b><span>${P === 'year' ? 'letzte 12 Monate' : 'letzte ' + P + ' Tage'}</span></div>
+      <div class="cardhead"><b>${T('Pro Gewohnheit', 'Per habit')}</b><span>${P === 'year' ? T('letzte 12 Monate', 'last 12 months') : T(`letzte ${P} Tage`, `last ${P} days`)}</span></div>
       <div class="plist">${sorted.map(p => `<div class="prow" style="${cvars(p.h.color)}">
         <div class="top2"><span class="hic">${icon(p.h.icon, 17)}</span><span class="nm">${esc(p.h.name)}</span><span class="sub">${p.ok}/${p.el} · ${pct(p.rate)}</span></div>
         <div class="ptrack"><i style="width:${Math.round(p.rate * 100)}%"></i></div></div>`).join('')}</div>
@@ -1428,8 +1511,8 @@ function deltaHtml(v, unit = '', dec = 0) {
 }
 function viewStatsScore() {
   const P = Number(ui.scoreStatsPeriod);
-  const periodSeg = seg('scoreStatsPeriod', String(P), [['7', '7 Tage'], ['30', '30 Tage'], ['90', '90 Tage']]);
-  if (!attrs().length) return periodSeg + `<div class="card"><p class="hint" style="margin:0">Leg im Tages-Score zuerst Attribute an, zum Beispiel Fokus oder Energie.</p></div>`;
+  const periodSeg = seg('scoreStatsPeriod', String(P), [['7', T('7 Tage', '7 days')], ['30', T('30 Tage', '30 days')], ['90', T('90 Tage', '90 days')]]);
+  if (!attrs().length) return periodSeg + `<div class="card"><p class="hint" style="margin:0">${T('Leg im Tages-Score zuerst Attribute an, zum Beispiel Fokus oder Energie.', 'Add attributes in Daily Score first, like focus or energy.')}</p></div>`;
   const d = scorePeriodData(P);
   const total = d.rows.reduce((s, r) => s + r.sum, 0);
   const n = d.rows.reduce((s, r) => s + r.n, 0);
@@ -1438,38 +1521,41 @@ function viewStatsScore() {
   const max = Math.max(1, ...ranked.map(r => r.sum));
   const lead = ranked[0];
   let insight = '';
+  const fs = v => num(v, v % 1 ? 1 : 0);
   if (lead && lead.sum > 0) {
-    const second = ranked[1];
-    insight = `<section class="card insight">${icon('info', 18)}<p><b>${esc(lead.a.name)}</b> führt mit <b>${num(lead.sum, lead.sum % 1 ? 1 : 0)} Sternen</b> in den letzten ${P} Tagen.${second
-      ? ` <b>${esc(second.a.name)}</b> liegt ${num(lead.sum - second.sum, (lead.sum - second.sum) % 1 ? 1 : 0)} ${plural(lead.sum - second.sum, 'Stern', 'Sterne')} dahinter.` : ''}${ranked.length > 2
-      ? ` Am wenigsten: <b>${esc(ranked[ranked.length - 1].a.name)}</b> mit ${num(ranked[ranked.length - 1].sum, ranked[ranked.length - 1].sum % 1 ? 1 : 0)}.` : ''}</p></section>`;
+    const second = ranked[1], last = ranked[ranked.length - 1];
+    const gap = second ? lead.sum - second.sum : 0;
+    insight = `<section class="card insight">${icon('info', 18)}<p>${T(
+      `<b>${esc(lead.a.name)}</b> führt mit <b>${fs(lead.sum)} Sternen</b> in den letzten ${P} Tagen.${second ? ` <b>${esc(second.a.name)}</b> liegt ${fs(gap)} ${plural(gap, 'Stern', 'Sterne')} dahinter.` : ''}${ranked.length > 2 ? ` Am wenigsten: <b>${esc(last.a.name)}</b> mit ${fs(last.sum)}.` : ''}`,
+      `<b>${esc(lead.a.name)}</b> leads with <b>${fs(lead.sum)} stars</b> in the last ${P} days.${second ? ` <b>${esc(second.a.name)}</b> is ${fs(gap)} ${plural(gap, 'star', 'stars')} behind.` : ''}${ranked.length > 2 ? ` Lowest: <b>${esc(last.a.name)}</b> with ${fs(last.sum)}.` : ''}`
+    )}</p></section>`;
   } else {
-    insight = `<section class="card insight">${icon('info', 18)}<p>In den letzten ${P} Tagen hast du noch nichts bewertet. Öffne den Tages-Score und vergib deine ersten Sterne.</p></section>`;
+    insight = `<section class="card insight">${icon('info', 18)}<p>${T(`In den letzten ${P} Tagen hast du noch nichts bewertet. Öffne den Tages-Score und vergib deine ersten Sterne.`, `You haven't rated anything in the last ${P} days. Open Daily Score and give your first stars.`)}</p></section>`;
   }
   const fmtSum = v => num(v, v % 1 ? 1 : 0);
   return periodSeg + `
     <div class="kpis">
-      <div class="kpi"><span class="v">${fmtSum(total)}</span><span class="k">Sterne gesamt ${deltaHtml(total - prevTotal)}</span></div>
-      <div class="kpi"><span class="v">${n ? num(total / n) : '–'}</span><span class="k">Ø pro Bewertung</span></div>
-      <div class="kpi"><span class="v">${d.days}<small class="muted" style="font-size:13px;font-weight:500">/${P}</small></span><span class="k">Tage bewertet</span></div>
+      <div class="kpi"><span class="v">${fmtSum(total)}</span><span class="k">${T('Sterne gesamt', 'Total stars')} ${deltaHtml(total - prevTotal)}</span></div>
+      <div class="kpi"><span class="v">${n ? num(total / n) : '–'}</span><span class="k">${T('Ø pro Bewertung', 'Avg per rating')}</span></div>
+      <div class="kpi"><span class="v">${d.days}<small class="muted" style="font-size:13px;font-weight:500">/${P}</small></span><span class="k">${T('Tage bewertet', 'Days rated')}</span></div>
     </div>
     ${insight}
     <section class="card">
-      <div class="cardhead"><b>Gesammelte Sterne</b><span>Vergleich mit den ${P} Tagen davor</span></div>
+      <div class="cardhead"><b>${T('Gesammelte Sterne', 'Stars collected')}</b><span>${T(`Vergleich mit den ${P} Tagen davor`, `compared with the ${P} days before`)}</span></div>
       <div class="rank">${ranked.map((r, i) => {
-        const behind = i > 0 && lead.sum > r.sum ? `<span>${fmtSum(lead.sum - r.sum)} weniger als ${esc(lead.a.name)}</span>` : '';
+        const behind = i > 0 && lead.sum > r.sum ? `<span>${T(`${fmtSum(lead.sum - r.sum)} weniger als ${esc(lead.a.name)}`, `${fmtSum(lead.sum - r.sum)} fewer than ${esc(lead.a.name)}`)}</span>` : '';
         return `<div class="rk" style="${cvars(r.a.color)}">
-          <div class="t"><span class="dot"></span><span class="nm">${esc(r.a.name)}</span><span class="sum">${fmtSum(r.sum)} <svg class="i" width="15" height="15" viewBox="0 0 24 24" aria-label="Sterne"><path d="${STAR_PATH}" fill="currentColor"/></svg></span></div>
+          <div class="t"><span class="dot"></span><span class="nm">${esc(r.a.name)}</span><span class="sum">${fmtSum(r.sum)} <svg class="i" width="15" height="15" viewBox="0 0 24 24" aria-label="${T('Sterne', 'stars')}"><path d="${STAR_PATH}" fill="currentColor"/></svg></span></div>
           <div class="ptrack"><i style="width:${r.sum / max * 100}%"></i></div>
-          <div class="s"><span>Ø ${r.avg == null ? '–' : num(r.avg)}</span><span>${r.n} ${plural(r.n, 'Tag', 'Tage')}</span><span>${deltaHtml(r.sum - r.prevSum)} ggü. davor</span>${behind}</div>
+          <div class="s"><span>Ø ${r.avg == null ? '–' : num(r.avg)}</span><span>${r.n} ${T(plural(r.n, 'Tag', 'Tage'), plural(r.n, 'day', 'days'))}</span><span>${deltaHtml(r.sum - r.prevSum)} ${T('ggü. davor', 'vs. before')}</span>${behind}</div>
         </div>`;
       }).join('')}</div>
     </section>`;
 }
 
 function viewStats() {
-  return header({ title: 'Statistiken' }) + `<main class="stack">
-    ${seg('statsTab', ui.statsTab, [['habits', 'Gewohnheiten'], ['score', 'Tages-Score']])}
+  return header({ title: T('Statistiken', 'Statistics') }) + `<main class="stack">
+    ${seg('statsTab', ui.statsTab, [['habits', T('Gewohnheiten', 'Habits')], ['score', T('Tages-Score', 'Daily score')]])}
     ${ui.statsTab === 'habits' ? viewStatsHabits() : viewStatsScore()}
   </main>`;
 }
@@ -1481,32 +1567,32 @@ function viewScoreRate() {
   const day = scoreDay(k) || {};
   const vals = attrs().map(a => day[a.id]).filter(v => v != null);
   const avg = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
-  const label = k === t ? 'Heute' : k === addD(t, -1) ? 'Gestern' : fmtLong(k);
+  const label = k === t ? T('Heute', 'Today') : k === addD(t, -1) ? T('Gestern', 'Yesterday') : fmtLong(k);
   const cards = attrs().map(a => {
     const v = day[a.id] ?? null;
     const w7 = summarize(attrRange(a.id, addD(k, -6), k).map(x => x.v));
     let stars = '';
     for (let i = 1; i <= 5; i++) {
       const f = v == null ? 0 : Math.max(0, Math.min(1, v - (i - 1)));
-      stars += `<button class="star" data-a="rate" data-attr="${a.id}" data-n="${i}" aria-label="${esc(a.name)}: ${i} ${plural(i, 'Stern', 'Sterne')}">${starSvg(f, a.color)}</button>`;
+      stars += `<button class="star" data-a="rate" data-attr="${a.id}" data-n="${i}" aria-label="${esc(a.name)}: ${i} ${T(plural(i, 'Stern', 'Sterne'), plural(i, 'star', 'stars'))}">${starSvg(f, a.color)}</button>`;
     }
     return `<section class="card attr" style="${cvars(a.color)}">
       <div class="ah"><span class="dot"></span><span class="nm">${esc(a.name)}</span>
-        <span class="val">${v == null ? '<small>nicht bewertet</small>' : num(v) + ' <small>/ 5</small>'}</span>
-        <button class="ib ghost" data-a="editAttr" data-id="${a.id}" aria-label="${esc(a.name)} bearbeiten" style="width:36px;height:36px">${icon('pencil', 16)}</button>
+        <span class="val">${v == null ? `<small>${T('nicht bewertet', 'not rated')}</small>` : num(v) + ' <small>/ 5</small>'}</span>
+        <button class="ib ghost" data-a="editAttr" data-id="${a.id}" aria-label="${T('Bearbeiten', 'Edit')}: ${esc(a.name)}" style="width:36px;height:36px">${icon('pencil', 16)}</button>
       </div>
-      <div class="ab"><div class="stars" role="group" aria-label="${esc(a.name)} bewerten">${stars}</div>
-        <div class="avg">${v != null ? `<button class="linkbtn" data-a="clearRate" data-attr="${a.id}" style="--c:var(--muted);min-height:32px;padding:0">Löschen</button><br>` : ''}Ø 7 Tage ${w7.avg == null ? '–' : num(w7.avg)}</div></div>
+      <div class="ab"><div class="stars" role="group" aria-label="${T('Bewerten', 'Rate')}: ${esc(a.name)}">${stars}</div>
+        <div class="avg">${v != null ? `<button class="linkbtn" data-a="clearRate" data-attr="${a.id}" style="--c:var(--muted);min-height:32px;padding:0">${T('Löschen', 'Clear')}</button><br>` : ''}${T('Ø 7 Tage', '7-day avg')} ${w7.avg == null ? '–' : num(w7.avg)}</div></div>
     </section>`;
   }).join('');
   return `<div class="card datenav">
-      <button class="ib ghost" data-a="scoreDay" data-v="-1" aria-label="Vorheriger Tag">${icon('chevron-left')}</button>
-      <div class="mid"><b>${esc(label)}</b><span>${k === t || k === addD(t, -1) ? esc(fmtLong(k)) : (avg == null ? 'noch nichts bewertet' : '')}${avg != null ? (k === t || k === addD(t, -1) ? ' · ' : '') + 'Tagesschnitt ' + num(avg) : ''}</span></div>
-      <button class="ib ghost" data-a="scoreDay" data-v="1" aria-label="Nächster Tag" ${k >= t ? 'disabled' : ''}>${icon('chevron-right')}</button>
+      <button class="ib ghost" data-a="scoreDay" data-v="-1" aria-label="${T('Vorheriger Tag', 'Previous day')}">${icon('chevron-left')}</button>
+      <div class="mid"><b>${esc(label)}</b><span>${k === t || k === addD(t, -1) ? esc(fmtLong(k)) : (avg == null ? T('noch nichts bewertet', 'nothing rated yet') : '')}${avg != null ? (k === t || k === addD(t, -1) ? ' · ' : '') + T('Tagesschnitt ', 'Day average ') + num(avg) : ''}</span></div>
+      <button class="ib ghost" data-a="scoreDay" data-v="1" aria-label="${T('Nächster Tag', 'Next day')}" ${k >= t ? 'disabled' : ''}>${icon('chevron-right')}</button>
     </div>
-    ${attrs().length ? `<p class="hint" style="margin:0 4px">Tippe auf einen Stern. Tippst du denselben Stern nochmal, wird es ein halber.</p>` : ''}
-    ${cards || `<div class="card"><p class="hint" style="margin:0">Noch keine Attribute. Leg eins an, zum Beispiel Fokus, Energie oder Schlaf.</p></div>`}
-    <button class="btn dashed" data-a="newAttr">${icon('plus', 18, 2.5)} Attribut hinzufügen</button>`;
+    ${attrs().length ? `<p class="hint" style="margin:0 4px">${T('Tippe auf einen Stern. Tippst du denselben Stern nochmal, wird es ein halber.', 'Tap a star. Tap the same star again for a half star.')}</p>` : ''}
+    ${cards || `<div class="card"><p class="hint" style="margin:0">${T('Noch keine Attribute. Leg eins an, zum Beispiel Fokus, Energie oder Schlaf.', 'No attributes yet. Add one, like focus, energy or sleep.')}</p></div>`}
+    <button class="btn dashed" data-a="newAttr">${icon('plus', 18, 2.5)} ${T('Attribut hinzufügen', 'Add attribute')}</button>`;
 }
 
 // values per bucket: daily up to 120 days, weekly averages beyond
@@ -1523,11 +1609,11 @@ function attrSeries(aId, P) {
   return out;
 }
 function lineChart(P) {
-  const W = 340, H = 230, L = 26, R = 8, T = 10, B = 24;
+  const W = 340, H = 230, L = 26, R = 8, TOP = 10, B = 24;
   const anyA = attrs()[0];
   const n = anyA ? attrSeries(anyA.id, P).length : 1;
   const x = i => L + (n <= 1 ? 0 : i * (W - L - R) / (n - 1));
-  const y = v => T + (5 - v) / 5 * (H - T - B);
+  const y = v => TOP + (5 - v) / 5 * (H - TOP - B);
   let g = '';
   for (let v = 1; v <= 5; v++) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--faint)">${v}</text>`;
   const focus = ui.focusAttr && attrs().some(a => a.id === ui.focusAttr) ? ui.focusAttr : null;
@@ -1551,32 +1637,32 @@ function lineChart(P) {
     const ticks = keys.length > 2 ? [0, Math.floor((keys.length - 1) / 2), keys.length - 1] : [0, keys.length - 1];
     for (const i of [...new Set(ticks)]) {
       const [, m, d] = ymd(keys[i]);
-      const label = P > 120 ? `${MON_S[m - 1]}` : `${d}.${m}.`;
+      const label = P > 120 ? `${MON_S[m - 1]}` : dayNum(d, m);
       g += `<text x="${x(i)}" y="${H - 5}" text-anchor="${i === 0 ? 'start' : i === keys.length - 1 ? 'end' : 'middle'}" font-size="11" fill="var(--faint)">${label}</text>`;
     }
   }
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf aller Attribute">${g}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${T('Verlauf aller Attribute', 'History of all attributes')}">${g}</svg>`;
 }
-const PERIOD_LABEL = { 7: 'letzte 7 Tage', 30: 'letzte 30 Tage', 90: 'letzte 3 Monate', 365: 'letztes Jahr, Wochenschnitt' };
+const PERIOD_LABEL = () => ({ 7: T('letzte 7 Tage', 'last 7 days'), 30: T('letzte 30 Tage', 'last 30 days'), 90: T('letzte 3 Monate', 'last 3 months'), 365: T('letztes Jahr, Wochenschnitt', 'last year, weekly average') });
 
 function viewScoreOverview() {
   const P = Number(ui.overviewPeriod);
-  if (!attrs().length) return `<div class="card"><p class="hint" style="margin:0">Noch keine Attribute angelegt.</p></div>`;
+  if (!attrs().length) return `<div class="card"><p class="hint" style="margin:0">${T('Noch keine Attribute angelegt.', 'No attributes yet.')}</p></div>`;
   const d = scorePeriodData(P);
   const all = d.rows.filter(r => r.n);
   const avg = all.length ? all.reduce((s, r) => s + r.sum, 0) / all.reduce((s, r) => s + r.n, 0) : null;
   const pAll = d.rows.filter(r => r.prevN);
   const pAvg = pAll.length ? pAll.reduce((s, r) => s + r.prevSum, 0) / pAll.reduce((s, r) => s + r.prevN, 0) : null;
-  return seg('overviewPeriod', String(P), [['7', 'Woche'], ['30', 'Monat'], ['90', '3 Monate'], ['365', 'Jahr']]) + `
+  return seg('overviewPeriod', String(P), [['7', T('Woche', 'Week')], ['30', T('Monat', 'Month')], ['90', T('3 Monate', '3 months')], ['365', T('Jahr', 'Year')]]) + `
     <section class="card sumcard">
-      <div><span class="hint">Gesamt-Durchschnitt</span><div class="big">${avg == null ? '–' : num(avg)}<small>/ 5</small></div></div>
-      ${avg != null && pAvg != null ? `<span class="pill">${deltaHtml(avg - pAvg, '', 1)} ggü. davor</span>` : ''}
+      <div><span class="hint">${T('Gesamt-Durchschnitt', 'Overall average')}</span><div class="big">${avg == null ? '–' : num(avg)}<small>/ 5</small></div></div>
+      ${avg != null && pAvg != null ? `<span class="pill">${deltaHtml(avg - pAvg, '', 1)} ${T('ggü. davor', 'vs. before')}</span>` : ''}
     </section>
     <section class="card chart">
-      <div class="cardhead"><b>Alle Attribute</b><span>${PERIOD_LABEL[P]}</span></div>
+      <div class="cardhead"><b>${T('Alle Attribute', 'All attributes')}</b><span>${PERIOD_LABEL()[P]}</span></div>
       ${lineChart(P)}
-      <div class="legend" role="group" aria-label="Attribut hervorheben">${attrs().map(a => `<button data-a="focusAttr" data-id="${a.id}" aria-pressed="${ui.focusAttr === a.id}" class="${ui.focusAttr && ui.focusAttr !== a.id ? 'dim' : ''}"><i class="dot" style="--c:${a.color}"></i>${esc(a.name)}</button>`).join('')}</div>
-      <p class="hint" style="margin:6px 0 0">Tippe auf ein Attribut, um es hervorzuheben.</p>
+      <div class="legend" role="group" aria-label="${T('Attribut hervorheben', 'Highlight attribute')}">${attrs().map(a => `<button data-a="focusAttr" data-id="${a.id}" aria-pressed="${ui.focusAttr === a.id}" class="${ui.focusAttr && ui.focusAttr !== a.id ? 'dim' : ''}"><i class="dot" style="--c:${a.color}"></i>${esc(a.name)}</button>`).join('')}</div>
+      <p class="hint" style="margin:6px 0 0">${T('Tippe auf ein Attribut, um es hervorzuheben.', 'Tap an attribute to highlight it.')}</p>
     </section>
     <div class="stack" style="gap:8px">${d.rows.map(r => {
       const pts = attrSeries(r.a.id, P);
@@ -1595,7 +1681,7 @@ function viewScoreTable() {
   const [ty, tm] = ymd(t);
   const atCurrent = y > ty || (y === ty && m >= tm);
   const as = attrs();
-  if (!as.length) return `<div class="card"><p class="hint" style="margin:0">Noch keine Attribute angelegt.</p></div>`;
+  if (!as.length) return `<div class="card"><p class="hint" style="margin:0">${T('Noch keine Attribute angelegt.', 'No attributes yet.')}</p></div>`;
   const dim = atCurrent ? Math.min(daysInMonth(y, m), ymd(t)[2]) : daysInMonth(y, m);
   const colSum = as.map(() => ({ sum: 0, n: 0 }));
   let rows = '';
@@ -1610,54 +1696,52 @@ function viewScoreTable() {
       return `<td class="c" style="background:${hexA(a.color, 0.08 + v / 5 * 0.34)}">${num(v)}</td>`;
     }).join('');
     rows += `<tr class="${k === t ? 'today' : ''} ${k > t ? 'future' : ''}">
-      <td><button class="rowbtn" data-a="openScoreDate" data-k="${k}" ${k > t ? 'disabled' : ''} aria-label="${fmtLong(k)} bewerten">${WD[wday(k)]} ${d}.</button></td>
+      <td><button class="rowbtn" data-a="openScoreDate" data-k="${k}" ${k > t ? 'disabled' : ''} aria-label="${T('Bewerten', 'Rate')}: ${fmtLong(k)}">${WD[wday(k)]} ${LANG === 'de' ? d + '.' : d}</button></td>
       ${cells}<td class="avgc">${rn ? num(rs / rn) : '<span class="muted">–</span>'}</td></tr>`;
   }
   const tot = colSum.reduce((s, c) => ({ sum: s.sum + c.sum, n: s.n + c.n }), { sum: 0, n: 0 });
   return `<div class="card datenav">
-      <button class="ib ghost" data-a="tableMonth" data-v="-1" aria-label="Vorheriger Monat">${icon('chevron-left')}</button>
-      <div class="mid"><b>${MON[m - 1]} ${y}</b><span>${tot.n} ${plural(tot.n, 'Bewertung', 'Bewertungen')}</span></div>
-      <button class="ib ghost" data-a="tableMonth" data-v="1" aria-label="Nächster Monat" ${atCurrent ? 'disabled' : ''}>${icon('chevron-right')}</button>
+      <button class="ib ghost" data-a="tableMonth" data-v="-1" aria-label="${T('Vorheriger Monat', 'Previous month')}">${icon('chevron-left')}</button>
+      <div class="mid"><b>${MON[m - 1]} ${y}</b><span>${tot.n} ${T(plural(tot.n, 'Bewertung', 'Bewertungen'), plural(tot.n, 'rating', 'ratings'))}</span></div>
+      <button class="ib ghost" data-a="tableMonth" data-v="1" aria-label="${T('Nächster Monat', 'Next month')}" ${atCurrent ? 'disabled' : ''}>${icon('chevron-right')}</button>
     </div>
     <div class="tablewrap"><table class="st">
-      <thead><tr><th scope="col" style="padding-left:12px">Tag</th>${as.map(a => `<th scope="col"><span class="thname"><i class="dot" style="--c:${a.color}"></i><span>${esc(a.name)}</span></span></th>`).join('')}<th scope="col">Ø</th></tr></thead>
+      <thead><tr><th scope="col" style="padding-left:12px">${T('Tag', 'Day')}</th>${as.map(a => `<th scope="col"><span class="thname"><i class="dot" style="--c:${a.color}"></i><span>${esc(a.name)}</span></span></th>`).join('')}<th scope="col">Ø</th></tr></thead>
       <tbody>${rows}</tbody>
       <tfoot>
         <tr><td>Ø</td>${colSum.map(c => `<td>${c.n ? num(c.sum / c.n) : '–'}</td>`).join('')}<td>${tot.n ? num(tot.sum / tot.n) : '–'}</td></tr>
-        <tr><td>Sterne</td>${colSum.map(c => `<td>${c.n ? num(c.sum, c.sum % 1 ? 1 : 0) : '–'}</td>`).join('')}<td>${tot.n ? num(tot.sum, tot.sum % 1 ? 1 : 0) : '–'}</td></tr>
+        <tr><td>${T('Sterne', 'Stars')}</td>${colSum.map(c => `<td>${c.n ? num(c.sum, c.sum % 1 ? 1 : 0) : '–'}</td>`).join('')}<td>${tot.n ? num(tot.sum, tot.sum % 1 ? 1 : 0) : '–'}</td></tr>
       </tfoot>
     </table></div>
-    <p class="hint" style="margin:0 4px">Tippe auf einen Tag, um ihn zu bewerten.</p>`;
+    <p class="hint" style="margin:0 4px">${T('Tippe auf einen Tag, um ihn zu bewerten.', 'Tap a day to rate it.')}</p>`;
 }
 
 function viewScore() {
   const body = ui.scoreTab === 'rate' ? viewScoreRate() : ui.scoreTab === 'overview' ? viewScoreOverview() : viewScoreTable();
-  return header({ title: 'Tages-Score' }) + `<main class="stack">
-    ${seg('scoreTab', ui.scoreTab, [['rate', 'Bewerten'], ['overview', 'Übersicht'], ['table', 'Tabelle']])}
+  return header({ title: T('Tages-Score', 'Daily score') }) + `<main class="stack">
+    ${seg('scoreTab', ui.scoreTab, [['rate', T('Bewerten', 'Rate')], ['overview', T('Übersicht', 'Overview')], ['table', T('Tabelle', 'Table')]])}
     ${body}
   </main>`;
 }
 
 // ---------- login (hosted app) ----------
 function authMsg(code) {
+  const wrong = T('E-Mail oder Passwort stimmt nicht.', 'Email or password is incorrect.');
   const m = {
-    'auth/invalid-email': 'Diese E-Mail-Adresse sieht nicht richtig aus.',
-    'auth/missing-email': 'Gib deine E-Mail-Adresse ein.',
-    'auth/user-not-found': 'E-Mail oder Passwort stimmt nicht.',
-    'auth/wrong-password': 'E-Mail oder Passwort stimmt nicht.',
-    'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.',
-    'auth/invalid-login-credentials': 'E-Mail oder Passwort stimmt nicht.',
-    'auth/email-already-in-use': 'Mit dieser E-Mail gibt es schon ein Konto. Melde dich an.',
-    'auth/weak-password': 'Das Passwort muss mindestens 6 Zeichen haben.',
-    'auth/missing-password': 'Gib ein Passwort ein.',
-    'auth/too-many-requests': 'Zu viele Versuche. Warte kurz und versuch es dann nochmal.',
-    'auth/network-request-failed': 'Keine Verbindung zum Internet. Prüf dein Netz und versuch es nochmal.',
-    'auth/operation-not-allowed': 'Die Anmeldung per E-Mail ist im Projekt noch nicht aktiviert.',
+    'auth/invalid-email': T('Diese E-Mail-Adresse sieht nicht richtig aus.', 'That email address doesn\'t look right.'),
+    'auth/missing-email': T('Gib deine E-Mail-Adresse ein.', 'Enter your email address.'),
+    'auth/user-not-found': wrong, 'auth/wrong-password': wrong, 'auth/invalid-credential': wrong, 'auth/invalid-login-credentials': wrong,
+    'auth/email-already-in-use': T('Mit dieser E-Mail gibt es schon ein Konto. Melde dich an.', 'There\'s already an account with this email. Sign in instead.'),
+    'auth/weak-password': T('Das Passwort muss mindestens 6 Zeichen haben.', 'The password needs at least 6 characters.'),
+    'auth/missing-password': T('Gib ein Passwort ein.', 'Enter a password.'),
+    'auth/too-many-requests': T('Zu viele Versuche. Warte kurz und versuch es dann nochmal.', 'Too many attempts. Wait a moment and try again.'),
+    'auth/network-request-failed': T('Keine Verbindung zum Internet. Prüf dein Netz und versuch es nochmal.', 'No internet connection. Check your network and try again.'),
+    'auth/operation-not-allowed': T('Die Anmeldung per E-Mail ist im Projekt noch nicht aktiviert.', 'Email sign-in isn\'t enabled for this project yet.'),
   };
-  return m[code] || 'Das hat nicht geklappt. Versuch es nochmal.';
+  return m[code] || T('Das hat nicht geklappt. Versuch es nochmal.', 'That didn\'t work. Try again.');
 }
 function viewSplash() {
-  return `<div class="onb" style="justify-content:center;align-items:center"><p class="hint">Lade …</p></div>`;
+  return `<div class="onb" style="justify-content:center;align-items:center"><p class="hint">${T('Lade …', 'Loading …')}</p></div>`;
 }
 function viewAuth() {
   const a = ui.auth;
@@ -1669,24 +1753,25 @@ function viewAuth() {
     deco += `<i style="${k < 0.42 + c * 0.035 ? 'background:' + palette[r] : ''}"></i>`;
   }
   return `<div class="onb">
+    <div class="langpick">${seg('setLang', LANG, [['en', 'EN'], ['de', 'DE']], `aria-label="${T('Sprache', 'Language')}"`)}</div>
     <div class="deco" aria-hidden="true">${deco}</div>
     <div class="stack" style="gap:12px">
       <span class="label">Habit Tracker</span>
-      <h1>${signup ? 'Konto erstellen' : 'Anmelden'}</h1>
-      <p>${signup ? 'Mit deinem Konto sind deine Gewohnheiten auf Handy und PC immer gleich.' : 'Melde dich an, um deine Gewohnheiten auf diesem Gerät zu sehen.'}</p>
+      <h1>${signup ? T('Konto erstellen', 'Create account') : T('Anmelden', 'Sign in')}</h1>
+      <p>${signup ? T('Mit deinem Konto sind deine Gewohnheiten auf Handy und PC immer gleich.', 'With an account, your habits stay in sync on your phone and computer.') : T('Melde dich an, um deine Gewohnheiten auf diesem Gerät zu sehen.', 'Sign in to see your habits on this device.')}</p>
     </div>
     <form class="stack" data-form="auth" style="gap:14px" novalidate>
-      <div class="field"><label for="auth-email">E-Mail</label>
-        <input id="auth-email" class="inp" type="email" inputmode="email" data-bind="auth.email" value="${esc(a.email)}" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="du@beispiel.de"></div>
-      <div class="field"><label for="auth-pw">Passwort</label>
-        <input id="auth-pw" class="inp" type="password" data-bind="auth.pw" value="${esc(a.pw)}" autocomplete="${signup ? 'new-password' : 'current-password'}" placeholder="${signup ? 'Mindestens 6 Zeichen' : ''}"></div>
+      <div class="field"><label for="auth-email">${T('E-Mail', 'Email')}</label>
+        <input id="auth-email" class="inp" type="email" inputmode="email" data-bind="auth.email" value="${esc(a.email)}" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="${T('du@beispiel.de', 'you@example.com')}"></div>
+      <div class="field"><label for="auth-pw">${T('Passwort', 'Password')}</label>
+        <input id="auth-pw" class="inp" type="password" data-bind="auth.pw" value="${esc(a.pw)}" autocomplete="${signup ? 'new-password' : 'current-password'}" placeholder="${signup ? T('Mindestens 6 Zeichen', 'At least 6 characters') : ''}"></div>
       ${a.error ? `<p class="hint" role="alert" style="margin:0;color:var(--bad)">${esc(a.error)}</p>` : ''}
       ${a.info ? `<p class="hint" role="status" style="margin:0;color:var(--good)">${esc(a.info)}</p>` : ''}
-      <button id="auth-go" class="btn primary block" type="submit" ${a.busy ? 'disabled' : ''}>${a.busy ? 'Einen Moment …' : signup ? 'Konto erstellen' : 'Anmelden'}</button>
+      <button id="auth-go" class="btn primary block" type="submit" ${a.busy ? 'disabled' : ''}>${a.busy ? T('Einen Moment …', 'One moment …') : signup ? T('Konto erstellen', 'Create account') : T('Anmelden', 'Sign in')}</button>
     </form>
     <div class="end">
-      <button class="linkbtn" data-a="authMode" style="--c:var(--text)">${signup ? 'Schon ein Konto? Anmelden' : 'Noch kein Konto? Konto erstellen'}</button>
-      ${signup ? '' : `<button class="linkbtn" data-a="authReset" style="--c:var(--muted)">Passwort vergessen?</button>`}
+      <button class="linkbtn" data-a="authMode" style="--c:var(--text)">${signup ? T('Schon ein Konto? Anmelden', 'Already have an account? Sign in') : T('Noch kein Konto? Konto erstellen', 'No account yet? Create one')}</button>
+      ${signup ? '' : `<button class="linkbtn" data-a="authReset" style="--c:var(--muted)">${T('Passwort vergessen?', 'Forgot password?')}</button>`}
     </div>
   </div>`;
 }
@@ -1694,11 +1779,11 @@ function viewAuth() {
 // ---------- settings ----------
 function statusHtml() {
   if (cloud.backend) {
-    const when = cloud.lastSync ? new Date(cloud.lastSync).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
-    const txt = cloud.status === 'syncing' ? 'Synchronisiere …' : cloud.status === 'error' ? 'Sync gerade nicht möglich. Deine Daten sind auf diesem Gerät gesichert und werden später hochgeladen.' : `${cloud.mode === 'firebase' ? 'Mit deinem Konto synchronisiert' : 'In deinem Claude-Konto gespeichert'}${when ? ' · zuletzt ' + when + ' Uhr' : ''}`;
+    const when = cloud.lastSync ? new Date(cloud.lastSync).toLocaleTimeString(LANG === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+    const txt = cloud.status === 'syncing' ? T('Synchronisiere …', 'Syncing …') : cloud.status === 'error' ? T('Sync gerade nicht möglich. Deine Daten sind auf diesem Gerät gesichert und werden später hochgeladen.', 'Sync isn\'t possible right now. Your data is safe on this device and will upload later.') : `${cloud.mode === 'firebase' ? T('Mit deinem Konto synchronisiert', 'Synced with your account') : T('In deinem Claude-Konto gespeichert', 'Saved in your Claude account')}${when ? T(' · zuletzt ' + when + ' Uhr', ' · last ' + when) : ''}`;
     return `${icon(cloud.status === 'error' ? 'cloud-off' : 'cloud', 18)}<span>${txt}</span>`;
   }
-  return `${icon('smartphone', 18)}<span>Nur auf diesem Gerät gespeichert. Exportiere regelmäßig ein Backup.</span>`;
+  return `${icon('smartphone', 18)}<span>${T('Nur auf diesem Gerät gespeichert. Exportiere regelmäßig ein Backup.', 'Saved on this device only. Export a backup regularly.')}</span>`;
 }
 function renderStatus() {
   const el = document.getElementById('sync-status');
@@ -1706,28 +1791,33 @@ function renderStatus() {
 }
 function viewSettings() {
   const archived = habitList(true);
-  return header({ title: 'Einstellungen' }) + `<main class="stack" style="gap:22px">
-    <div class="field"><label for="set-name" class="label">Profil</label>
-      <input id="set-name" class="inp" data-bind="meta.name" value="${esc(S.meta.name)}" maxlength="40" placeholder="Dein Name" autocomplete="off"></div>
-    <div class="field"><span class="label">Darstellung</span>
-      ${seg('theme', S.meta.theme, [['dark', `${icon('moon', 16)}Dunkel`], ['light', `${icon('sun', 16)}Hell`], ['system', `${icon('monitor', 16)}System`]])}</div>
-    ${cloud.mode === 'firebase' && cloud.user ? `<div class="field"><span class="label">Konto</span>
-      <div class="list"><div class="li"><span class="lt"><span>Angemeldet</span><span class="sub" style="overflow-wrap:anywhere">${esc(cloud.user.email)}</span></span>
-        <button class="btn soft" style="height:40px;font-size:14px;flex:none" data-a="signOut">Abmelden</button></div></div></div>` : ''}
-    <div class="field"><span class="label">Daten</span>
+  return header({ title: T('Einstellungen', 'Settings') }) + `<main class="stack" style="gap:22px">
+    <div class="field"><label for="set-name" class="label">${T('Profil', 'Profile')}</label>
+      <input id="set-name" class="inp" data-bind="meta.name" value="${esc(S.meta.name)}" maxlength="40" placeholder="${T('Dein Name', 'Your name')}" autocomplete="off"></div>
+    <div class="field"><span class="label">${T('Sprache', 'Language')}</span>
+      ${seg('setLang', LANG, [['en', 'English'], ['de', 'Deutsch']])}</div>
+    <div class="field"><span class="label">${T('Darstellung', 'Appearance')}</span>
+      ${seg('theme', S.meta.theme, [['dark', `${icon('moon', 16)}${T('Dunkel', 'Dark')}`], ['light', `${icon('sun', 16)}${T('Hell', 'Light')}`], ['system', `${icon('monitor', 16)}System`]])}</div>
+    <div class="field"><span class="label">${T('Haptisches Feedback', 'Haptic feedback')}</span>
+      <div class="list"><div class="li"><span class="lt"><span>${T('Vibration beim Tippen', 'Vibrate on tap')}</span><span class="sub">${T('Funktioniert auf Android und ab iOS 18.', 'Works on Android and iOS 18 or later.')}</span></span>
+        <button role="switch" class="switch" aria-checked="${S.meta.haptics !== false}" aria-label="${T('Vibration beim Tippen', 'Vibrate on tap')}" data-a="toggleHaptics"><span></span></button></div></div></div>
+    ${cloud.mode === 'firebase' && cloud.user ? `<div class="field"><span class="label">${T('Konto', 'Account')}</span>
+      <div class="list"><div class="li"><span class="lt"><span>${T('Angemeldet', 'Signed in')}</span><span class="sub" style="overflow-wrap:anywhere">${esc(cloud.user.email)}</span></span>
+        <button class="btn soft" style="height:40px;font-size:14px;flex:none" data-a="signOut">${T('Abmelden', 'Sign out')}</button></div></div></div>` : ''}
+    <div class="field"><span class="label">${T('Daten', 'Data')}</span>
       <div class="list">
         <div id="sync-status" class="status">${statusHtml()}</div>
-        <button class="li" data-a="exportData"><span>Backup exportieren (JSON)</span>${icon('download', 18)}</button>
-        <button class="li" data-a="importData"><span>Backup importieren</span>${icon('upload', 18)}</button>
+        <button class="li" data-a="exportData"><span>${T('Backup exportieren (JSON)', 'Export backup (JSON)')}</span>${icon('download', 18)}</button>
+        <button class="li" data-a="importData"><span>${T('Backup importieren', 'Import backup')}</span>${icon('upload', 18)}</button>
       </div>
       <input id="import-file" type="file" accept="application/json,.json" hidden></div>
-    <div class="field"><span class="label">Archiv</span>
+    <div class="field"><span class="label">${T('Archiv', 'Archive')}</span>
       ${archived.length ? `<div class="list">${archived.map(h => `<div class="li" style="${cvars(h.color)}">
-          <span class="lt"><span>${esc(h.name)}</span><span class="sub">${h.type === 'quit' ? 'Abgewöhnen' : 'Aufbauen'}</span></span>
-          <button class="btn soft" style="height:40px;font-size:14px" data-a="restoreHabit" data-id="${h.id}">${icon('archive-restore', 16)} Zurückholen</button></div>`).join('')}</div>`
-        : `<p class="hint" style="margin:0 4px">Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.</p>`}</div>
-    <button class="btn danger block" data-a="resetAll">Alle Daten löschen</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.0</p>
+          <span class="lt"><span>${esc(h.name)}</span><span class="sub">${h.type === 'quit' ? T('Abgewöhnen', 'Quit') : T('Aufbauen', 'Build')}</span></span>
+          <button class="btn soft" style="height:40px;font-size:14px" data-a="restoreHabit" data-id="${h.id}">${icon('archive-restore', 16)} ${T('Zurückholen', 'Restore')}</button></div>`).join('')}</div>`
+        : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
+    <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
+    <p class="hint" style="text-align:center;margin:0">Version 1.1</p>
   </main>`;
 }
 
@@ -1735,28 +1825,28 @@ function viewSettings() {
 function drawerHtml() {
   const v = ui.view;
   const cur = name => (v === name || (name === 'habits' && ['detail', 'edit', 'icons'].includes(v))) ? 'aria-current="page"' : '';
-  const nm = S.meta.name || 'Du';
+  const nm = S.meta.name || T('Du', 'You');
   return `<div class="scrim" data-a="closeOverlay"></div>
-  <nav class="drawer" aria-label="Hauptmenü">
-    <div class="prof"><span class="avatar">${esc(nm.trim().charAt(0).toUpperCase() || 'D')}</span><div style="min-width:0"><b>${esc(nm)}</b><span>${habitList().length} ${plural(habitList().length, 'Gewohnheit', 'Gewohnheiten')}</span></div></div>
-    <button class="nav" data-a="nav" data-v="habits" ${cur('habits')}>${icon('list-checks', 22)}Gewohnheiten</button>
-    <button class="nav" data-a="nav" data-v="stats" ${cur('stats')}>${icon('chart-column', 22)}Statistiken</button>
-    <button class="nav" data-a="nav" data-v="score" ${cur('score')}>${icon('star', 22)}Tages-Score</button>
-    <div class="foot"><hr><button class="nav" data-a="nav" data-v="settings" ${cur('settings')}>${icon('settings', 22)}Einstellungen</button></div>
+  <nav class="drawer" aria-label="${T('Hauptmenü', 'Main menu')}">
+    <div class="prof"><span class="avatar">${esc(nm.trim().charAt(0).toUpperCase() || 'D')}</span><div style="min-width:0"><b>${esc(nm)}</b><span>${habitList().length} ${T(plural(habitList().length, 'Gewohnheit', 'Gewohnheiten'), plural(habitList().length, 'habit', 'habits'))}</span></div></div>
+    <button class="nav" data-a="nav" data-v="habits" ${cur('habits')}>${icon('list-checks', 22)}${T('Gewohnheiten', 'Habits')}</button>
+    <button class="nav" data-a="nav" data-v="stats" ${cur('stats')}>${icon('chart-column', 22)}${T('Statistiken', 'Statistics')}</button>
+    <button class="nav" data-a="nav" data-v="score" ${cur('score')}>${icon('star', 22)}${T('Tages-Score', 'Daily score')}</button>
+    <div class="foot"><hr><button class="nav" data-a="nav" data-v="settings" ${cur('settings')}>${icon('settings', 22)}${T('Einstellungen', 'Settings')}</button></div>
   </nav>`;
 }
 function attrSheetHtml() {
   const e = ui.attrEdit;
   return `<div class="scrim" data-a="closeOverlay"></div>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="attr-title" style="${cvars(e.color)}">
-    <div class="sheethead"><h2 id="attr-title">${e.id ? 'Attribut bearbeiten' : 'Neues Attribut'}</h2>
-      <button class="ib" data-a="closeOverlay" aria-label="Schließen">${icon('x')}</button></div>
+    <div class="sheethead"><h2 id="attr-title">${e.id ? T('Attribut bearbeiten', 'Edit attribute') : T('Neues Attribut', 'New attribute')}</h2>
+      <button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button></div>
     <div class="field"><label for="attr-name">Name</label>
-      <input id="attr-name" class="inp" data-bind="attrEdit.name" value="${esc(e.name)}" maxlength="30" placeholder="z. B. Fokus" autocomplete="off"></div>
-    <div class="field"><span class="flabel">Farbe</span>
-      <div class="colors">${COLORS.map(([c, n]) => `<button data-a="attrColor" data-c="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${c === e.color}"></button>`).join('')}</div></div>
-    <button id="save-attr" class="btn accent block" data-a="saveAttr" ${e.name.trim() ? '' : 'disabled'}>${e.id ? 'Speichern' : 'Hinzufügen'}</button>
-    ${e.id ? `<button class="btn danger block" data-a="deleteAttr">Attribut löschen</button>` : ''}
+      <input id="attr-name" class="inp" data-bind="attrEdit.name" value="${esc(e.name)}" maxlength="30" placeholder="${T('z. B. Fokus', 'e.g. Focus')}" autocomplete="off"></div>
+    <div class="field"><span class="flabel">${T('Farbe', 'Color')}</span>
+      <div class="colors">${COLORS_L().map(([c, n]) => `<button data-a="attrColor" data-c="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${c === e.color}"></button>`).join('')}</div></div>
+    <button id="save-attr" class="btn accent block" data-a="saveAttr" ${e.name.trim() ? '' : 'disabled'}>${e.id ? T('Speichern', 'Save') : T('Hinzufügen', 'Add')}</button>
+    ${e.id ? `<button class="btn danger block" data-a="deleteAttr">${T('Attribut löschen', 'Delete attribute')}</button>` : ''}
   </div>`;
 }
 function confirmHtml() {
@@ -1764,14 +1854,14 @@ function confirmHtml() {
   return `<div class="scrim" data-a="closeOverlay"></div>
   <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="cf-t" aria-describedby="cf-p">
     <h2 id="cf-t">${esc(c.title)}</h2><p id="cf-p">${esc(c.text)}</p>
-    <div class="row2"><button class="btn soft" data-a="closeOverlay">Abbrechen</button>
+    <div class="row2"><button class="btn soft" data-a="closeOverlay">${T('Abbrechen', 'Cancel')}</button>
       <button class="btn ${c.danger ? 'danger' : 'primary'}" data-a="confirmOk" style="${c.danger ? 'background:var(--bad);color:var(--on-accent);border-color:var(--bad)' : ''}">${esc(c.ok)}</button></div>
   </div>`;
 }
 
 // ---------- render ----------
 const app = document.getElementById('app');
-let lastView = null;
+let lastView = null, lastOv = '';
 function render() {
   pendingRender = false;
   let html;
@@ -1798,7 +1888,20 @@ function render() {
   }
   const ae = document.activeElement;
   const focusId = ae && ae.id ? ae.id : null;
+  const entering = lastView !== ui.view;
   app.innerHTML = html;
+  const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : '';
+  if (ovKey && ovKey !== lastOv) app.querySelectorAll('.scrim, .drawer, .sheet, .dialog').forEach(e => e.classList.add('anim'));
+  lastOv = ovKey;
+  if (entering) { const m = app.querySelector('main, .onb'); if (m) m.classList.add('enter'); }
+  const fill = app.querySelector('.daybar .fill');
+  if (fill) {
+    const w = Number(fill.dataset.w);
+    fill.style.width = (ui.prevPct == null ? w : ui.prevPct) + '%';
+    if (ui.prevPct != null && ui.prevPct !== w) requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = w + '%'; }));
+    else fill.style.width = w + '%';
+    ui.prevPct = w;
+  }
   document.body.classList.toggle('lock', !!(ui.drawer || ui.attrEdit || ui.confirm || ui.habitMenu));
   const sw = document.getElementById('swipe');
   if (sw) {
@@ -1814,10 +1917,50 @@ function render() {
   if (focusId) { const el = document.getElementById(focusId); if (el && el.tagName === 'INPUT') { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) { /* date inputs */ } } }
   if (lastView !== ui.view) {
     lastView = ui.view;
-    const titles = { onboarding: 'Willkommen', habits: 'Gewohnheiten', detail: 'Gewohnheit', edit: 'Bearbeiten', icons: 'Icon wählen', stats: 'Statistiken', score: 'Tages-Score', settings: 'Einstellungen' };
-    document.title = (titles[ui.view] || 'Gewohnheiten') + ' · Habit Tracker';
+    const titles = { onboarding: T('Willkommen', 'Welcome'), habits: T('Gewohnheiten', 'Habits'), detail: T('Gewohnheit', 'Habit'), edit: T('Bearbeiten', 'Edit'), icons: T('Icon wählen', 'Choose icon'), stats: T('Statistiken', 'Statistics'), score: T('Tages-Score', 'Daily score'), settings: T('Einstellungen', 'Settings'), auth: T('Anmelden', 'Sign in') };
+    document.title = (titles[ui.view] || 'Habits') + ' · Habit Tracker';
   }
 }
+
+// ---------- feel: haptics and small animations ----------
+let hapticEl = null;
+function haptic(kind = 'light') {
+  if (S.meta.haptics === false) return;
+  try {
+    if (navigator.vibrate) {
+      navigator.vibrate(kind === 'heavy' ? [22, 50, 22] : kind === 'success' ? [12, 40, 16] : kind === 'medium' ? 16 : 8);
+      return;
+    }
+    // iOS 18+: toggling a native switch control produces a system haptic tick
+    if (!hapticEl) {
+      hapticEl = document.createElement('label');
+      hapticEl.setAttribute('aria-hidden', 'true');
+      hapticEl.style.cssText = 'position:fixed;left:-200px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none';
+      const i = document.createElement('input');
+      i.type = 'checkbox'; i.setAttribute('switch', ''); i.tabIndex = -1; i.id = 'haptic-switch';
+      hapticEl.appendChild(i);
+      document.body.appendChild(hapticEl);
+    }
+    hapticEl.click();
+    if (kind === 'success' || kind === 'heavy') setTimeout(() => { if (hapticEl) hapticEl.click(); }, 110);
+  } catch (e) { /* no haptics here */ }
+}
+function fx(selector, cls = 'fx-pop', ms = 700) {
+  document.querySelectorAll(selector).forEach(el => {
+    el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), ms);
+  });
+}
+function celebrateIfAllDone(before) {
+  const t = todayK(), list = habitList();
+  const ok = list.filter(h => hOk(h, t, t)).length;
+  if (list.length > 1 && ok === list.length && before < list.length) {
+    fx('.daybar .fill', 'fx-glow', 1400);
+    haptic('success');
+    toast(T('Alles geschafft heute. Stark!', 'All done for today. Nice work!'));
+  }
+}
+const doneCount = () => { const t = todayK(); return habitList().filter(h => hOk(h, t, t)).length; };
 
 // ---------- actions ----------
 function openConfirm(c) { ui.confirm = c; render(); setTimeout(() => { const b = document.querySelector('.dialog [data-a="closeOverlay"]'); if (b) b.focus(); }, 0); }
@@ -1836,7 +1979,7 @@ const actions = {
     if (!name) return;
     S.meta.name = name;
     S.meta.onboarded = true;
-    if (!S.meta.attrs.length) S.meta.attrs = DEFAULT_ATTRS.map(([n, c]) => ({ id: 'a' + uid(), name: n, color: c }));
+    if (!S.meta.attrs.length) S.meta.attrs = DEFAULT_ATTRS_L().map(([n, c]) => ({ id: 'a' + uid(), name: n, color: c }));
     touchMeta(); ui.view = 'habits'; ui.stack = [];
     commit();
   },
@@ -1848,7 +1991,7 @@ const actions = {
     setTimeout(() => { const i = document.getElementById('f-name'); if (i) i.focus(); }, 50);
   },
   useTemplate: el => {
-    const tp = TEMPLATES[Number(el.dataset.i)];
+    const tp = TEMPLATES_L()[Number(el.dataset.i)];
     ui.edit = { id: null, ...tp, start: todayK() };
     ui.iconQuery = ''; ui.iconCat = 'all';
     go('edit');
@@ -1872,7 +2015,7 @@ const actions = {
   saveHabit: () => {
     const e = ui.edit; if (!e) return;
     const name = e.name.trim();
-    if (!name) { toast('Gib der Gewohnheit einen Namen.'); return; }
+    if (!name) { toast(T('Gib der Gewohnheit einen Namen.', 'Give the habit a name.')); return; }
     const t = todayK();
     let start = isKey(e.start) ? e.start : t;
     if (start > t) start = t;
@@ -1883,7 +2026,7 @@ const actions = {
       touchHabit(h.id);
       ui.edit = null;
       saveLocal(); scheduleSync();
-      toast('Gespeichert');
+      toast(T('Gespeichert', 'Saved'));
       goBack();
     } else {
       const id = 'h' + uid();
@@ -1892,7 +2035,7 @@ const actions = {
       touchMeta(); touchHabit(id);
       ui.edit = null;
       saveLocal(); scheduleSync();
-      toast(`„${name}“ angelegt`);
+      toast(T(`„${name}“ angelegt`, `“${name}” created`));
       setTop('habits');
     }
   },
@@ -1900,9 +2043,17 @@ const actions = {
   toggleToday: el => {
     const h = S.habits[el.dataset.id]; if (!h) return;
     const t = todayK();
+    const before = doneCount();
     if (h.log[t]) delete h.log[t]; else h.log[t] = 1;
     touchHabit(h.id); commit();
-    if (h.type === 'quit' && h.log[t]) toast('Rückfall eingetragen. Morgen startet ein neuer Streak.');
+    const sel = `[data-a="toggleToday"][data-id="${h.id}"]`;
+    if (h.type === 'quit') {
+      if (h.log[t]) { haptic('heavy'); fx(sel, 'fx-shake', 500); toast(T('Rückfall eingetragen. Morgen startet ein neuer Streak.', 'Slip logged. A new streak starts tomorrow.')); }
+      else { haptic('light'); fx(sel); }
+    } else if (h.log[t]) {
+      haptic('success'); fx(sel); fx(`[data-hold="${h.id}"] .hc.td, [data-a="toggleDay"][data-id="${h.id}"][data-k="${t}"]`, 'fx-cell', 600);
+    } else haptic('light');
+    celebrateIfAllDone(before);
   },
   openHabit: el => {
     if (!S.habits[el.dataset.id]) return;
@@ -1916,29 +2067,34 @@ const actions = {
   toggleDay: el => {
     const h = S.habits[el.dataset.id || ui.detailId]; const k = el.dataset.k; const t = todayK();
     if (!h || !isKey(k) || k > t || (h.type === 'quit' && k < h.start)) return;
+    const before = doneCount();
     if (h.log[k]) delete h.log[k]; else h.log[k] = 1;
     touchHabit(h.id); commit();
+    const on = h.type === 'quit' ? !h.log[k] : !!h.log[k];
+    haptic(on ? 'medium' : 'light');
+    if (on) fx(`[data-a="toggleDay"][data-id="${h.id}"][data-k="${k}"], [data-a="toggleDay"][data-k="${k}"]:not([data-id])`, 'fx-cell', 600);
+    if (k === t) celebrateIfAllDone(before);
   },
   archiveHabit: el => {
     const h = S.habits[el.dataset.id]; if (!h) return;
     h.archived = true; touchHabit(h.id); saveLocal(); scheduleSync();
-    toast(`„${h.name}“ archiviert. Du findest sie in den Einstellungen.`);
+    toast(T(`„${h.name}“ archiviert. Du findest sie in den Einstellungen.`, `“${h.name}” archived. You'll find it in Settings.`));
     setTop('habits');
   },
   restoreHabit: el => {
     const h = S.habits[el.dataset.id]; if (!h) return;
-    h.archived = false; touchHabit(h.id); commit(); toast(`„${h.name}“ ist zurück`);
+    h.archived = false; touchHabit(h.id); commit(); toast(T(`„${h.name}“ ist zurück`, `“${h.name}” is back`));
   },
   deleteHabit: el => {
     const h = S.habits[el.dataset.id]; if (!h) return;
     openConfirm({
-      title: `„${h.name}“ löschen?`, text: 'Der komplette Verlauf dieser Gewohnheit wird gelöscht. Das lässt sich nicht rückgängig machen.', ok: 'Löschen', danger: true,
+      title: T(`„${h.name}“ löschen?`, `Delete “${h.name}”?`), text: T('Der komplette Verlauf dieser Gewohnheit wird gelöscht. Das lässt sich nicht rückgängig machen.', 'The full history of this habit will be deleted. This can\'t be undone.'), ok: T('Löschen', 'Delete'), danger: true,
       onOk: () => {
         delete S.habits[h.id];
         S.meta.habitIds = S.meta.habitIds.filter(i => i !== h.id);
         touchMeta(); dirty.add('h:' + h.id);
         saveLocal(); scheduleSync();
-        toast('Gelöscht');
+        toast(T('Gelöscht', 'Deleted'));
         setTop('habits');
       },
     });
@@ -1949,7 +2105,7 @@ const actions = {
     const h = S.habits[ui.habitMenu]; if (!h) return;
     h.pinned = !h.pinned; touchHabit(h.id);
     if (h.pinned) { const ids = habitList().map(x => x.id); setActiveOrder(ids); }
-    ui.habitMenu = null; commit(); toast(h.pinned ? `„${h.name}“ angepinnt` : `„${h.name}“ gelöst`);
+    ui.habitMenu = null; commit(); toast(h.pinned ? T(`„${h.name}“ angepinnt`, `“${h.name}” pinned`) : T(`„${h.name}“ gelöst`, `“${h.name}” unpinned`));
   },
   hmMove: el => { const id = ui.habitMenu; ui.habitMenu = null; moveHabit(id, el.dataset.v); commit(); },
   hmSort: () => { ui.habitMenu = null; ui.sorting = true; render(); window.scrollTo(0, 0); },
@@ -1974,6 +2130,8 @@ const actions = {
     const cur = scoreVal(k, a);
     const v = cur === n ? n - 0.5 : cur === n - 0.5 ? n : n;
     setScore(k, a, v); commit();
+    haptic(v === n ? 'medium' : 'light');
+    fx(`[data-a="rate"][data-attr="${a}"][data-n="${n}"]`, 'fx-star', 500);
   },
   clearRate: el => { setScore(ui.scoreDate || todayK(), el.dataset.attr, null); commit(); },
   overviewPeriod: el => { ui.overviewPeriod = el.dataset.v; render(); },
@@ -1990,7 +2148,7 @@ const actions = {
   },
   newAttr: () => {
     const used = new Set(attrs().map(a => a.color));
-    const color = (COLORS.find(([c]) => !used.has(c)) || COLORS[0])[0];
+    const color = (COLORS_L().find(([c]) => !used.has(c)) || COLORS_L()[0])[0];
     ui.attrEdit = { id: null, name: '', color }; render();
     setTimeout(() => { const i = document.getElementById('attr-name'); if (i) i.focus(); }, 50);
   },
@@ -2012,7 +2170,7 @@ const actions = {
     const back = { ...e };
     ui.attrEdit = null;
     openConfirm({
-      title: `„${a.name}“ löschen?`, text: 'Das Attribut verschwindet aus Bewertung, Übersicht, Tabelle und Statistiken.', ok: 'Löschen', danger: true,
+      title: T(`„${a.name}“ löschen?`, `Delete “${a.name}”?`), text: T('Das Attribut verschwindet aus Bewertung, Übersicht, Tabelle und Statistiken.', 'The attribute disappears from rating, overview, table and statistics.'), ok: T('Löschen', 'Delete'), danger: true,
       onCancel: () => { ui.attrEdit = back; },
       onOk: () => {
         S.meta.attrs = S.meta.attrs.filter(x => x.id !== a.id);
@@ -2031,15 +2189,21 @@ const actions = {
   confirmOk: () => { const c = ui.confirm; ui.confirm = null; if (c && c.onOk) c.onOk(); render(); },
 
   theme: el => { S.meta.theme = el.dataset.v; touchMeta(); applyTheme(); commit(); },
+  setLang: el => {
+    const v = el.dataset.v === 'de' ? 'de' : 'en';
+    lsSet(LANG_KEY, v); setLang(v); S.meta.lang = v;
+    if (S.meta.onboarded) { touchMeta(); commit(); } else { saveLocal(); render(); }
+  },
+  toggleHaptics: () => { S.meta.haptics = S.meta.haptics === false; touchMeta(); commit(); if (S.meta.haptics) haptic('success'); },
   exportData: async () => {
     const data = JSON.stringify({ app: 'habit-tracker', version: 1, exportedAt: new Date().toISOString(), data: S }, null, 2);
     const filename = `habit-tracker-backup-${todayK()}.json`;
     let dl = null;
     try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
     if (dl) {
-      try { await dl.save({ filename, data }); toast('Backup gespeichert'); } catch (e) {
+      try { await dl.save({ filename, data }); toast(T('Backup gespeichert', 'Backup saved')); } catch (e) {
         if (e && e.code === 'declined') return;
-        toast('Export ist hier gerade nicht möglich.');
+        toast(T('Export ist hier gerade nicht möglich.', 'Export isn\'t possible here right now.'));
       }
       return;
     }
@@ -2048,8 +2212,8 @@ const actions = {
       const a = document.createElement('a'); a.href = url; a.download = filename;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
-      toast('Backup gespeichert');
-    } catch (e) { toast('Export ist hier gerade nicht möglich.'); }
+      toast(T('Backup gespeichert', 'Backup saved'));
+    } catch (e) { toast(T('Export ist hier gerade nicht möglich.', 'Export isn\'t possible here right now.')); }
   },
   importData: () => { const f = document.getElementById('import-file'); if (f) f.click(); },
   authMode: () => { const a = ui.auth; a.mode = a.mode === 'login' ? 'signup' : 'login'; a.error = ''; a.info = ''; render(); },
@@ -2058,7 +2222,7 @@ const actions = {
     if (a.busy) return;
     const email = a.email.trim();
     a.info = '';
-    if (!email || !a.pw) { a.error = 'Gib deine E-Mail und dein Passwort ein.'; render(); return; }
+    if (!email || !a.pw) { a.error = T('Gib deine E-Mail und dein Passwort ein.', 'Enter your email and password.'); render(); return; }
     a.busy = true; a.error = ''; render();
     try {
       if (a.mode === 'signup') await firebase.auth().createUserWithEmailAndPassword(email, a.pw);
@@ -2071,25 +2235,25 @@ const actions = {
     const a = ui.auth;
     const email = a.email.trim();
     a.info = '';
-    if (!email) { a.error = 'Gib oben deine E-Mail ein. Dann schicken wir dir einen Link zum Zurücksetzen.'; render(); return; }
-    try { await firebase.auth().sendPasswordResetEmail(email); a.error = ''; a.info = 'Wenn es ein Konto mit dieser E-Mail gibt, ist eine E-Mail zum Zurücksetzen unterwegs. Schau auch im Spam-Ordner.'; }
+    if (!email) { a.error = T('Gib oben deine E-Mail ein. Dann schicken wir dir einen Link zum Zurücksetzen.', 'Enter your email above. Then we\'ll send you a reset link.'); render(); return; }
+    try { await firebase.auth().sendPasswordResetEmail(email); a.error = ''; a.info = T('Wenn es ein Konto mit dieser E-Mail gibt, ist eine E-Mail zum Zurücksetzen unterwegs. Schau auch im Spam-Ordner.', 'If there\'s an account with this email, a reset email is on its way. Check your spam folder too.'); }
     catch (e) { a.error = authMsg(e && e.code); }
     render();
   },
   signOut: () => openConfirm({
-    title: 'Abmelden?',
-    text: dirty.size ? 'Ein paar Änderungen sind noch nicht hochgeladen. Wenn du dich jetzt ohne Internet abmeldest, gehen sie verloren.' : 'Deine Daten bleiben in deinem Konto. Auf diesem Gerät siehst du sie wieder, sobald du dich anmeldest.',
-    ok: 'Abmelden',
+    title: T('Abmelden?', 'Sign out?'),
+    text: dirty.size ? T('Ein paar Änderungen sind noch nicht hochgeladen. Wenn du dich jetzt ohne Internet abmeldest, gehen sie verloren.', 'Some changes haven\'t uploaded yet. If you sign out now without internet, they\'ll be lost.') : T('Deine Daten bleiben in deinem Konto. Auf diesem Gerät siehst du sie wieder, sobald du dich anmeldest.', 'Your data stays in your account. You\'ll see it on this device again once you sign in.'),
+    ok: T('Abmelden', 'Sign out'),
     onOk: async () => {
       try { await flush(); } catch (e) { /* offline */ }
       S = blank(); dirty.clear(); pendingDeletes.clear(); saveLocal(); lsSet(OWNER_KEY, null);
       ui.stack = []; ui.view = 'habits'; ui.onboardName = ''; ui.auth = { mode: 'login', email: cloud.user ? cloud.user.email : '', pw: '', busy: false, error: '', info: '' };
       applyTheme();
-      try { await firebase.auth().signOut(); } catch (e) { toast('Abmelden hat nicht geklappt.'); }
+      try { await firebase.auth().signOut(); } catch (e) { toast(T('Abmelden hat nicht geklappt.', 'Sign-out didn\'t work.')); }
     },
   }),
   resetAll: () => openConfirm({
-    title: 'Alle Daten löschen?', text: 'Gewohnheiten, Verlauf, Tages-Scores und dein Name werden gelöscht. Exportiere vorher ein Backup, falls du sie behalten willst.', ok: 'Alles löschen', danger: true,
+    title: T('Alle Daten löschen?', 'Delete all data?'), text: T('Gewohnheiten, Verlauf, Tages-Scores und dein Name werden gelöscht. Exportiere vorher ein Backup, falls du sie behalten willst.', 'Habits, history, daily scores and your name will be deleted. Export a backup first if you want to keep them.'), ok: T('Alles löschen', 'Delete everything'), danger: true,
     onOk: async () => {
       const keep = new Set(['meta']);
       S = blank(); S.meta.resetAt = Date.now(); touchMeta();
@@ -2138,6 +2302,7 @@ document.addEventListener('pointerdown', e => {
   lp = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
     lp = null; lpFired = true;
     try { if (navigator.vibrate) navigator.vibrate(12); } catch (err) { /* ignore */ }
+    haptic('medium');
     openHabitMenu(id);
   }, 480) };
 });
@@ -2171,6 +2336,8 @@ function endDrag() {
   const rest = pinnedGroup ? list.filter(x => !x.pinned).map(x => x.id) : ids;
   setActiveOrder([...pinned, ...rest]);
   commit();
+  haptic('medium');
+  fx(`.srow[data-id="${m}"]`, 'fx-drop', 500);
 }
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
@@ -2190,7 +2357,18 @@ document.addEventListener('click', e => {
   const el = e.target.closest('[data-a]');
   if (!el || el.disabled) return;
   const fn = actions[el.dataset.a];
-  if (fn) { e.preventDefault(); fn(el, e); }
+  if (!fn) return;
+  e.preventDefault();
+  const a = el.dataset.a, v = el.dataset.v;
+  if (!['toggleToday', 'toggleDay', 'rate', 'closeOverlay'].includes(a)) haptic('light');
+  fn(el, e);
+  if (el.closest('.seg') && v != null) fx(`.seg [data-a="${a}"][data-v="${v}"]`, 'fx-pill', 400);
+  if (['statsTab', 'scoreTab', 'statsPeriod', 'scoreStatsPeriod', 'overviewPeriod', 'layout', 'tableMonth', 'detailMonth', 'scoreDay'].includes(a)) {
+    const seg = document.querySelector(`.seg [data-a="${a}"]`);
+    const after = seg ? seg.closest('.seg').nextElementSibling : null;
+    let n = after; while (n && !n.matches('section, div, article')) n = n.nextElementSibling;
+    if (n) { const items = [n]; let x = n.nextElementSibling; while (x && items.length < 6) { items.push(x); x = x.nextElementSibling; } items.forEach(it => { it.classList.remove('fx-in'); void it.offsetWidth; it.classList.add('fx-in'); setTimeout(() => it.classList.remove('fx-in'), 450); }); }
+  }
 });
 document.addEventListener('input', e => {
   const el = e.target;
@@ -2220,9 +2398,9 @@ document.addEventListener('change', e => {
   const el = e.target;
   if (el.id === 'set-name') {
     const v = el.value.trim();
-    if (!v) { S.meta.name = S.meta.name.trim() || 'Du'; el.value = S.meta.name; }
+    if (!v) { S.meta.name = S.meta.name.trim() || T('Du', 'You'); el.value = S.meta.name; }
     else S.meta.name = v;
-    touchMeta(); commit({ render: false }); toast('Name gespeichert');
+    touchMeta(); commit({ render: false }); toast(T('Name gespeichert', 'Name saved'));
   }
   if (el.id === 'import-file' && el.files && el.files[0]) {
     const file = el.files[0];
@@ -2230,17 +2408,17 @@ document.addEventListener('change', e => {
     reader.onload = () => {
       el.value = '';
       let parsed;
-      try { parsed = JSON.parse(String(reader.result)); } catch (err) { toast('Die Datei ist kein gültiges Backup.'); return; }
+      try { parsed = JSON.parse(String(reader.result)); } catch (err) { toast(T('Die Datei ist kein gültiges Backup.', 'That file isn\'t a valid backup.')); return; }
       const raw = parsed && parsed.data ? parsed.data : parsed;
-      if (!raw || !raw.meta || !Array.isArray(raw.meta.habitIds)) { toast('Die Datei ist kein gültiges Backup.'); return; }
+      if (!raw || !raw.meta || !Array.isArray(raw.meta.habitIds)) { toast(T('Die Datei ist kein gültiges Backup.', 'That file isn\'t a valid backup.')); return; }
       const next = normalize(raw);
       next.meta.onboarded = true;
       openConfirm({
-        title: 'Backup importieren?', text: `Das Backup enthält ${next.meta.habitIds.length} ${plural(next.meta.habitIds.length, 'Gewohnheit', 'Gewohnheiten')}. Deine aktuellen Daten werden dadurch ersetzt.`, ok: 'Importieren',
-        onOk: () => { replaceAll(next); setTop('habits'); toast('Backup importiert'); },
+        title: T('Backup importieren?', 'Import backup?'), text: T(`Das Backup enthält ${next.meta.habitIds.length} ${plural(next.meta.habitIds.length, 'Gewohnheit', 'Gewohnheiten')}. Deine aktuellen Daten werden dadurch ersetzt.`, `The backup contains ${next.meta.habitIds.length} ${plural(next.meta.habitIds.length, 'habit', 'habits')}. It replaces your current data.`), ok: T('Importieren', 'Import'),
+        onOk: () => { replaceAll(next); setTop('habits'); toast(T('Backup importiert', 'Backup imported')); },
       });
     };
-    reader.onerror = () => toast('Die Datei konnte nicht gelesen werden.');
+    reader.onerror = () => toast(T('Die Datei konnte nicht gelesen werden.', 'The file couldn\'t be read.'));
     reader.readAsText(file);
   }
 });
@@ -2263,6 +2441,7 @@ setInterval(() => { const t = todayK(); if (t !== lastDay) { lastDay = t; safeRe
 
 // ---------- boot ----------
 loadLocal();
+setLang(S.meta.lang || lsGet(LANG_KEY) || 'en');
 if (S.meta.onboarded) ui.view = 'habits';
 applyTheme();
 render();
