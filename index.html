@@ -569,55 +569,114 @@ main.enter.from-right, main.enter.from-left, main.enter.from-below, .onb.enter {
 .btn:active:not(:disabled), .nav:active, .li:active:not(:disabled) { transform: scale(.975); }
 .ib:active:not(:disabled), .chk:active, .dd:active:not(:disabled), .cd:active:not(:disabled) { transform: scale(.9); }
 
-/* ---------- Splash ---------- */
+/* ---------- Splash: mark + loading bar, no text, under 3 s ---------- */
 #splash {
   position: fixed; inset: 0; z-index: 100; background: #000; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
-  transition: opacity .55s ease, transform .55s cubic-bezier(.2, .8, .2, 1);
+  transition: opacity .45s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
 }
-#splash.out { opacity: 0; transform: scale(1.08); pointer-events: none; }
-.sp-grid { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; gap: 6px; }
-.sp-grid i {
-  width: 24px; height: 24px; border-radius: 6px; background: #18181B; opacity: 0;
-  animation: sp-tile 2.6s cubic-bezier(.2, .8, .2, 1) var(--d) both, sp-wave 2.2s ease-in-out calc(var(--d) + 1.2s) infinite;
-}
-@keyframes sp-tile {
-  0% { opacity: 0; transform: scale(.2); }
-  22% { opacity: 1; transform: scale(1.12); background: var(--c); box-shadow: 0 0 18px var(--c); }
-  45% { opacity: .95; transform: scale(1); background: var(--c); box-shadow: 0 0 6px var(--c); }
-  100% { opacity: .22; transform: scale(.82); background: var(--c); box-shadow: none; }
-}
-@keyframes sp-wave { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.9); } }
-.sp-center {
-  position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding: 34px 40px 30px; border-radius: 28px;
-  background: radial-gradient(closest-side, rgba(0, 0, 0, .92), rgba(0, 0, 0, .75) 70%, rgba(0, 0, 0, 0));
-}
-.sp-glow {
-  position: absolute; inset: -40px; z-index: -1; border-radius: 50%; filter: blur(46px); opacity: .55;
+#splash.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.sp-center { position: relative; display: flex; flex-direction: column; align-items: center; gap: 44px; }
+.sp-halo {
+  position: absolute; left: 50%; top: 31px; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%;
   background: conic-gradient(from 0deg, #F97316, #EAB308, #22C55E, #06B6D4, #3B82F6, #A855F7, #EC4899, #F97316);
-  animation: sp-spin 4s linear infinite, sp-fade .9s ease .3s both;
+  filter: blur(60px); opacity: 0; animation: sp-halo 2.6s ease .15s both, sp-spin 6s linear infinite;
 }
-@keyframes sp-spin { to { transform: rotate(360deg); } }
-@keyframes sp-fade { from { opacity: 0; transform: scale(.6); } }
-.sp-mark { display: grid; grid-template-columns: repeat(3, 14px); gap: 4px; margin-bottom: 6px; }
-.sp-mark i { width: 14px; height: 14px; border-radius: 4px; background: var(--c); animation: sp-pop .5s cubic-bezier(.2, .9, .3, 1.5) calc(.35s + var(--m)) both; box-shadow: 0 0 10px var(--c); }
-@keyframes sp-pop { from { opacity: 0; transform: scale(0) rotate(-30deg); } }
-.sp-word { font: 800 64px/1.05 var(--font); letter-spacing: -0.045em; display: flex; color: #FFFFFF; }
-.sp-word span {
-  display: inline-block; color: transparent; -webkit-background-clip: text; background-clip: text;
-  background-image: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 30%, #F97316 40%, #EC4899 50%, #A855F7 60%, #06B6D4 70%, #FFFFFF 80%, #FFFFFF 100%);
-  background-size: 400% 100%; background-position: 100% 0;
-  filter: drop-shadow(0 0 18px rgba(255, 255, 255, .25));
-  animation: sp-letter .7s cubic-bezier(.2, .9, .3, 1.3) calc(.55s + var(--l)) both, sp-shine 1.8s ease-in-out calc(1.4s + var(--l)) both;
+@keyframes sp-halo { 0% { opacity: 0; transform: scale(.4); } 40% { opacity: .38; } 100% { opacity: .22; transform: scale(1); } }
+@keyframes sp-spin { to { rotate: 360deg; } }
+.sp-mark { position: relative; display: grid; grid-template-columns: repeat(3, 18px); gap: 4px; }
+.sp-mark i {
+  width: 18px; height: 18px; border-radius: 5px; background: var(--c);
+  animation: sp-pop .55s cubic-bezier(.2, .9, .3, 1.45) calc(.12s + var(--m)) both, sp-breathe 1.4s ease-in-out calc(1.1s + var(--m) * .5) infinite;
 }
-@keyframes sp-letter { from { opacity: 0; transform: translateY(26px) scale(.8); filter: blur(6px); } }
-@keyframes sp-shine { from { background-position: 100% 0; } to { background-position: 0% 0; } }
-.sp-sub { font: 700 13px/1 var(--font); letter-spacing: .62em; margin-right: -.62em; color: #A1A1AA; animation: sp-sub .8s ease 1.1s both; }
-@keyframes sp-sub { from { opacity: 0; letter-spacing: 1.2em; } }
-.sp-bar { width: 132px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; margin-top: 14px; animation: sp-sub .6s ease 1.2s both; }
-.sp-bar i { display: block; height: 100%; width: 100%; transform-origin: left; background: linear-gradient(90deg, #F97316, #EC4899, #A855F7, #06B6D4, #22C55E); animation: grow-x 2.2s cubic-bezier(.4, 0, .2, 1) 1.2s both; }
-@media (prefers-reduced-motion: reduce) { #splash * { animation: none !important; opacity: 1 !important; } .sp-grid i { opacity: .25 !important; background: var(--c) !important; } }
+@keyframes sp-pop { from { opacity: 0; transform: scale(0) rotate(-35deg); border-radius: 50%; } }
+@keyframes sp-breathe { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.35); box-shadow: 0 0 14px var(--c); } }
+.sp-bar {
+  position: relative; width: 168px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .09); overflow: hidden;
+  animation: sp-barin .4s ease .35s both;
+}
+@keyframes sp-barin { from { opacity: 0; transform: scaleX(.6); } }
+.sp-bar i {
+  position: absolute; inset: 0; border-radius: 4px; transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, #F97316, #EC4899, #A855F7, #06B6D4, #22C55E);
+  box-shadow: 0 0 12px rgba(236, 72, 153, .55);
+  animation: sp-load 1.9s cubic-bezier(.45, 0, .2, 1) .45s forwards;
+}
+.sp-bar b {
+  position: absolute; top: 0; bottom: 0; width: 40px; left: -40px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
+  animation: sp-shine 1s ease-in-out .7s 2;
+}
+@keyframes sp-load { 0% { transform: scaleX(0); } 30% { transform: scaleX(.38); } 48% { transform: scaleX(.46); } 78% { transform: scaleX(.86); } 100% { transform: scaleX(1); } }
+@keyframes sp-shine { to { left: 100%; } }
+@media (prefers-reduced-motion: reduce) { #splash * { animation: none !important; } .sp-bar i { transform: scaleX(1); } }
+
+/* ---------- To-dos ---------- */
+.ib.menu { position: relative; }
+.mdot {
+  position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--bad); box-shadow: 0 0 0 2px var(--surface); animation: dot-in .4s cubic-bezier(.2, .9, .3, 1.5);
+}
+@keyframes dot-in { from { transform: scale(0); } }
+.nav .badge {
+  margin-left: auto; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--bad); color: var(--on-accent);
+  font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+}
+.qa { display: flex; gap: 8px; align-items: center; }
+.qa .inp { flex: 1; min-width: 0; }
+.qa .ib { height: 50px; width: 50px; border-radius: 12px; }
+.qa .ib.solid:disabled { opacity: .3; }
+.chips .chip { display: inline-flex; align-items: center; gap: 8px; }
+.chips.wrap { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; }
+.chip .dot { width: 8px; height: 8px; }
+.chip.dashed { background: transparent; border-style: dashed; border-color: var(--faint); }
+.chip[aria-pressed="true"] .dot { box-shadow: 0 0 0 2px var(--on-invert); }
+.tsec { display: flex; flex-direction: column; gap: 8px; }
+.tsec > .label { display: flex; align-items: center; gap: 8px; padding: 6px 4px 0; }
+.tsec > .label em { font-style: normal; color: var(--faint); font-weight: 600; letter-spacing: 0; }
+.tsec > .label.late { color: var(--bad); }
+.tsec > .label.late em { color: var(--bad); opacity: .7; }
+.tdone-t { background: none; border: none; min-height: 36px; text-align: left; }
+.trow {
+  display: flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 0 4px 0 6px; transition: opacity .35s ease, transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.trow.leaving { opacity: 0; transform: translateX(14px) scale(.98); transition-delay: .25s; }
+.tchk {
+  width: 44px; height: 44px; flex: none; border: none; background: transparent; padding: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: transparent; position: relative;
+}
+.tchk::before {
+  content: ''; position: absolute; inset: 10px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--c) 70%, var(--faint));
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.tchk.late::before { border-color: var(--bad); }
+.tchk .i { position: relative; z-index: 1; }
+.tchk.on { color: var(--on-accent); }
+.tchk.on::before { background: var(--c); border-color: var(--c); }
+.tchk:active::before { transform: scale(.85); }
+.topen {
+  flex: 1; min-width: 0; min-height: 56px; padding: 9px 10px 9px 2px; border: none; background: transparent; text-align: left;
+  display: flex; flex-direction: column; justify-content: center; gap: 3px; color: var(--text);
+}
+.ttl {
+  font-size: 16px; font-weight: 500; line-height: 21px; overflow-wrap: anywhere; align-self: flex-start;
+  background: linear-gradient(currentColor, currentColor) 0 58% / 0 1.5px no-repeat; transition: background-size .35s ease, color .3s ease;
+}
+.trow.done .ttl { background-size: 100% 1.5px; color: var(--muted); }
+.tmeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.tmeta b { color: var(--faint); font-weight: 400; }
+.tmeta .tcat { display: inline-flex; align-items: center; gap: 6px; }
+.tmeta .dot { width: 8px; height: 8px; }
+.tmeta .late { color: var(--bad); font-weight: 600; }
+.trowin { display: flex; gap: 8px; }
+.trowin .inp { flex: 1; min-width: 0; }
+.trowin .ib { width: 50px; height: 50px; }
+.inp.big { height: 56px; font-size: 18px; font-weight: 500; }
+input[type="date"].inp, input[type="time"].inp { -webkit-appearance: none; appearance: none; display: flex; align-items: center; color-scheme: inherit; }
+.fx-new { animation: t-new .55s cubic-bezier(.2, .9, .3, 1.2); }
+@keyframes t-new { from { opacity: 0; transform: translateY(-10px) scale(.96); } 60% { opacity: 1; } }
+.tsheet .btn .i { flex: none; }
 #app { overflow-x: clip; }
 
 :root { padding-top: env(safe-area-inset-top, 0px); }
@@ -630,7 +689,7 @@ main.enter.from-right, main.enter.from-left, main.enter.from-below, .onb.enter {
 <script src="firebase-firestore-compat.js"></script>
 <script>window.FIREBASE_CONFIG = {"apiKey":"AIzaSyDwahmidKJUcryp09ATk1u27UQiABswx2M","authDomain":"goal-and-habit-tracker-4bd83.firebaseapp.com","projectId":"goal-and-habit-tracker-4bd83","storageBucket":"goal-and-habit-tracker-4bd83.firebasestorage.app","messagingSenderId":"47842969300","appId":"1:47842969300:web:0ad2868cbba707c1ef9d41"};</script>
 <script>
-const ICONS={"dumbbell":"<path d=\"M14.4 14.4 9.6 9.6\"/><path d=\"M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z\"/><path d=\"m21.5 21.5-1.4-1.4\"/><path d=\"M3.9 3.9 2.5 2.5\"/><path d=\"M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z\"/>","swords":"<polyline points=\"14.5 17.5 3 6 3 3 6 3 17.5 14.5\"/><line x1=\"13\" x2=\"19\" y1=\"19\" y2=\"13\"/><line x1=\"16\" x2=\"20\" y1=\"16\" y2=\"20\"/><line x1=\"19\" x2=\"21\" y1=\"21\" y2=\"19\"/><polyline points=\"14.5 6.5 18 3 21 3 21 6 17.5 9.5\"/><line x1=\"5\" x2=\"9\" y1=\"14\" y2=\"18\"/><line x1=\"7\" x2=\"4\" y1=\"17\" y2=\"20\"/><line x1=\"3\" x2=\"5\" y1=\"19\" y2=\"21\"/>","hand-metal":"<path d=\"M18 12.5V10a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4\"/><path d=\"M14 11V9a2 2 0 1 0-4 0v2\"/><path d=\"M10 10.5V5a2 2 0 1 0-4 0v9\"/><path d=\"m7 15-1.76-1.76a2 2 0 0 0-2.83 2.82l3.6 3.6C7.5 21.14 9.2 22 12 22h2a8 8 0 0 0 8-8V7a2 2 0 1 0-4 0v5\"/>","bike":"<circle cx=\"18.5\" cy=\"17.5\" r=\"3.5\"/><circle cx=\"5.5\" cy=\"17.5\" r=\"3.5\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><path d=\"M12 17.5V14l-3-3 4-3 2 3h2\"/>","footprints":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","person-standing":"<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","waves":"<path d=\"M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/><path d=\"M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/><path d=\"M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/>","mountain":"<path d=\"m8 3 4 8 5-5 5 15H2L8 3z\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","medal":"<path d=\"M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15\"/><path d=\"M11 12 5.12 2.2\"/><path d=\"m13 12 5.88-9.8\"/><path d=\"M8 7h8\"/><circle cx=\"12\" cy=\"17\" r=\"5\"/><path d=\"M12 18v-2h-.5\"/>","trophy":"<path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","flame":"<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/>","zap":"<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>","shield":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/>","stretch-horizontal":"<rect width=\"20\" height=\"6\" x=\"2\" y=\"4\" rx=\"2\"/><rect width=\"20\" height=\"6\" x=\"2\" y=\"14\" rx=\"2\"/>","accessibility":"<circle cx=\"16\" cy=\"4\" r=\"1\"/><path d=\"m18 19 1-7-6 1\"/><path d=\"m5 8 3-3 5.5 3-2.36 3.5\"/><path d=\"M4.24 14.5a5 5 0 0 0 6.88 6\"/><path d=\"M13.76 17.5a5 5 0 0 0-6.88-6\"/>","heart":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/>","heart-pulse":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/><path d=\"M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","pill":"<path d=\"m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z\"/><path d=\"m8.5 8.5 7 7\"/>","tablets":"<circle cx=\"7\" cy=\"7\" r=\"5\"/><circle cx=\"17\" cy=\"17\" r=\"5\"/><path d=\"M12 17h10\"/><path d=\"m3.46 10.54 7.08-7.08\"/>","droplet":"<path d=\"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z\"/>","glass-water":"<path d=\"M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z\"/><path d=\"M6 12a5 5 0 0 1 6 0 5 5 0 0 0 6 0\"/>","bed":"<path d=\"M2 4v16\"/><path d=\"M2 8h18a2 2 0 0 1 2 2v10\"/><path d=\"M2 17h20\"/><path d=\"M6 8v9\"/>","bed-double":"<path d=\"M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8\"/><path d=\"M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4\"/><path d=\"M12 4v6\"/><path d=\"M2 18h20\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","sunrise":"<path d=\"M12 2v8\"/><path d=\"m4.93 10.93 1.41 1.41\"/><path d=\"M2 18h2\"/><path d=\"M20 18h2\"/><path d=\"m19.07 10.93-1.41 1.41\"/><path d=\"M22 22H2\"/><path d=\"m8 6 4-4 4 4\"/><path d=\"M16 18a4 4 0 0 0-8 0\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","bath":"<path d=\"M10 4 8 6\"/><path d=\"M17 19v2\"/><path d=\"M2 12h20\"/><path d=\"M7 19v2\"/><path d=\"M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5\"/>","shower-head":"<path d=\"m4 4 2.5 2.5\"/><path d=\"M13.5 6.5a4.95 4.95 0 0 0-7 7\"/><path d=\"M15 5 5 15\"/><path d=\"M14 17v.01\"/><path d=\"M10 16v.01\"/><path d=\"M13 13v.01\"/><path d=\"M16 10v.01\"/><path d=\"M11 20v.01\"/><path d=\"M17 14v.01\"/><path d=\"M20 11v.01\"/>","snowflake":"<line x1=\"2\" x2=\"22\" y1=\"12\" y2=\"12\"/><line x1=\"12\" x2=\"12\" y1=\"2\" y2=\"22\"/><path d=\"m20 16-4-4 4-4\"/><path d=\"m4 8 4 4-4 4\"/><path d=\"m16 4-4 4-4-4\"/><path d=\"m8 20 4-4 4 4\"/>","thermometer":"<path d=\"M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z\"/>","stethoscope":"<path d=\"M11 2v2\"/><path d=\"M5 2v2\"/><path d=\"M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1\"/><path d=\"M8 15a6 6 0 0 0 12 0v-3\"/><circle cx=\"20\" cy=\"10\" r=\"2\"/>","scale":"<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"M7 21h10\"/><path d=\"M12 3v18\"/><path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\"/>","ruler":"<path d=\"M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z\"/><path d=\"m14.5 12.5 2-2\"/><path d=\"m11.5 9.5 2-2\"/><path d=\"m8.5 6.5 2-2\"/><path d=\"m17.5 15.5 2-2\"/>","smile":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 14s1.5 2 4 2 4-2 4-2\"/><line x1=\"9\" x2=\"9.01\" y1=\"9\" y2=\"9\"/><line x1=\"15\" x2=\"15.01\" y1=\"9\" y2=\"9\"/>","apple":"<path d=\"M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z\"/><path d=\"M10 2c1 .5 2 2 2 5\"/>","salad":"<path d=\"M7 21h10\"/><path d=\"M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z\"/><path d=\"M11.38 12a2.4 2.4 0 0 1-.4-4.77 2.4 2.4 0 0 1 3.2-2.77 2.4 2.4 0 0 1 3.47-.63 2.4 2.4 0 0 1 3.37 3.37 2.4 2.4 0 0 1-1.1 3.7 2.51 2.51 0 0 1 .03 1.1\"/><path d=\"m13 12 4-4\"/><path d=\"M10.9 7.25A3.99 3.99 0 0 0 4 10c0 .73.2 1.41.54 2\"/>","carrot":"<path d=\"M2.27 21.7s9.87-3.5 12.73-6.36a4.5 4.5 0 0 0-6.36-6.37C5.77 11.84 2.27 21.7 2.27 21.7zM8.64 14l-2.05-2.04M15.34 15l-2.46-2.46\"/><path d=\"M22 9s-1.33-2-3.5-2C16.86 7 15 9 15 9s1.33 2 3.5 2S22 9 22 9z\"/><path d=\"M15 2s-2 1.33-2 3.5S15 9 15 9s2-1.84 2-3.5C17 3.33 15 2 15 2z\"/>","beef":"<circle cx=\"12.5\" cy=\"8.5\" r=\"2.5\"/><path d=\"M12.5 2a6.5 6.5 0 0 0-6.22 4.6c-1.1 3.13-.78 3.9-3.18 6.08A3 3 0 0 0 5 18c4 0 8.4-1.8 11.4-4.3A6.5 6.5 0 0 0 12.5 2Z\"/><path d=\"m18.5 6 2.19 4.5a6.48 6.48 0 0 1 .31 2 6.49 6.49 0 0 1-2.6 5.2C15.4 20.2 11 22 7 22a3 3 0 0 1-2.68-1.66L2.4 16.5\"/>","egg":"<path d=\"M12 22c6.23-.05 7.87-5.57 7.5-10-.36-4.34-3.95-9.96-7.5-10-3.55.04-7.14 5.66-7.5 10-.37 4.43 1.27 9.95 7.5 10z\"/>","milk":"<path d=\"M8 2h8\"/><path d=\"M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2\"/><path d=\"M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/>","soup":"<path d=\"M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z\"/><path d=\"M7 21h10\"/><path d=\"M19.5 12 22 6\"/><path d=\"M16.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.73 1.62\"/><path d=\"M11.25 3c.27.1.8.53.74 1.36-.05.83-.93 1.2-.98 2.02-.06.78.33 1.24.72 1.62\"/><path d=\"M6.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.74 1.62\"/>","cooking-pot":"<path d=\"M2 12h20\"/><path d=\"M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"m4 8 16-4\"/><path d=\"m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8\"/>","utensils":"<path d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\"/><path d=\"M7 2v20\"/><path d=\"M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\"/>","citrus":"<path d=\"M21.66 17.67a1.08 1.08 0 0 1-.04 1.6A12 12 0 0 1 4.73 2.38a1.1 1.1 0 0 1 1.61-.04z\"/><path d=\"M19.65 15.66A8 8 0 0 1 8.35 4.34\"/><path d=\"m14 10-5.5 5.5\"/><path d=\"M14 17.85V10H6.15\"/>","cherry":"<path d=\"M2 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z\"/><path d=\"M12 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z\"/><path d=\"M7 14c3.22-2.91 4.29-8.75 5-12 1.66 2.38 4.94 9 5 12\"/><path d=\"M22 9c-4.29 0-7.14-2.33-10-7 5.71 0 10 4.67 10 7Z\"/>","wheat":"<path d=\"M2 22 16 8\"/><path d=\"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z\"/><path d=\"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/>","vegan":"<path d=\"M16 8q6 0 6-6-6 0-6 6\"/><path d=\"M17.41 3.59a10 10 0 1 0 3 3\"/><path d=\"M2 2a26.6 26.6 0 0 1 10 20c.9-6.82 1.5-9.5 4-14\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","book-open":"<path d=\"M12 7v14\"/><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\"/>","book":"<path d=\"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20\"/>","graduation-cap":"<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>","school":"<path d=\"M14 22v-4a2 2 0 1 0-4 0v4\"/><path d=\"m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10\"/><path d=\"M18 5v17\"/><path d=\"m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6\"/><path d=\"M6 5v17\"/><circle cx=\"12\" cy=\"9\" r=\"2\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","pen-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/>","languages":"<path d=\"m5 8 6 6\"/><path d=\"m4 14 6-6 2-3\"/><path d=\"M2 5h12\"/><path d=\"M7 2h1\"/><path d=\"m22 22-5-10-5 10\"/><path d=\"M14 18h6\"/>","calculator":"<rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"6\" y2=\"6\"/><line x1=\"16\" x2=\"16\" y1=\"14\" y2=\"18\"/><path d=\"M16 10h.01\"/><path d=\"M12 10h.01\"/><path d=\"M8 10h.01\"/><path d=\"M12 14h.01\"/><path d=\"M8 14h.01\"/><path d=\"M12 18h.01\"/><path d=\"M8 18h.01\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","brain-circuit":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M9 13a4.5 4.5 0 0 0 3-4\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M12 13h4\"/><path d=\"M12 18h6a2 2 0 0 1 2 2v1\"/><path d=\"M12 8h8\"/><path d=\"M16 8V5a2 2 0 0 1 2-2\"/><circle cx=\"16\" cy=\"13\" r=\".5\"/><circle cx=\"18\" cy=\"3\" r=\".5\"/><circle cx=\"20\" cy=\"21\" r=\".5\"/><circle cx=\"20\" cy=\"8\" r=\".5\"/>","puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","laptop":"<path d=\"M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16\"/>","code":"<polyline points=\"16 18 22 12 16 6\"/><polyline points=\"8 6 2 12 8 18\"/>","bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","trending-up":"<polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\"/><polyline points=\"16 7 22 7 22 13\"/>","chart-line":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"m19 9-5 5-4-4-3 3\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","phone":"<path d=\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z\"/>","list-checks":"<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>","calendar-check":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","alarm-clock":"<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l2 2\"/><path d=\"M5 3 2 6\"/><path d=\"m22 6-3-3\"/><path d=\"M6.38 18.7 4 21\"/><path d=\"M17.64 18.67 20 21\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","trash-2":"<path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"/><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"/>","shirt":"<path d=\"M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z\"/>","sofa":"<path d=\"M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3\"/><path d=\"M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z\"/><path d=\"M4 18v2\"/><path d=\"M20 18v2\"/><path d=\"M12 4v9\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","cloud-sun":"<path d=\"M12 2v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"M20 12h2\"/><path d=\"m19.07 4.93-1.41 1.41\"/><path d=\"M15.947 12.65a4 4 0 0 0-5.925-4.128\"/><path d=\"M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z\"/>","umbrella":"<path d=\"M22 12a10.06 10.06 1 0 0-20 0Z\"/><path d=\"M12 12v8a2 2 0 0 0 4 0\"/><path d=\"M12 2v1\"/>","car":"<path d=\"M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2\"/><circle cx=\"7\" cy=\"17\" r=\"2\"/><path d=\"M9 17h6\"/><circle cx=\"17\" cy=\"17\" r=\"2\"/>","bus":"<path d=\"M8 6v6\"/><path d=\"M15 6v6\"/><path d=\"M2 12h19.6\"/><path d=\"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/><path d=\"M9 18h5\"/><circle cx=\"16\" cy=\"18\" r=\"2\"/>","plane":"<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\"/>","compass":"<path d=\"m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z\"/><circle cx=\"12\" cy=\"12\" r=\"10\"/>","map":"<path d=\"M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z\"/><path d=\"M15 5.764v15\"/><path d=\"M9 3.236v15\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","scissors":"<circle cx=\"6\" cy=\"6\" r=\"3\"/><path d=\"M8.12 8.12 12 12\"/><path d=\"M20 4 8.12 15.88\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M14.8 14.8 20 20\"/>","music":"<path d=\"M9 18V5l12-2v13\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/>","guitar":"<path d=\"m11.9 12.1 4.514-4.514\"/><path d=\"M20.1 2.3a1 1 0 0 0-1.4 0l-1.114 1.114A2 2 0 0 0 17 4.828v1.344a2 2 0 0 1-.586 1.414A2 2 0 0 1 17.828 7h1.344a2 2 0 0 0 1.414-.586L21.7 5.3a1 1 0 0 0 0-1.4z\"/><path d=\"m6 16 2 2\"/><path d=\"M8.2 9.9C8.7 8.8 9.8 8 11 8c2.8 0 5 2.2 5 5 0 1.2-.8 2.3-1.9 2.8l-.9.4A2 2 0 0 0 12 18a4 4 0 0 1-4 4c-3.3 0-6-2.7-6-6a4 4 0 0 1 4-4 2 2 0 0 0 1.8-1.2z\"/><circle cx=\"11.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/>","drum":"<path d=\"m2 2 8 8\"/><path d=\"m22 2-8 8\"/><ellipse cx=\"12\" cy=\"9\" rx=\"10\" ry=\"5\"/><path d=\"M7 13.4v7.9\"/><path d=\"M12 14v8\"/><path d=\"M17 13.4v7.9\"/><path d=\"M2 9v8a10 5 0 0 0 20 0V9\"/>","piano":"<path d=\"M18.5 8c-1.4 0-2.6-.8-3.2-2A6.87 6.87 0 0 0 2 9v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8.5C22 9.6 20.4 8 18.5 8\"/><path d=\"M2 14h20\"/><path d=\"M6 14v4\"/><path d=\"M10 14v4\"/><path d=\"M14 14v4\"/><path d=\"M18 14v4\"/>","mic":"<path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\"/><path d=\"M19 10v2a7 7 0 0 1-14 0v-2\"/><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\"/>","headphones":"<path d=\"M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3\"/>","camera":"<path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/>","film":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M7 3v18\"/><path d=\"M3 7.5h4\"/><path d=\"M3 12h18\"/><path d=\"M3 16.5h4\"/><path d=\"M17 3v18\"/><path d=\"M17 7.5h4\"/><path d=\"M17 16.5h4\"/>","clapperboard":"<path d=\"M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z\"/><path d=\"m6.2 5.3 3.1 3.9\"/><path d=\"m12.4 3.4 3.1 4\"/><path d=\"M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z\"/>","palette":"<circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><path d=\"M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z\"/>","brush":"<path d=\"m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08\"/><path d=\"M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z\"/>","pen-tool":"<path d=\"M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z\"/><path d=\"m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18\"/><path d=\"m2.3 2.3 7.286 7.286\"/><circle cx=\"11\" cy=\"11\" r=\"2\"/>","feather":"<path d=\"M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z\"/><path d=\"M16 8 2 22\"/><path d=\"M17.5 15H9\"/>","gamepad-2":"<line x1=\"6\" x2=\"10\" y1=\"11\" y2=\"11\"/><line x1=\"8\" x2=\"8\" y1=\"9\" y2=\"13\"/><line x1=\"15\" x2=\"15.01\" y1=\"12\" y2=\"12\"/><line x1=\"18\" x2=\"18.01\" y1=\"10\" y2=\"10\"/><path d=\"M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z\"/>","dice-5":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><path d=\"M16 8h.01\"/><path d=\"M8 8h.01\"/><path d=\"M8 16h.01\"/><path d=\"M16 16h.01\"/><path d=\"M12 12h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","heart-handshake":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/><path d=\"M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66\"/><path d=\"m18 15-2-2\"/><path d=\"m15 18-2-2\"/>","handshake":"<path d=\"m11 17 2 2a1 1 0 1 0 3-3\"/><path d=\"m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4\"/><path d=\"m21 3 1 11h-2\"/><path d=\"M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3\"/><path d=\"M3 4h8\"/>","message-circle":"<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/>","gift":"<rect x=\"3\" y=\"8\" width=\"18\" height=\"4\" rx=\"1\"/><path d=\"M12 8v13\"/><path d=\"M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7\"/><path d=\"M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5\"/>","baby":"<path d=\"M9 12h.01\"/><path d=\"M15 12h.01\"/><path d=\"M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5\"/><path d=\"M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1\"/>","church":"<path d=\"M10 9h4\"/><path d=\"M12 7v5\"/><path d=\"M14 22v-4a2 2 0 0 0-4 0v4\"/><path d=\"M18 22V5.618a1 1 0 0 0-.553-.894l-4.553-2.277a2 2 0 0 0-1.788 0L6.553 4.724A1 1 0 0 0 6 5.618V22\"/><path d=\"m18 7 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.618a1 1 0 0 1 .553-.894L6 7\"/>","leaf":"<path d=\"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z\"/><path d=\"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12\"/>","sprout":"<path d=\"M7 20h10\"/><path d=\"M10 20c5.5-2.5.8-6.4 3-10\"/><path d=\"M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z\"/><path d=\"M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z\"/>","flower-2":"<path d=\"M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1\"/><circle cx=\"12\" cy=\"8\" r=\"2\"/><path d=\"M12 10v12\"/><path d=\"M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z\"/><path d=\"M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z\"/>","tree-pine":"<path d=\"m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z\"/><path d=\"M12 22v-3\"/>","tent":"<path d=\"M3.5 21 14 3\"/><path d=\"M20.5 21 10 3\"/><path d=\"M15.5 21 12 15l-3.5 6\"/><path d=\"M2 21h20\"/>","dog":"<path d=\"M11.25 16.25h1.5L12 17z\"/><path d=\"M16 14v.5\"/><path d=\"M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444a11.702 11.702 0 0 0-.493-3.309\"/><path d=\"M8 14v.5\"/><path d=\"M8.5 8.5c-.384 1.05-1.083 2.028-2.344 2.5-1.931.722-3.576-.297-3.656-1-.113-.994 1.177-6.53 4-7 1.923-.321 3.651.845 3.651 2.235A7.497 7.497 0 0 1 14 5.277c0-1.39 1.844-2.598 3.767-2.277 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5\"/>","cat":"<path d=\"M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z\"/><path d=\"M8 14v.5\"/><path d=\"M16 14v.5\"/><path d=\"M11.25 16.25h1.5L12 17l-.75-.75Z\"/>","fish":"<path d=\"M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z\"/><path d=\"M18 12v.5\"/><path d=\"M16 17.93a9.77 9.77 0 0 1 0-11.86\"/><path d=\"M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33\"/><path d=\"M10.46 7.26C10.2 5.88 9.17 4.24 8 3h5.8a2 2 0 0 1 1.98 1.67l.23 1.4\"/><path d=\"m16.01 17.93-.23 1.4A2 2 0 0 1 13.8 21H9.5a5.96 5.96 0 0 0 1.49-3.98\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","piggy-bank":"<path d=\"M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z\"/><path d=\"M2 9v1c0 1.1.9 2 2 2h1\"/><path d=\"M16 11h.01\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","coins":"<circle cx=\"8\" cy=\"8\" r=\"6\"/><path d=\"M18.09 10.37A6 6 0 1 1 10.34 18\"/><path d=\"M7 6h1v4\"/><path d=\"m16.71 13.88.7.71-2.82 2.82\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","receipt":"<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"/><path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\"/><path d=\"M12 17.5v-11\"/>","cigarette-off":"<path d=\"M12 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h13\"/><path d=\"M18 8c0-2.5-2-2.5-2-5\"/><path d=\"m2 2 20 20\"/><path d=\"M21 12a1 1 0 0 1 1 1v2a1 1 0 0 1-.5.866\"/><path d=\"M22 8c0-2.5-2-2.5-2-5\"/><path d=\"M7 12v4\"/>","cigarette":"<path d=\"M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14\"/><path d=\"M18 8c0-2.5-2-2.5-2-5\"/><path d=\"M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M22 8c0-2.5-2-2.5-2-5\"/><path d=\"M7 12v4\"/>","wine-off":"<path d=\"M8 22h8\"/><path d=\"M7 10h3m7 0h-1.343\"/><path d=\"M12 15v7\"/><path d=\"M7.307 7.307A12.33 12.33 0 0 0 7 10a5 5 0 0 0 7.391 4.391M8.638 2.981C8.75 2.668 8.872 2.34 9 2h6c1.5 4 2 6 2 8 0 .407-.05.809-.145 1.198\"/><line x1=\"2\" x2=\"22\" y1=\"2\" y2=\"22\"/>","beer-off":"<path d=\"M13 13v5\"/><path d=\"M17 11.47V8\"/><path d=\"M17 11h1a3 3 0 0 1 2.745 4.211\"/><path d=\"m2 2 20 20\"/><path d=\"M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3\"/><path d=\"M7.536 7.535C6.766 7.649 6.154 8 5.5 8a2.5 2.5 0 0 1-1.768-4.268\"/><path d=\"M8.727 3.204C9.306 2.767 9.885 2 11 2c1.56 0 2 1.5 3 1.5s1.72-.5 2.5-.5a1 1 0 1 1 0 5c-.78 0-1.5-.5-2.5-.5a3.149 3.149 0 0 0-.842.12\"/><path d=\"M9 14.6V18\"/>","wine":"<path d=\"M8 22h8\"/><path d=\"M7 10h10\"/><path d=\"M12 15v7\"/><path d=\"M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z\"/>","candy-off":"<path d=\"m8.5 8.5-1 1a4.95 4.95 0 0 0 7 7l1-1\"/><path d=\"M11.843 6.187A4.947 4.947 0 0 1 16.5 7.5a4.947 4.947 0 0 1 1.313 4.657\"/><path d=\"M14 16.5V14\"/><path d=\"M14 6.5v1.843\"/><path d=\"M10 10v7.5\"/><path d=\"m16 7 1-5 1.367.683A3 3 0 0 0 19.708 3H21v1.292a3 3 0 0 0 .317 1.341L22 7l-5 1\"/><path d=\"m8 17-1 5-1.367-.683A3 3 0 0 0 4.292 21H3v-1.292a3 3 0 0 0-.317-1.341L2 17l5-1\"/><line x1=\"2\" x2=\"22\" y1=\"2\" y2=\"22\"/>","candy":"<path d=\"m9.5 7.5-2 2a4.95 4.95 0 1 0 7 7l2-2a4.95 4.95 0 1 0-7-7Z\"/><path d=\"M14 6.5v10\"/><path d=\"M10 7.5v10\"/><path d=\"m16 7 1-5 1.37.68A3 3 0 0 0 19.7 3H21v1.3c0 .46.1.92.32 1.33L22 7l-5 1\"/><path d=\"m8 17-1 5-1.37-.68A3 3 0 0 0 4.3 21H3v-1.3a3 3 0 0 0-.32-1.33L2 17l5-1\"/>","cookie":"<path d=\"M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5\"/><path d=\"M8.5 8.5v.01\"/><path d=\"M16 15.5v.01\"/><path d=\"M12 12v.01\"/><path d=\"M11 17v.01\"/><path d=\"M7 14v.01\"/>","pizza":"<path d=\"m12 14-1 1\"/><path d=\"m13.75 18.25-1.25 1.42\"/><path d=\"M17.775 5.654a15.68 15.68 0 0 0-12.121 12.12\"/><path d=\"M18.8 9.3a1 1 0 0 0 2.1 7.7\"/><path d=\"M21.964 20.732a1 1 0 0 1-1.232 1.232l-18-5a1 1 0 0 1-.695-1.232A19.68 19.68 0 0 1 15.732 2.037a1 1 0 0 1 1.232.695z\"/>","cup-soda":"<path d=\"m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8\"/><path d=\"M5 8h14\"/><path d=\"M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/><path d=\"m12 8 1-6h2\"/>","phone-off":"<path d=\"M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91\"/><line x1=\"22\" x2=\"2\" y1=\"2\" y2=\"22\"/>","monitor-off":"<path d=\"M17 17H4a2 2 0 0 1-2-2V5c0-1.5 1-2 1-2\"/><path d=\"M22 15V5a2 2 0 0 0-2-2H9\"/><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"m2 2 20 20\"/>","bell-off":"<path d=\"M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5\"/><path d=\"M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/><path d=\"m2 2 20 20\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m4.9 4.9 14.2 14.2\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","menu":"<line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\"/><line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\"/><line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","chevron-left":"<path d=\"m15 18-6-6 6-6\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","settings":"<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","archive-restore":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h2\"/><path d=\"M20 8v11a2 2 0 0 1-2 2h-2\"/><path d=\"m9 15 3-3 3 3\"/><path d=\"M12 12v9\"/>","download":"<path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\"/>","upload":"<path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"17 8 12 3 7 8\"/><line x1=\"12\" x2=\"12\" y1=\"3\" y2=\"15\"/>","cloud":"<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>","cloud-off":"<path d=\"m2 2 20 20\"/><path d=\"M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193\"/><path d=\"M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","calendar-days":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","pin":"<path d=\"M12 17v5\"/><path d=\"M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z\"/>","pin-off":"<path d=\"M12 17v5\"/><path d=\"M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89\"/><path d=\"m2 2 20 20\"/><path d=\"M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11\"/>","arrow-up-to-line":"<path d=\"M5 3h14\"/><path d=\"m18 13-6-6-6 6\"/><path d=\"M12 7v14\"/>","arrow-down-to-line":"<path d=\"M12 17V3\"/><path d=\"m6 11 6 6 6-6\"/><path d=\"M19 21H5\"/>","grip-vertical":"<circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"9\" cy=\"5\" r=\"1\"/><circle cx=\"9\" cy=\"19\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><circle cx=\"15\" cy=\"19\" r=\"1\"/>","chevron-up":"<path d=\"m18 15-6-6-6 6\"/>","chevron-down":"<path d=\"m6 9 6 6 6-6\"/>","layout-list":"<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/><path d=\"M14 4h7\"/><path d=\"M14 9h7\"/><path d=\"M14 15h7\"/><path d=\"M14 20h7\"/>","gallery-horizontal-end":"<path d=\"M2 7v10\"/><path d=\"M6 5v14\"/><rect width=\"12\" height=\"18\" x=\"10\" y=\"3\" rx=\"2\"/>","rows-3":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M21 9H3\"/><path d=\"M21 15H3\"/>","rotate-ccw":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>","table-2":"<path d=\"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18\"/>","layout-grid":"<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>"};
+const ICONS={"dumbbell":"<path d=\"M14.4 14.4 9.6 9.6\"/><path d=\"M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z\"/><path d=\"m21.5 21.5-1.4-1.4\"/><path d=\"M3.9 3.9 2.5 2.5\"/><path d=\"M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z\"/>","swords":"<polyline points=\"14.5 17.5 3 6 3 3 6 3 17.5 14.5\"/><line x1=\"13\" x2=\"19\" y1=\"19\" y2=\"13\"/><line x1=\"16\" x2=\"20\" y1=\"16\" y2=\"20\"/><line x1=\"19\" x2=\"21\" y1=\"21\" y2=\"19\"/><polyline points=\"14.5 6.5 18 3 21 3 21 6 17.5 9.5\"/><line x1=\"5\" x2=\"9\" y1=\"14\" y2=\"18\"/><line x1=\"7\" x2=\"4\" y1=\"17\" y2=\"20\"/><line x1=\"3\" x2=\"5\" y1=\"19\" y2=\"21\"/>","hand-metal":"<path d=\"M18 12.5V10a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4\"/><path d=\"M14 11V9a2 2 0 1 0-4 0v2\"/><path d=\"M10 10.5V5a2 2 0 1 0-4 0v9\"/><path d=\"m7 15-1.76-1.76a2 2 0 0 0-2.83 2.82l3.6 3.6C7.5 21.14 9.2 22 12 22h2a8 8 0 0 0 8-8V7a2 2 0 1 0-4 0v5\"/>","bike":"<circle cx=\"18.5\" cy=\"17.5\" r=\"3.5\"/><circle cx=\"5.5\" cy=\"17.5\" r=\"3.5\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><path d=\"M12 17.5V14l-3-3 4-3 2 3h2\"/>","footprints":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","person-standing":"<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","waves":"<path d=\"M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/><path d=\"M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/><path d=\"M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\"/>","mountain":"<path d=\"m8 3 4 8 5-5 5 15H2L8 3z\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","medal":"<path d=\"M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15\"/><path d=\"M11 12 5.12 2.2\"/><path d=\"m13 12 5.88-9.8\"/><path d=\"M8 7h8\"/><circle cx=\"12\" cy=\"17\" r=\"5\"/><path d=\"M12 18v-2h-.5\"/>","trophy":"<path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","flame":"<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/>","zap":"<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>","shield":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/>","stretch-horizontal":"<rect width=\"20\" height=\"6\" x=\"2\" y=\"4\" rx=\"2\"/><rect width=\"20\" height=\"6\" x=\"2\" y=\"14\" rx=\"2\"/>","accessibility":"<circle cx=\"16\" cy=\"4\" r=\"1\"/><path d=\"m18 19 1-7-6 1\"/><path d=\"m5 8 3-3 5.5 3-2.36 3.5\"/><path d=\"M4.24 14.5a5 5 0 0 0 6.88 6\"/><path d=\"M13.76 17.5a5 5 0 0 0-6.88-6\"/>","heart":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/>","heart-pulse":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/><path d=\"M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","pill":"<path d=\"m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z\"/><path d=\"m8.5 8.5 7 7\"/>","tablets":"<circle cx=\"7\" cy=\"7\" r=\"5\"/><circle cx=\"17\" cy=\"17\" r=\"5\"/><path d=\"M12 17h10\"/><path d=\"m3.46 10.54 7.08-7.08\"/>","droplet":"<path d=\"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z\"/>","glass-water":"<path d=\"M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z\"/><path d=\"M6 12a5 5 0 0 1 6 0 5 5 0 0 0 6 0\"/>","bed":"<path d=\"M2 4v16\"/><path d=\"M2 8h18a2 2 0 0 1 2 2v10\"/><path d=\"M2 17h20\"/><path d=\"M6 8v9\"/>","bed-double":"<path d=\"M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8\"/><path d=\"M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4\"/><path d=\"M12 4v6\"/><path d=\"M2 18h20\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","sunrise":"<path d=\"M12 2v8\"/><path d=\"m4.93 10.93 1.41 1.41\"/><path d=\"M2 18h2\"/><path d=\"M20 18h2\"/><path d=\"m19.07 10.93-1.41 1.41\"/><path d=\"M22 22H2\"/><path d=\"m8 6 4-4 4 4\"/><path d=\"M16 18a4 4 0 0 0-8 0\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","bath":"<path d=\"M10 4 8 6\"/><path d=\"M17 19v2\"/><path d=\"M2 12h20\"/><path d=\"M7 19v2\"/><path d=\"M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5\"/>","shower-head":"<path d=\"m4 4 2.5 2.5\"/><path d=\"M13.5 6.5a4.95 4.95 0 0 0-7 7\"/><path d=\"M15 5 5 15\"/><path d=\"M14 17v.01\"/><path d=\"M10 16v.01\"/><path d=\"M13 13v.01\"/><path d=\"M16 10v.01\"/><path d=\"M11 20v.01\"/><path d=\"M17 14v.01\"/><path d=\"M20 11v.01\"/>","snowflake":"<line x1=\"2\" x2=\"22\" y1=\"12\" y2=\"12\"/><line x1=\"12\" x2=\"12\" y1=\"2\" y2=\"22\"/><path d=\"m20 16-4-4 4-4\"/><path d=\"m4 8 4 4-4 4\"/><path d=\"m16 4-4 4-4-4\"/><path d=\"m8 20 4-4 4 4\"/>","thermometer":"<path d=\"M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z\"/>","stethoscope":"<path d=\"M11 2v2\"/><path d=\"M5 2v2\"/><path d=\"M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1\"/><path d=\"M8 15a6 6 0 0 0 12 0v-3\"/><circle cx=\"20\" cy=\"10\" r=\"2\"/>","scale":"<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"M7 21h10\"/><path d=\"M12 3v18\"/><path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\"/>","ruler":"<path d=\"M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z\"/><path d=\"m14.5 12.5 2-2\"/><path d=\"m11.5 9.5 2-2\"/><path d=\"m8.5 6.5 2-2\"/><path d=\"m17.5 15.5 2-2\"/>","smile":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 14s1.5 2 4 2 4-2 4-2\"/><line x1=\"9\" x2=\"9.01\" y1=\"9\" y2=\"9\"/><line x1=\"15\" x2=\"15.01\" y1=\"9\" y2=\"9\"/>","apple":"<path d=\"M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z\"/><path d=\"M10 2c1 .5 2 2 2 5\"/>","salad":"<path d=\"M7 21h10\"/><path d=\"M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z\"/><path d=\"M11.38 12a2.4 2.4 0 0 1-.4-4.77 2.4 2.4 0 0 1 3.2-2.77 2.4 2.4 0 0 1 3.47-.63 2.4 2.4 0 0 1 3.37 3.37 2.4 2.4 0 0 1-1.1 3.7 2.51 2.51 0 0 1 .03 1.1\"/><path d=\"m13 12 4-4\"/><path d=\"M10.9 7.25A3.99 3.99 0 0 0 4 10c0 .73.2 1.41.54 2\"/>","carrot":"<path d=\"M2.27 21.7s9.87-3.5 12.73-6.36a4.5 4.5 0 0 0-6.36-6.37C5.77 11.84 2.27 21.7 2.27 21.7zM8.64 14l-2.05-2.04M15.34 15l-2.46-2.46\"/><path d=\"M22 9s-1.33-2-3.5-2C16.86 7 15 9 15 9s1.33 2 3.5 2S22 9 22 9z\"/><path d=\"M15 2s-2 1.33-2 3.5S15 9 15 9s2-1.84 2-3.5C17 3.33 15 2 15 2z\"/>","beef":"<circle cx=\"12.5\" cy=\"8.5\" r=\"2.5\"/><path d=\"M12.5 2a6.5 6.5 0 0 0-6.22 4.6c-1.1 3.13-.78 3.9-3.18 6.08A3 3 0 0 0 5 18c4 0 8.4-1.8 11.4-4.3A6.5 6.5 0 0 0 12.5 2Z\"/><path d=\"m18.5 6 2.19 4.5a6.48 6.48 0 0 1 .31 2 6.49 6.49 0 0 1-2.6 5.2C15.4 20.2 11 22 7 22a3 3 0 0 1-2.68-1.66L2.4 16.5\"/>","egg":"<path d=\"M12 22c6.23-.05 7.87-5.57 7.5-10-.36-4.34-3.95-9.96-7.5-10-3.55.04-7.14 5.66-7.5 10-.37 4.43 1.27 9.95 7.5 10z\"/>","milk":"<path d=\"M8 2h8\"/><path d=\"M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2\"/><path d=\"M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/>","soup":"<path d=\"M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z\"/><path d=\"M7 21h10\"/><path d=\"M19.5 12 22 6\"/><path d=\"M16.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.73 1.62\"/><path d=\"M11.25 3c.27.1.8.53.74 1.36-.05.83-.93 1.2-.98 2.02-.06.78.33 1.24.72 1.62\"/><path d=\"M6.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.74 1.62\"/>","cooking-pot":"<path d=\"M2 12h20\"/><path d=\"M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"m4 8 16-4\"/><path d=\"m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8\"/>","utensils":"<path d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\"/><path d=\"M7 2v20\"/><path d=\"M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\"/>","citrus":"<path d=\"M21.66 17.67a1.08 1.08 0 0 1-.04 1.6A12 12 0 0 1 4.73 2.38a1.1 1.1 0 0 1 1.61-.04z\"/><path d=\"M19.65 15.66A8 8 0 0 1 8.35 4.34\"/><path d=\"m14 10-5.5 5.5\"/><path d=\"M14 17.85V10H6.15\"/>","cherry":"<path d=\"M2 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z\"/><path d=\"M12 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z\"/><path d=\"M7 14c3.22-2.91 4.29-8.75 5-12 1.66 2.38 4.94 9 5 12\"/><path d=\"M22 9c-4.29 0-7.14-2.33-10-7 5.71 0 10 4.67 10 7Z\"/>","wheat":"<path d=\"M2 22 16 8\"/><path d=\"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z\"/><path d=\"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/>","vegan":"<path d=\"M16 8q6 0 6-6-6 0-6 6\"/><path d=\"M17.41 3.59a10 10 0 1 0 3 3\"/><path d=\"M2 2a26.6 26.6 0 0 1 10 20c.9-6.82 1.5-9.5 4-14\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","book-open":"<path d=\"M12 7v14\"/><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\"/>","book":"<path d=\"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20\"/>","graduation-cap":"<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>","school":"<path d=\"M14 22v-4a2 2 0 1 0-4 0v4\"/><path d=\"m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10\"/><path d=\"M18 5v17\"/><path d=\"m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6\"/><path d=\"M6 5v17\"/><circle cx=\"12\" cy=\"9\" r=\"2\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","pen-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/>","languages":"<path d=\"m5 8 6 6\"/><path d=\"m4 14 6-6 2-3\"/><path d=\"M2 5h12\"/><path d=\"M7 2h1\"/><path d=\"m22 22-5-10-5 10\"/><path d=\"M14 18h6\"/>","calculator":"<rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"6\" y2=\"6\"/><line x1=\"16\" x2=\"16\" y1=\"14\" y2=\"18\"/><path d=\"M16 10h.01\"/><path d=\"M12 10h.01\"/><path d=\"M8 10h.01\"/><path d=\"M12 14h.01\"/><path d=\"M8 14h.01\"/><path d=\"M12 18h.01\"/><path d=\"M8 18h.01\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","brain-circuit":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M9 13a4.5 4.5 0 0 0 3-4\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M12 13h4\"/><path d=\"M12 18h6a2 2 0 0 1 2 2v1\"/><path d=\"M12 8h8\"/><path d=\"M16 8V5a2 2 0 0 1 2-2\"/><circle cx=\"16\" cy=\"13\" r=\".5\"/><circle cx=\"18\" cy=\"3\" r=\".5\"/><circle cx=\"20\" cy=\"21\" r=\".5\"/><circle cx=\"20\" cy=\"8\" r=\".5\"/>","puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","laptop":"<path d=\"M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16\"/>","code":"<polyline points=\"16 18 22 12 16 6\"/><polyline points=\"8 6 2 12 8 18\"/>","bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","trending-up":"<polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\"/><polyline points=\"16 7 22 7 22 13\"/>","chart-line":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"m19 9-5 5-4-4-3 3\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","phone":"<path d=\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z\"/>","list-checks":"<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>","calendar-check":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","alarm-clock":"<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l2 2\"/><path d=\"M5 3 2 6\"/><path d=\"m22 6-3-3\"/><path d=\"M6.38 18.7 4 21\"/><path d=\"M17.64 18.67 20 21\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","trash-2":"<path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"/><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"/>","shirt":"<path d=\"M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z\"/>","sofa":"<path d=\"M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3\"/><path d=\"M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z\"/><path d=\"M4 18v2\"/><path d=\"M20 18v2\"/><path d=\"M12 4v9\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","cloud-sun":"<path d=\"M12 2v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"M20 12h2\"/><path d=\"m19.07 4.93-1.41 1.41\"/><path d=\"M15.947 12.65a4 4 0 0 0-5.925-4.128\"/><path d=\"M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z\"/>","umbrella":"<path d=\"M22 12a10.06 10.06 1 0 0-20 0Z\"/><path d=\"M12 12v8a2 2 0 0 0 4 0\"/><path d=\"M12 2v1\"/>","car":"<path d=\"M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2\"/><circle cx=\"7\" cy=\"17\" r=\"2\"/><path d=\"M9 17h6\"/><circle cx=\"17\" cy=\"17\" r=\"2\"/>","bus":"<path d=\"M8 6v6\"/><path d=\"M15 6v6\"/><path d=\"M2 12h19.6\"/><path d=\"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/><path d=\"M9 18h5\"/><circle cx=\"16\" cy=\"18\" r=\"2\"/>","plane":"<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\"/>","compass":"<path d=\"m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z\"/><circle cx=\"12\" cy=\"12\" r=\"10\"/>","map":"<path d=\"M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z\"/><path d=\"M15 5.764v15\"/><path d=\"M9 3.236v15\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","scissors":"<circle cx=\"6\" cy=\"6\" r=\"3\"/><path d=\"M8.12 8.12 12 12\"/><path d=\"M20 4 8.12 15.88\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M14.8 14.8 20 20\"/>","music":"<path d=\"M9 18V5l12-2v13\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/>","guitar":"<path d=\"m11.9 12.1 4.514-4.514\"/><path d=\"M20.1 2.3a1 1 0 0 0-1.4 0l-1.114 1.114A2 2 0 0 0 17 4.828v1.344a2 2 0 0 1-.586 1.414A2 2 0 0 1 17.828 7h1.344a2 2 0 0 0 1.414-.586L21.7 5.3a1 1 0 0 0 0-1.4z\"/><path d=\"m6 16 2 2\"/><path d=\"M8.2 9.9C8.7 8.8 9.8 8 11 8c2.8 0 5 2.2 5 5 0 1.2-.8 2.3-1.9 2.8l-.9.4A2 2 0 0 0 12 18a4 4 0 0 1-4 4c-3.3 0-6-2.7-6-6a4 4 0 0 1 4-4 2 2 0 0 0 1.8-1.2z\"/><circle cx=\"11.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/>","drum":"<path d=\"m2 2 8 8\"/><path d=\"m22 2-8 8\"/><ellipse cx=\"12\" cy=\"9\" rx=\"10\" ry=\"5\"/><path d=\"M7 13.4v7.9\"/><path d=\"M12 14v8\"/><path d=\"M17 13.4v7.9\"/><path d=\"M2 9v8a10 5 0 0 0 20 0V9\"/>","piano":"<path d=\"M18.5 8c-1.4 0-2.6-.8-3.2-2A6.87 6.87 0 0 0 2 9v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8.5C22 9.6 20.4 8 18.5 8\"/><path d=\"M2 14h20\"/><path d=\"M6 14v4\"/><path d=\"M10 14v4\"/><path d=\"M14 14v4\"/><path d=\"M18 14v4\"/>","mic":"<path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\"/><path d=\"M19 10v2a7 7 0 0 1-14 0v-2\"/><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\"/>","headphones":"<path d=\"M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3\"/>","camera":"<path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/>","film":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M7 3v18\"/><path d=\"M3 7.5h4\"/><path d=\"M3 12h18\"/><path d=\"M3 16.5h4\"/><path d=\"M17 3v18\"/><path d=\"M17 7.5h4\"/><path d=\"M17 16.5h4\"/>","clapperboard":"<path d=\"M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z\"/><path d=\"m6.2 5.3 3.1 3.9\"/><path d=\"m12.4 3.4 3.1 4\"/><path d=\"M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z\"/>","palette":"<circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><path d=\"M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z\"/>","brush":"<path d=\"m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08\"/><path d=\"M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z\"/>","pen-tool":"<path d=\"M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z\"/><path d=\"m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18\"/><path d=\"m2.3 2.3 7.286 7.286\"/><circle cx=\"11\" cy=\"11\" r=\"2\"/>","feather":"<path d=\"M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z\"/><path d=\"M16 8 2 22\"/><path d=\"M17.5 15H9\"/>","gamepad-2":"<line x1=\"6\" x2=\"10\" y1=\"11\" y2=\"11\"/><line x1=\"8\" x2=\"8\" y1=\"9\" y2=\"13\"/><line x1=\"15\" x2=\"15.01\" y1=\"12\" y2=\"12\"/><line x1=\"18\" x2=\"18.01\" y1=\"10\" y2=\"10\"/><path d=\"M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z\"/>","dice-5":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><path d=\"M16 8h.01\"/><path d=\"M8 8h.01\"/><path d=\"M8 16h.01\"/><path d=\"M16 16h.01\"/><path d=\"M12 12h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","heart-handshake":"<path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"/><path d=\"M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66\"/><path d=\"m18 15-2-2\"/><path d=\"m15 18-2-2\"/>","handshake":"<path d=\"m11 17 2 2a1 1 0 1 0 3-3\"/><path d=\"m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4\"/><path d=\"m21 3 1 11h-2\"/><path d=\"M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3\"/><path d=\"M3 4h8\"/>","message-circle":"<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/>","gift":"<rect x=\"3\" y=\"8\" width=\"18\" height=\"4\" rx=\"1\"/><path d=\"M12 8v13\"/><path d=\"M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7\"/><path d=\"M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5\"/>","baby":"<path d=\"M9 12h.01\"/><path d=\"M15 12h.01\"/><path d=\"M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5\"/><path d=\"M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1\"/>","church":"<path d=\"M10 9h4\"/><path d=\"M12 7v5\"/><path d=\"M14 22v-4a2 2 0 0 0-4 0v4\"/><path d=\"M18 22V5.618a1 1 0 0 0-.553-.894l-4.553-2.277a2 2 0 0 0-1.788 0L6.553 4.724A1 1 0 0 0 6 5.618V22\"/><path d=\"m18 7 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.618a1 1 0 0 1 .553-.894L6 7\"/>","leaf":"<path d=\"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z\"/><path d=\"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12\"/>","sprout":"<path d=\"M7 20h10\"/><path d=\"M10 20c5.5-2.5.8-6.4 3-10\"/><path d=\"M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z\"/><path d=\"M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z\"/>","flower-2":"<path d=\"M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1\"/><circle cx=\"12\" cy=\"8\" r=\"2\"/><path d=\"M12 10v12\"/><path d=\"M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z\"/><path d=\"M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z\"/>","tree-pine":"<path d=\"m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z\"/><path d=\"M12 22v-3\"/>","tent":"<path d=\"M3.5 21 14 3\"/><path d=\"M20.5 21 10 3\"/><path d=\"M15.5 21 12 15l-3.5 6\"/><path d=\"M2 21h20\"/>","dog":"<path d=\"M11.25 16.25h1.5L12 17z\"/><path d=\"M16 14v.5\"/><path d=\"M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444a11.702 11.702 0 0 0-.493-3.309\"/><path d=\"M8 14v.5\"/><path d=\"M8.5 8.5c-.384 1.05-1.083 2.028-2.344 2.5-1.931.722-3.576-.297-3.656-1-.113-.994 1.177-6.53 4-7 1.923-.321 3.651.845 3.651 2.235A7.497 7.497 0 0 1 14 5.277c0-1.39 1.844-2.598 3.767-2.277 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5\"/>","cat":"<path d=\"M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z\"/><path d=\"M8 14v.5\"/><path d=\"M16 14v.5\"/><path d=\"M11.25 16.25h1.5L12 17l-.75-.75Z\"/>","fish":"<path d=\"M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z\"/><path d=\"M18 12v.5\"/><path d=\"M16 17.93a9.77 9.77 0 0 1 0-11.86\"/><path d=\"M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33\"/><path d=\"M10.46 7.26C10.2 5.88 9.17 4.24 8 3h5.8a2 2 0 0 1 1.98 1.67l.23 1.4\"/><path d=\"m16.01 17.93-.23 1.4A2 2 0 0 1 13.8 21H9.5a5.96 5.96 0 0 0 1.49-3.98\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","piggy-bank":"<path d=\"M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z\"/><path d=\"M2 9v1c0 1.1.9 2 2 2h1\"/><path d=\"M16 11h.01\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","coins":"<circle cx=\"8\" cy=\"8\" r=\"6\"/><path d=\"M18.09 10.37A6 6 0 1 1 10.34 18\"/><path d=\"M7 6h1v4\"/><path d=\"m16.71 13.88.7.71-2.82 2.82\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","receipt":"<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"/><path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\"/><path d=\"M12 17.5v-11\"/>","cigarette-off":"<path d=\"M12 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h13\"/><path d=\"M18 8c0-2.5-2-2.5-2-5\"/><path d=\"m2 2 20 20\"/><path d=\"M21 12a1 1 0 0 1 1 1v2a1 1 0 0 1-.5.866\"/><path d=\"M22 8c0-2.5-2-2.5-2-5\"/><path d=\"M7 12v4\"/>","cigarette":"<path d=\"M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14\"/><path d=\"M18 8c0-2.5-2-2.5-2-5\"/><path d=\"M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M22 8c0-2.5-2-2.5-2-5\"/><path d=\"M7 12v4\"/>","wine-off":"<path d=\"M8 22h8\"/><path d=\"M7 10h3m7 0h-1.343\"/><path d=\"M12 15v7\"/><path d=\"M7.307 7.307A12.33 12.33 0 0 0 7 10a5 5 0 0 0 7.391 4.391M8.638 2.981C8.75 2.668 8.872 2.34 9 2h6c1.5 4 2 6 2 8 0 .407-.05.809-.145 1.198\"/><line x1=\"2\" x2=\"22\" y1=\"2\" y2=\"22\"/>","beer-off":"<path d=\"M13 13v5\"/><path d=\"M17 11.47V8\"/><path d=\"M17 11h1a3 3 0 0 1 2.745 4.211\"/><path d=\"m2 2 20 20\"/><path d=\"M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3\"/><path d=\"M7.536 7.535C6.766 7.649 6.154 8 5.5 8a2.5 2.5 0 0 1-1.768-4.268\"/><path d=\"M8.727 3.204C9.306 2.767 9.885 2 11 2c1.56 0 2 1.5 3 1.5s1.72-.5 2.5-.5a1 1 0 1 1 0 5c-.78 0-1.5-.5-2.5-.5a3.149 3.149 0 0 0-.842.12\"/><path d=\"M9 14.6V18\"/>","wine":"<path d=\"M8 22h8\"/><path d=\"M7 10h10\"/><path d=\"M12 15v7\"/><path d=\"M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z\"/>","candy-off":"<path d=\"m8.5 8.5-1 1a4.95 4.95 0 0 0 7 7l1-1\"/><path d=\"M11.843 6.187A4.947 4.947 0 0 1 16.5 7.5a4.947 4.947 0 0 1 1.313 4.657\"/><path d=\"M14 16.5V14\"/><path d=\"M14 6.5v1.843\"/><path d=\"M10 10v7.5\"/><path d=\"m16 7 1-5 1.367.683A3 3 0 0 0 19.708 3H21v1.292a3 3 0 0 0 .317 1.341L22 7l-5 1\"/><path d=\"m8 17-1 5-1.367-.683A3 3 0 0 0 4.292 21H3v-1.292a3 3 0 0 0-.317-1.341L2 17l5-1\"/><line x1=\"2\" x2=\"22\" y1=\"2\" y2=\"22\"/>","candy":"<path d=\"m9.5 7.5-2 2a4.95 4.95 0 1 0 7 7l2-2a4.95 4.95 0 1 0-7-7Z\"/><path d=\"M14 6.5v10\"/><path d=\"M10 7.5v10\"/><path d=\"m16 7 1-5 1.37.68A3 3 0 0 0 19.7 3H21v1.3c0 .46.1.92.32 1.33L22 7l-5 1\"/><path d=\"m8 17-1 5-1.37-.68A3 3 0 0 0 4.3 21H3v-1.3a3 3 0 0 0-.32-1.33L2 17l5-1\"/>","cookie":"<path d=\"M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5\"/><path d=\"M8.5 8.5v.01\"/><path d=\"M16 15.5v.01\"/><path d=\"M12 12v.01\"/><path d=\"M11 17v.01\"/><path d=\"M7 14v.01\"/>","pizza":"<path d=\"m12 14-1 1\"/><path d=\"m13.75 18.25-1.25 1.42\"/><path d=\"M17.775 5.654a15.68 15.68 0 0 0-12.121 12.12\"/><path d=\"M18.8 9.3a1 1 0 0 0 2.1 7.7\"/><path d=\"M21.964 20.732a1 1 0 0 1-1.232 1.232l-18-5a1 1 0 0 1-.695-1.232A19.68 19.68 0 0 1 15.732 2.037a1 1 0 0 1 1.232.695z\"/>","cup-soda":"<path d=\"m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8\"/><path d=\"M5 8h14\"/><path d=\"M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/><path d=\"m12 8 1-6h2\"/>","phone-off":"<path d=\"M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91\"/><line x1=\"22\" x2=\"2\" y1=\"2\" y2=\"22\"/>","monitor-off":"<path d=\"M17 17H4a2 2 0 0 1-2-2V5c0-1.5 1-2 1-2\"/><path d=\"M22 15V5a2 2 0 0 0-2-2H9\"/><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"m2 2 20 20\"/>","bell-off":"<path d=\"M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5\"/><path d=\"M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/><path d=\"m2 2 20 20\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m4.9 4.9 14.2 14.2\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","menu":"<line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\"/><line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\"/><line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","chevron-left":"<path d=\"m15 18-6-6 6-6\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","settings":"<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","archive-restore":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h2\"/><path d=\"M20 8v11a2 2 0 0 1-2 2h-2\"/><path d=\"m9 15 3-3 3 3\"/><path d=\"M12 12v9\"/>","download":"<path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\"/>","upload":"<path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"17 8 12 3 7 8\"/><line x1=\"12\" x2=\"12\" y1=\"3\" y2=\"15\"/>","cloud":"<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>","cloud-off":"<path d=\"m2 2 20 20\"/><path d=\"M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193\"/><path d=\"M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","calendar-days":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","pin":"<path d=\"M12 17v5\"/><path d=\"M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z\"/>","pin-off":"<path d=\"M12 17v5\"/><path d=\"M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89\"/><path d=\"m2 2 20 20\"/><path d=\"M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11\"/>","arrow-up-to-line":"<path d=\"M5 3h14\"/><path d=\"m18 13-6-6-6 6\"/><path d=\"M12 7v14\"/>","arrow-down-to-line":"<path d=\"M12 17V3\"/><path d=\"m6 11 6 6 6-6\"/><path d=\"M19 21H5\"/>","grip-vertical":"<circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"9\" cy=\"5\" r=\"1\"/><circle cx=\"9\" cy=\"19\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><circle cx=\"15\" cy=\"19\" r=\"1\"/>","chevron-up":"<path d=\"m18 15-6-6-6 6\"/>","chevron-down":"<path d=\"m6 9 6 6 6-6\"/>","layout-list":"<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/><path d=\"M14 4h7\"/><path d=\"M14 9h7\"/><path d=\"M14 15h7\"/><path d=\"M14 20h7\"/>","gallery-horizontal-end":"<path d=\"M2 7v10\"/><path d=\"M6 5v14\"/><rect width=\"12\" height=\"18\" x=\"10\" y=\"3\" rx=\"2\"/>","rows-3":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M21 9H3\"/><path d=\"M21 15H3\"/>","rotate-ccw":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>","table-2":"<path d=\"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18\"/>","layout-grid":"<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-plus":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><path d=\"M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8\"/><path d=\"M3 10h18\"/><path d=\"M16 19h6\"/><path d=\"M19 16v6\"/>","list-todo":"<rect x=\"3\" y=\"5\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>","square-check-big":"<path d=\"M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5\"/><path d=\"m9 11 3 3L22 4\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","arrow-up":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","sliders-horizontal":"<line x1=\"21\" x2=\"14\" y1=\"4\" y2=\"4\"/><line x1=\"10\" x2=\"3\" y1=\"4\" y2=\"4\"/><line x1=\"21\" x2=\"12\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"3\" y1=\"12\" y2=\"12\"/><line x1=\"21\" x2=\"16\" y1=\"20\" y2=\"20\"/><line x1=\"12\" x2=\"3\" y1=\"20\" y2=\"20\"/><line x1=\"14\" x2=\"14\" y1=\"2\" y2=\"6\"/><line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\"/><line x1=\"16\" x2=\"16\" y1=\"18\" y2=\"22\"/>"};
 const ICON_CATALOG=[{"n":"dumbbell","k":"Hantel Gym Krafttraining Fitness","c":"sport"},{"n":"swords","k":"Kampfsport Kickboxen MMA Kampf","c":"sport"},{"n":"hand-metal","k":"Faust Boxen Rock","c":"sport"},{"n":"bike","k":"Fahrrad Radfahren","c":"sport"},{"n":"footprints","k":"Schritte Laufen Gehen Spaziergang","c":"sport"},{"n":"person-standing","k":"Haltung Stehen Körper","c":"sport"},{"n":"activity","k":"Puls Cardio Ausdauer","c":"sport"},{"n":"waves","k":"Schwimmen Wasser Meer","c":"sport"},{"n":"mountain","k":"Berg Wandern Klettern","c":"sport"},{"n":"timer","k":"Timer Stoppuhr Intervall","c":"sport"},{"n":"medal","k":"Medaille Wettkampf","c":"sport"},{"n":"trophy","k":"Pokal Sieg Ziel","c":"sport"},{"n":"target","k":"Ziel Fokus Zielscheibe","c":"sport"},{"n":"flame","k":"Flamme Feuer Streak Energie","c":"sport"},{"n":"zap","k":"Blitz Energie Power","c":"sport"},{"n":"shield","k":"Schild Schutz Disziplin","c":"sport"},{"n":"stretch-horizontal","k":"Dehnen Stretching Mobility","c":"sport"},{"n":"accessibility","k":"Yoga Mobilität Bewegung","c":"sport"},{"n":"heart","k":"Herz Liebe Gesundheit","c":"health"},{"n":"heart-pulse","k":"Herzfrequenz Puls Gesundheit","c":"health"},{"n":"pill","k":"Tablette Vitamine Medikament Supplement","c":"health"},{"n":"tablets","k":"Tabletten Vitamine Supplements","c":"health"},{"n":"droplet","k":"Tropfen Wasser Hydration","c":"health"},{"n":"glass-water","k":"Wasser trinken Glas","c":"health"},{"n":"bed","k":"Bett Schlafen Schlaf","c":"health"},{"n":"bed-double","k":"Bett Schlaf Ruhe","c":"health"},{"n":"moon","k":"Mond Nacht Schlaf","c":"health"},{"n":"sunrise","k":"Sonnenaufgang Früh aufstehen Morgen","c":"health"},{"n":"brain","k":"Gehirn Meditation Denken Fokus","c":"health"},{"n":"eye","k":"Auge Bildschirmpause Sehen","c":"health"},{"n":"bath","k":"Baden Badewanne Entspannen","c":"health"},{"n":"shower-head","k":"Kalt duschen Dusche","c":"health"},{"n":"snowflake","k":"Kälte Eisbad Kalt","c":"health"},{"n":"thermometer","k":"Thermometer Sauna Temperatur","c":"health"},{"n":"stethoscope","k":"Arzt Gesundheit Check","c":"health"},{"n":"scale","k":"Waage Gewicht wiegen","c":"health"},{"n":"ruler","k":"Messen Lineal Körpermaße","c":"health"},{"n":"smile","k":"Lächeln Laune Stimmung","c":"health"},{"n":"apple","k":"Apfel Obst gesund essen","c":"food"},{"n":"salad","k":"Salat Gemüse gesund","c":"food"},{"n":"carrot","k":"Karotte Gemüse","c":"food"},{"n":"beef","k":"Fleisch Protein Eiweiß","c":"food"},{"n":"egg","k":"Ei Frühstück Protein","c":"food"},{"n":"milk","k":"Milch Protein Shake","c":"food"},{"n":"soup","k":"Suppe Kochen Essen","c":"food"},{"n":"cooking-pot","k":"Kochen Meal Prep Topf","c":"food"},{"n":"utensils","k":"Besteck Mahlzeit Essen","c":"food"},{"n":"citrus","k":"Zitrone Vitamin Obst","c":"food"},{"n":"cherry","k":"Kirsche Obst","c":"food"},{"n":"wheat","k":"Getreide Kohlenhydrate","c":"food"},{"n":"vegan","k":"Vegan Pflanzlich Blatt","c":"food"},{"n":"coffee","k":"Kaffee Tasse Koffein","c":"food"},{"n":"book-open","k":"Buch Lesen","c":"mind"},{"n":"book","k":"Buch Lernen Vokabeln","c":"mind"},{"n":"graduation-cap","k":"Schule Studium Lernen Abitur","c":"mind"},{"n":"school","k":"Schule Unterricht","c":"mind"},{"n":"notebook-pen","k":"Tagebuch Journal Notizen schreiben","c":"mind"},{"n":"pen-line","k":"Schreiben Stift","c":"mind"},{"n":"languages","k":"Sprachen Englisch Vokabeln","c":"mind"},{"n":"calculator","k":"Rechnen Mathe","c":"mind"},{"n":"lightbulb","k":"Idee Glühbirne Lernen","c":"mind"},{"n":"brain-circuit","k":"KI AI Denken","c":"mind"},{"n":"puzzle","k":"Puzzle Rätsel Denken","c":"mind"},{"n":"briefcase","k":"Arbeit Job Business","c":"work"},{"n":"laptop","k":"Laptop Arbeiten Computer","c":"work"},{"n":"code","k":"Programmieren Code","c":"work"},{"n":"bot","k":"KI Agent Automatisierung Bot","c":"work"},{"n":"rocket","k":"Rakete Start Wachstum","c":"work"},{"n":"trending-up","k":"Wachstum Fortschritt Umsatz","c":"work"},{"n":"chart-line","k":"Diagramm Zahlen Analyse","c":"work"},{"n":"mail","k":"E-Mail Posteingang","c":"work"},{"n":"inbox","k":"Inbox Aufräumen Mails","c":"work"},{"n":"phone","k":"Telefon Anruf Cold Calling","c":"work"},{"n":"list-checks","k":"Aufgaben Todo Liste","c":"work"},{"n":"calendar-check","k":"Kalender Planung Termin","c":"work"},{"n":"clock","k":"Uhr Zeit Deep Work","c":"work"},{"n":"alarm-clock","k":"Wecker Aufstehen","c":"work"},{"n":"hourglass","k":"Sanduhr Zeit Geduld","c":"work"},{"n":"house","k":"Haus Zuhause Aufräumen","c":"home"},{"n":"sparkles","k":"Putzen Sauber Glanz","c":"home"},{"n":"trash-2","k":"Müll rausbringen","c":"home"},{"n":"shirt","k":"Wäsche Kleidung","c":"home"},{"n":"sofa","k":"Sofa Pause Entspannen","c":"home"},{"n":"sun","k":"Sonne Tageslicht Draußen","c":"home"},{"n":"cloud-sun","k":"Wetter Draußen","c":"home"},{"n":"umbrella","k":"Regenschirm","c":"home"},{"n":"car","k":"Auto Fahren","c":"home"},{"n":"bus","k":"Bus Pendeln","c":"home"},{"n":"plane","k":"Reisen Flugzeug","c":"home"},{"n":"compass","k":"Kompass Entdecken","c":"home"},{"n":"map","k":"Karte Ausflug","c":"home"},{"n":"smartphone","k":"Handy Smartphone","c":"home"},{"n":"wrench","k":"Reparieren Werkzeug","c":"home"},{"n":"hammer","k":"Bauen Werkzeug Handwerk","c":"home"},{"n":"scissors","k":"Schere Haare Basteln","c":"home"},{"n":"music","k":"Musik Noten","c":"creative"},{"n":"guitar","k":"Gitarre Band Üben","c":"creative"},{"n":"drum","k":"Schlagzeug Drums Band","c":"creative"},{"n":"piano","k":"Klavier Piano Üben","c":"creative"},{"n":"mic","k":"Mikrofon Singen Podcast","c":"creative"},{"n":"headphones","k":"Kopfhörer Hören Podcast","c":"creative"},{"n":"camera","k":"Kamera Foto Content","c":"creative"},{"n":"film","k":"Film Video Schnitt","c":"creative"},{"n":"clapperboard","k":"Video Dreh Content","c":"creative"},{"n":"palette","k":"Malen Farben Kunst","c":"creative"},{"n":"brush","k":"Pinsel Zeichnen","c":"creative"},{"n":"pen-tool","k":"Design Grafik","c":"creative"},{"n":"feather","k":"Schreiben Gedicht Feder","c":"creative"},{"n":"gamepad-2","k":"Gaming Spiel Controller","c":"creative"},{"n":"dice-5","k":"Würfel Brettspiel","c":"creative"},{"n":"users","k":"Freunde Familie Leute","c":"social"},{"n":"heart-handshake","k":"Helfen Dankbarkeit","c":"social"},{"n":"handshake","k":"Netzwerken Treffen","c":"social"},{"n":"message-circle","k":"Nachricht Schreiben Kontakt","c":"social"},{"n":"gift","k":"Geschenk Freundlichkeit","c":"social"},{"n":"baby","k":"Kind Familie","c":"social"},{"n":"church","k":"Glaube Ruhe","c":"social"},{"n":"leaf","k":"Blatt Natur Grün","c":"nature"},{"n":"sprout","k":"Wachsen Pflanze","c":"nature"},{"n":"flower-2","k":"Blume Pflanzen gießen","c":"nature"},{"n":"tree-pine","k":"Baum Wald Natur","c":"nature"},{"n":"tent","k":"Zelt Camping","c":"nature"},{"n":"dog","k":"Hund Gassi","c":"nature"},{"n":"cat","k":"Katze Haustier","c":"nature"},{"n":"fish","k":"Fisch Angeln","c":"nature"},{"n":"wallet","k":"Geldbörse Budget","c":"money"},{"n":"piggy-bank","k":"Sparen Sparschwein","c":"money"},{"n":"banknote","k":"Geld Banknote","c":"money"},{"n":"coins","k":"Münzen Sparen","c":"money"},{"n":"hand-coins","k":"Investieren Geld","c":"money"},{"n":"receipt","k":"Ausgaben Beleg Quittung","c":"money"},{"n":"cigarette-off","k":"Nicht rauchen Rauchstopp","c":"quit"},{"n":"cigarette","k":"Rauchen Zigarette","c":"quit"},{"n":"wine-off","k":"Kein Alkohol","c":"quit"},{"n":"beer-off","k":"Kein Bier Alkohol","c":"quit"},{"n":"wine","k":"Wein Alkohol","c":"quit"},{"n":"candy-off","k":"Kein Zucker Süßigkeiten","c":"quit"},{"n":"candy","k":"Süßigkeiten Zucker","c":"quit"},{"n":"cookie","k":"Keks Snacks","c":"quit"},{"n":"pizza","k":"Pizza Fast Food","c":"quit"},{"n":"cup-soda","k":"Softdrinks Cola Zucker","c":"quit"},{"n":"phone-off","k":"Handyfrei Social Media","c":"quit"},{"n":"monitor-off","k":"Kein Bildschirm Serien","c":"quit"},{"n":"bell-off","k":"Benachrichtigungen aus","c":"quit"},{"n":"ban","k":"Verbot Stopp Nein","c":"quit"},{"n":"circle-x","k":"Nein Stopp","c":"quit"}];
 </script>
 <script>
@@ -721,7 +780,28 @@ const dayNum = (d, m) => (LANG === 'de' ? `${d}.${m}.` : `${m}/${d}`);
 
 // ---------- state ----------
 function blank() {
-  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', lang: '', haptics: true, habitIds: [], attrs: [] }, habits: {}, scores: {} };
+  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', lang: '', haptics: true, habitIds: [], attrs: [], todoCats: defaultCats() }, habits: {}, scores: {}, todos: {} };
+}
+
+// To-do categories: the four defaults keep an empty name and show a translated one
+const DEFAULT_CATS = [['school', '#38BDF8'], ['biz', '#F97316'], ['band', '#A855F7'], ['train', '#22C55E']];
+const DEFAULT_CAT_NAMES = { school: ['Schule', 'School'], biz: ['Business', 'Business'], band: ['Band', 'Band'], train: ['Training', 'Training'] };
+function defaultCats() { return DEFAULT_CATS.map(([id, color]) => ({ id, name: '', color })); }
+const catName = c => c.name || (DEFAULT_CAT_NAMES[c.id] ? T(...DEFAULT_CAT_NAMES[c.id]) : '');
+function normTodo(t, id) {
+  if (!t || typeof t !== 'object') return null;
+  return {
+    _t: Number(t._t) || 0,
+    id,
+    title: String(t.title || '').slice(0, 140),
+    due: isKey(t.due) ? t.due : '',
+    time: /^\d{2}:\d{2}$/.test(t.time || '') ? t.time : '',
+    cat: t.cat ? String(t.cat) : '',
+    done: !!t.done,
+    doneAt: Number(t.doneAt) || 0,
+    createdAt: Number(t.createdAt) || Number(t._t) || 0,
+    deleted: !!t.deleted,
+  };
 }
 
 function normHabit(h, id) {
@@ -762,6 +842,11 @@ function normalize(r) {
   s.meta.attrs = Array.isArray(m.attrs) ? m.attrs.filter(a => a && a.id && a.name).map(a => ({
     id: String(a.id), name: String(a.name).slice(0, 30), color: /^#[0-9a-f]{6}$/i.test(a.color) ? a.color : '#A855F7',
   })) : [];
+  if (Array.isArray(m.todoCats)) s.meta.todoCats = m.todoCats.filter(c => c && c.id).map(c => ({
+    id: String(c.id), name: String(c.name || '').slice(0, 24), color: /^#[0-9a-f]{6}$/i.test(c.color) ? c.color : '#38BDF8',
+  }));
+  const td = r.todos && typeof r.todos === 'object' ? r.todos : {};
+  for (const id in td) { const t = normTodo(td[id], String(id)); if (t && (t.title || t.deleted)) s.todos[t.id] = t; }
   const ids = Array.isArray(m.habitIds) ? m.habitIds.map(String) : [];
   const habits = r.habits && typeof r.habits === 'object' ? r.habits : {};
   for (const id of ids) {
@@ -804,10 +889,12 @@ function saveLocal() {
 function touchMeta() { S.meta._t = Date.now(); dirty.add('meta'); }
 function touchHabit(id) { if (S.habits[id]) { S.habits[id]._t = Date.now(); dirty.add('h:' + id); } }
 function touchYear(y) { if (S.scores[y]) { S.scores[y]._t = Date.now(); dirty.add('s:' + y); } }
+function touchTodo(id) { if (S.todos[id]) { S.todos[id]._t = Date.now(); dirty.add('t:' + id); } }
 function markAllDirty() {
   touchMeta();
   for (const id in S.habits) touchHabit(id);
   for (const y in S.scores) touchYear(y);
+  for (const id in S.todos) touchTodo(id);
 }
 function commit(opts) { saveLocal(); scheduleSync(); if (!opts || opts.render !== false) render(); }
 
@@ -894,7 +981,7 @@ async function retry(fn) {
 async function pull() {
   if (!cloud.backend) return;
   const docs = await retry(() => cloud.backend.list());
-  const raw = { meta: null, habits: {}, scores: {} };
+  const raw = { meta: null, habits: {}, scores: {}, todos: {} };
   let any = false;
   for (const d of docs) {
     if (!d || !d.data) continue;
@@ -903,16 +990,18 @@ async function pull() {
     if (d.id === 'meta') raw.meta = b;
     else if (d.id.startsWith('habit-')) raw.habits[d.id.slice(6)] = b;
     else if (d.id.startsWith('scores-')) raw.scores[d.id.slice(7)] = b;
+    else if (d.id.startsWith('todo-')) raw.todos[d.id.slice(5)] = b;
   }
   if (!any || !raw.meta) {
     if (S.meta.onboarded) markAllDirty();
   } else {
     const allIds = Array.from(new Set([...(raw.meta.habitIds || []), ...Object.keys(raw.habits)]));
-    const R = normalize({ meta: { ...raw.meta, habitIds: allIds }, habits: raw.habits, scores: raw.scores });
+    const R = normalize({ meta: { ...raw.meta, habitIds: allIds }, habits: raw.habits, scores: raw.scores, todos: raw.todos });
     R.meta.habitIds = (raw.meta.habitIds || []).filter(id => R.habits[id]);
     const orphan = Object.keys(R.habits).filter(id => !R.meta.habitIds.includes(id));
     merge(R, orphan);
   }
+  gcTodos();
   cloud.status = 'synced'; cloud.lastSync = Date.now();
   saveLocal();
   if (ui.view === 'onboarding' && S.meta.onboarded) { ui.view = 'habits'; ui.stack = []; }
@@ -949,12 +1038,31 @@ function merge(R, orphanRemote) {
     scores[y] = w;
     if (w === l && w !== r) dirty.add('s:' + y);
   }
-  S = { v: 1, meta: { ...M, resetAt, habitIds: M.habitIds.filter(id => habits[id]) }, habits, scores };
+  const todos = {};
+  for (const id of new Set([...Object.keys(L.todos || {}), ...Object.keys(R.todos || {})])) {
+    let l = (L.todos || {})[id], r = (R.todos || {})[id];
+    if (l && (l._t || 0) < resetAt) l = null;
+    if (r && (r._t || 0) < resetAt) r = null;
+    const w = !l ? r : !r ? l : (newer(l, r) ? l : r);
+    if (!w) { if ((R.todos || {})[id]) pendingDeletes.add('todo-' + id); continue; }
+    todos[id] = w;
+    if (w === l && w !== r) dirty.add('t:' + id);
+  }
+  S = { v: 1, meta: { ...M, resetAt, habitIds: M.habitIds.filter(id => habits[id]) }, habits, scores, todos };
+}
+// deleted to-dos stay as small markers so other devices learn about the delete; after 45 days they go for good
+function gcTodos() {
+  const cut = Date.now() - 45 * 864e5;
+  for (const id in S.todos) {
+    const t = S.todos[id];
+    if (t.deleted && (t._t || 0) < cut) { delete S.todos[id]; dirty.delete('t:' + id); pendingDeletes.add('todo-' + id); }
+  }
 }
 function docFor(item) {
   if (item === 'meta') return ['meta', S.meta];
   if (item.startsWith('h:')) { const id = item.slice(2); return ['habit-' + id, S.habits[id] || null]; }
   if (item.startsWith('s:')) { const y = item.slice(2); return ['scores-' + y, S.scores[y] || null]; }
+  if (item.startsWith('t:')) { const id = item.slice(2); return ['todo-' + id, S.todos[id] || null]; }
   return [null, null];
 }
 function scheduleSync() {
@@ -1104,6 +1212,7 @@ const ui = {
   scoreTab: 'rate', scoreDate: null, overviewPeriod: '30', tableMonth: null,
   attrEdit: null, confirm: null, onboardName: '', focusAttr: null,
   habitMenu: null, sorting: false, swipeLeft: 0,
+  todoFilter: 'all', todoEdit: null, showDone: false, catList: false, catEdit: null, qa: '',
   auth: { mode: 'login', email: '', pw: '', busy: false, error: '', info: '' },
 };
 function go(view) {
@@ -1121,9 +1230,11 @@ function goBack() {
   back();
 }
 window.addEventListener('popstate', () => {
-  if (ui.confirm || ui.attrEdit || ui.drawer || ui.habitMenu) { ui.confirm = null; ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; }
+  if (anyOverlay()) closeAllOverlays();
   if (ui.stack.length) back(); else render();
 });
+const anyOverlay = () => !!(ui.confirm || ui.attrEdit || ui.drawer || ui.habitMenu || ui.todoEdit || ui.catList || ui.catEdit);
+function closeAllOverlays() { ui.confirm = null; ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; }
 function setTop(view) {
   if (STANDALONE && ui.stack.length) { try { history.go(-ui.stack.length); } catch (e) { /* ignore */ } }
   ui.stack = []; ui.view = view; ui.drawer = false; ui.navDir = 'top';
@@ -1168,7 +1279,7 @@ function toast(msg) {
 // ---------- shared view pieces ----------
 function header({ left = 'menu', title, sub = '', right = '' }) {
   const l = left === 'menu'
-    ? `<button class="ib" data-a="openDrawer" aria-label="${T('Menü öffnen', 'Open menu')}">${icon('menu')}</button>`
+    ? `<button class="ib menu" data-a="openDrawer" aria-label="${T('Menü öffnen', 'Open menu')}${todoBadge() ? T(' – offene Aufgaben', ' – open tasks') : ''}">${icon('menu')}${todoBadge() ? '<i class="mdot" aria-hidden="true"></i>' : ''}</button>`
     : left === 'back'
       ? `<button class="ib" data-a="back" aria-label="${T('Zurück', 'Back')}">${icon('chevron-left')}</button>`
       : left === 'close'
@@ -1906,19 +2017,193 @@ function viewSettings() {
           <button class="btn soft" style="height:40px;font-size:14px" data-a="restoreHabit" data-id="${h.id}">${icon('archive-restore', 16)} ${T('Zurückholen', 'Restore')}</button></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.1</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.2</p>
   </main>`;
+}
+
+// ---------- to-dos ----------
+const todoCats = () => S.meta.todoCats || [];
+const catById = id => todoCats().find(c => c.id === id) || null;
+const liveTodos = () => Object.values(S.todos).filter(t => !t.deleted);
+// open tasks that need attention now: overdue or due today
+const todoBadge = () => { const t = todayK(); return liveTodos().filter(x => !x.done && x.due && x.due <= t).length; };
+function relDay(k) {
+  const diff = dnum(k) - dnum(todayK());
+  if (diff === 0) return T('Heute', 'Today');
+  if (diff === 1) return T('Morgen', 'Tomorrow');
+  if (diff === -1) return T('Gestern', 'Yesterday');
+  if (diff > 1 && diff < 7) return WD_LONG[wday(k)];
+  return fmtShort(k);
+}
+const fmtTime = hm => { if (LANG === 'de') return hm; const [h, m] = hm.split(':').map(Number); return ((h + 11) % 12 + 1) + ':' + pad(m) + (h < 12 ? ' AM' : ' PM'); };
+function todoGroups() {
+  const t = todayK(), tm = addD(t, 1);
+  const f = ui.todoFilter;
+  const xs = liveTodos().filter(x => f === 'all' || x.cat === f);
+  const open = xs.filter(x => !x.done);
+  const byDue = (a, b) => (a.due + (a.time || '99')).localeCompare(b.due + (b.time || '99')) || a.createdAt - b.createdAt;
+  return {
+    overdue: open.filter(x => x.due && x.due < t).sort(byDue),
+    today: open.filter(x => x.due === t).sort(byDue),
+    tomorrow: open.filter(x => x.due === tm).sort(byDue),
+    later: open.filter(x => x.due && x.due > tm).sort(byDue),
+    someday: open.filter(x => !x.due).sort((a, b) => b.createdAt - a.createdAt),
+    done: xs.filter(x => x.done).sort((a, b) => b.doneAt - a.doneAt),
+  };
+}
+function todoRow(x, overdue) {
+  const c = catById(x.cat);
+  const col = c ? c.color : 'var(--text)';
+  const meta = [];
+  if (c) meta.push(`<span class="tcat"><i class="dot"></i>${esc(catName(c))}</span>`);
+  if (x.due && !x.done) meta.push(`<span class="${overdue ? 'late' : ''}">${esc(relDay(x.due))}${x.time ? ' · ' + fmtTime(x.time) : ''}</span>`);
+  return `<div class="trow${x.done ? ' done' : ''}" data-tid="${x.id}" style="--c:${col}">
+    <button class="tchk${x.done ? ' on' : ''}${overdue ? ' late' : ''}" data-a="todoToggle" data-id="${x.id}" role="checkbox" aria-checked="${x.done}" aria-label="${esc(x.title)}">${icon('check', 16, 3.2)}</button>
+    <button class="topen" data-a="openTodo" data-id="${x.id}"><span class="ttl">${esc(x.title)}</span>${meta.length ? `<span class="tmeta">${meta.join('<b aria-hidden="true">·</b>')}</span>` : ''}</button>
+  </div>`;
+}
+function viewTodos() {
+  const g = todoGroups();
+  const openN = g.overdue.length + g.today.length + g.tomorrow.length + g.later.length + g.someday.length;
+  const sec = (title, list, cls = '') => list.length ? `<section class="tsec"><span class="label ${cls}">${title}<em class="num">${list.length}</em></span>${list.map(x => todoRow(x, cls === 'late')).join('')}</section>` : '';
+  const chips = [['all', T('Alle', 'All'), null], ...todoCats().map(c => [c.id, catName(c), c.color])];
+  const empty = !openN && !g.done.length;
+  return header({ title: T('To-Dos', 'To-dos'), sub: openN ? T(`${openN} offen`, `${openN} open`) : T('Alles erledigt', 'All clear'), right: `<button class="ib solid" data-a="newTodo" aria-label="${T('Neue Aufgabe', 'New task')}">${icon('plus', 20, 2.5)}</button>` }) +
+  `<main class="stack">
+    <form class="qa" data-form="quickadd" autocomplete="off">
+      <label for="qa" class="sr">${T('Neue Aufgabe', 'New task')}</label>
+      <input id="qa" class="inp" data-bind="qa" value="${esc(ui.qa)}" maxlength="140" placeholder="${T('Neue Aufgabe …', 'New task …')}" enterkeyhint="done">
+      <button type="button" class="ib" data-a="qaMore" aria-label="${T('Mit Datum und Kategorie', 'With date and category')}">${icon('sliders-horizontal', 18)}</button>
+      <button type="submit" id="qa-go" class="ib solid" aria-label="${T('Hinzufügen', 'Add')}" ${ui.qa.trim() ? '' : 'disabled'}>${icon('arrow-up', 20, 2.5)}</button>
+    </form>
+    <div class="chips" role="group" aria-label="${T('Kategorie filtern', 'Filter by category')}">
+      ${chips.map(([id, n, col]) => `<button class="chip" data-a="todoFilter" data-v="${id}" aria-pressed="${ui.todoFilter === id}">${col ? `<i class="dot" style="--c:${col}"></i>` : ''}${esc(n)}</button>`).join('')}
+      <button class="chip" data-a="openCats" aria-label="${T('Kategorien bearbeiten', 'Edit categories')}">${icon('pencil', 14)}</button>
+    </div>
+    ${empty ? `<div class="card empty"><h2>${T('Keine Aufgaben', 'No tasks')}</h2><p class="hint" style="margin:0">${T('Schreib oben rein, was ansteht. Mit dem Regler-Symbol gibst du Datum, Uhrzeit und Kategorie an.', 'Type what you need to do above. The slider icon adds a date, time and category.')}</p></div>` : ''}
+    ${sec(T('Überfällig', 'Overdue'), g.overdue, 'late')}
+    ${sec(T('Heute', 'Today'), g.today)}
+    ${sec(T('Morgen', 'Tomorrow'), g.tomorrow)}
+    ${sec(T('Später', 'Later'), g.later)}
+    ${sec(T('Ohne Datum', 'No date'), g.someday)}
+    ${g.done.length ? `<section class="tsec"><button class="label tdone-t" data-a="toggleDone" aria-expanded="${ui.showDone}">${T('Erledigt', 'Done')}<em class="num">${g.done.length}</em>${icon(ui.showDone ? 'chevron-down' : 'chevron-right', 14, 2.5)}</button>
+      ${ui.showDone ? g.done.slice(0, 50).map(x => todoRow(x, false)).join('') + (g.done.length > 0 ? `<button class="linkbtn" data-a="clearDone" style="--c:var(--muted);align-self:flex-start">${T('Erledigte löschen', 'Clear completed')}</button>` : '') : ''}</section>` : ''}
+  </main>`;
+}
+function todoSheetHtml() {
+  const e = ui.todoEdit;
+  const t = todayK(), tm = addD(t, 1);
+  const dueMode = !e.due ? 'none' : e.due === t ? 'today' : e.due === tm ? 'tomorrow' : 'pick';
+  const showPick = dueMode === 'pick' || e.pick;
+  const c = catById(e.cat);
+  return `<div class="scrim" data-a="closeOverlay"></div>
+  <div class="sheet tsheet" role="dialog" aria-modal="true" aria-labelledby="te-h" style="--c:${c ? c.color : 'var(--text)'}">
+    <div class="sheethead"><h2 id="te-h">${e.id ? T('Aufgabe', 'Task') : T('Neue Aufgabe', 'New task')}</h2>
+      <button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button></div>
+    <div class="field"><label for="te-title" class="sr">${T('Titel', 'Title')}</label>
+      <input id="te-title" class="inp big" data-bind="te.title" value="${esc(e.title)}" maxlength="140" placeholder="${T('Was steht an?', 'What needs doing?')}" autocomplete="off" enterkeyhint="done"></div>
+    <div class="field"><span class="flabel">${T('Fällig', 'Due')}</span>
+      <div class="chips wrap">
+        <button class="chip" data-a="teDue" data-v="today" aria-pressed="${dueMode === 'today' && !e.pick}">${T('Heute', 'Today')}</button>
+        <button class="chip" data-a="teDue" data-v="tomorrow" aria-pressed="${dueMode === 'tomorrow' && !e.pick}">${T('Morgen', 'Tomorrow')}</button>
+        <button class="chip" data-a="teDue" data-v="pick" aria-pressed="${!!showPick}">${icon('calendar-days', 14)}${dueMode === 'pick' ? esc(relDay(e.due)) : T('Datum', 'Date')}</button>
+        <button class="chip" data-a="teDue" data-v="none" aria-pressed="${dueMode === 'none' && !e.pick}">${T('Ohne', 'None')}</button>
+      </div>
+      ${showPick ? `<input id="te-date" class="inp" type="date" data-bind="te.due" value="${e.due}" aria-label="${T('Datum', 'Date')}">` : ''}</div>
+    ${e.due ? `<div class="field"><label for="te-time" class="flabel">${T('Uhrzeit (optional)', 'Time (optional)')}</label>
+      <div class="trowin"><input id="te-time" class="inp" type="time" data-bind="te.time" value="${e.time}">
+      ${e.time ? `<button class="ib" data-a="teNoTime" aria-label="${T('Uhrzeit entfernen', 'Remove time')}">${icon('x', 18)}</button>` : ''}</div></div>` : ''}
+    <div class="field"><span class="flabel">${T('Kategorie', 'Category')}</span>
+      <div class="chips wrap">
+        ${todoCats().map(cc => `<button class="chip" data-a="teCat" data-v="${cc.id}" aria-pressed="${e.cat === cc.id}"><i class="dot" style="--c:${cc.color}"></i>${esc(catName(cc))}</button>`).join('')}
+        <button class="chip dashed" data-a="newCat">${icon('plus', 14, 2.5)}${T('Neu', 'New')}</button>
+      </div></div>
+    <button id="te-save" class="btn primary block" data-a="saveTodo" ${e.title.trim() ? '' : 'disabled'}>${e.id ? T('Speichern', 'Save') : T('Hinzufügen', 'Add')}</button>
+    ${e.id ? `<div class="row2">
+      <button class="btn soft" data-a="todoIcs" ${e.due ? '' : 'disabled'}>${icon('calendar-plus', 18)}${T('Kalender', 'Calendar')}</button>
+      <button class="btn danger" data-a="deleteTodo">${icon('trash-2', 18)}${T('Löschen', 'Delete')}</button></div>
+      ${e.due ? '' : `<p class="hint" style="margin:-6px 4px 0">${T('Für den Kalender braucht die Aufgabe ein Datum.', 'Add a date to put this task in your calendar.')}</p>`}` : ''}
+  </div>`;
+}
+function catListHtml() {
+  return `<div class="scrim" data-a="closeOverlay"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cl-h">
+    <div class="sheethead"><h2 id="cl-h">${T('Kategorien', 'Categories')}</h2>
+      <button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button></div>
+    ${todoCats().length ? `<div class="list">${todoCats().map(c => `<button class="li" data-a="editCat" data-id="${c.id}" style="--c:${c.color}"><span style="display:flex;align-items:center;gap:12px"><i class="dot"></i>${esc(catName(c))}</span>${icon('pencil', 16)}</button>`).join('')}</div>` : `<p class="hint" style="margin:0 4px">${T('Noch keine Kategorien.', 'No categories yet.')}</p>`}
+    <button class="btn dashed block" data-a="newCat">${icon('plus', 18, 2.5)} ${T('Neue Kategorie', 'New category')}</button>
+  </div>`;
+}
+function catSheetHtml() {
+  const e = ui.catEdit;
+  return `<div class="scrim" data-a="closeOverlay"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ce-h" style="${cvars(e.color)}">
+    <div class="sheethead"><h2 id="ce-h">${e.id ? T('Kategorie bearbeiten', 'Edit category') : T('Neue Kategorie', 'New category')}</h2>
+      <button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button></div>
+    <div class="field"><label for="cat-name">Name</label>
+      <input id="cat-name" class="inp" data-bind="catEdit.name" value="${esc(e.name)}" maxlength="24" placeholder="${T('z. B. Mathe', 'e.g. Math')}" autocomplete="off"></div>
+    <div class="field"><span class="flabel">${T('Farbe', 'Color')}</span>
+      <div class="colors">${COLORS_L().map(([c, n]) => `<button data-a="catColor" data-c="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${c === e.color}"></button>`).join('')}</div></div>
+    <button id="save-cat" class="btn accent block" data-a="saveCat" ${e.name.trim() ? '' : 'disabled'}>${e.id ? T('Speichern', 'Save') : T('Hinzufügen', 'Add')}</button>
+    ${e.id ? `<button class="btn danger block" data-a="deleteCat">${T('Kategorie löschen', 'Delete category')}</button>` : ''}
+  </div>`;
+}
+// One calendar event per task (.ics). Timed tasks get 30 minutes and a reminder 15 minutes before.
+function todoIcs(x) {
+  const icsEsc = s => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  const d = x.due.replace(/-/g, '');
+  const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
+  const c = catById(x.cat);
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Habit Tracker//To-Dos//DE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
+    'UID:' + x.id + '@habit-tracker', 'DTSTAMP:' + now];
+  if (x.time) {
+    const [h, m] = x.time.split(':').map(Number);
+    const end = h * 60 + m + 30;
+    const endD = end >= 1440 ? addD(x.due, 1).replace(/-/g, '') : d;
+    const e2 = end % 1440;
+    lines.push('DTSTART:' + d + 'T' + pad(h) + pad(m) + '00', 'DTEND:' + endD + 'T' + pad(Math.floor(e2 / 60)) + pad(e2 % 60) + '00');
+  } else {
+    lines.push('DTSTART;VALUE=DATE:' + d, 'DTEND;VALUE=DATE:' + addD(x.due, 1).replace(/-/g, ''), 'TRANSP:TRANSPARENT');
+  }
+  lines.push('SUMMARY:' + icsEsc(x.title));
+  if (c) lines.push('CATEGORIES:' + icsEsc(catName(c)));
+  if (x.time) lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEsc(x.title), 'TRIGGER:-PT15M', 'END:VALARM');
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.join('\r\n') + '\r\n';
+}
+const isAppleTouch = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+async function exportIcs(x) {
+  const data = todoIcs(x);
+  const base = (x.title.replace(/[^\p{L}\p{N} _-]+/gu, '').trim().slice(0, 40) || 'aufgabe').replace(/\s+/g, '-');
+  const filename = base + '.ics';
+  let dl = null;
+  try { dl = window.claude && window.claude.use && !window.FIREBASE_CONFIG ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) {
+    try { await dl.save({ filename, data }); toast(T('Kalender-Datei gespeichert', 'Calendar file saved')); } catch (e) { if (!e || e.code !== 'declined') toast(T('Hier gerade nicht möglich.', 'Not possible here right now.')); }
+    return;
+  }
+  // iPhone and iPad open a calendar file directly and offer "Add to Calendar"
+  if (isAppleTouch()) { location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(data); return; }
+  try {
+    const url = URL.createObjectURL(new Blob([data], { type: 'text/calendar;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast(T('Datei öffnen, dann landet die Aufgabe im Kalender', 'Open the file to add the task to your calendar'));
+  } catch (e) { toast(T('Hier gerade nicht möglich.', 'Not possible here right now.')); }
 }
 
 // ---------- overlays ----------
 function drawerHtml() {
   const v = ui.view;
   const cur = name => (v === name || (name === 'habits' && ['detail', 'edit', 'icons'].includes(v))) ? 'aria-current="page"' : '';
+  const nb = todoBadge();
   const nm = S.meta.name || T('Du', 'You');
   return `<div class="scrim" data-a="closeOverlay"></div>
   <nav class="drawer" aria-label="${T('Hauptmenü', 'Main menu')}">
     <div class="prof"><span class="avatar">${esc(nm.trim().charAt(0).toUpperCase() || 'D')}</span><div style="min-width:0"><b>${esc(nm)}</b><span>${habitList().length} ${T(plural(habitList().length, 'Gewohnheit', 'Gewohnheiten'), plural(habitList().length, 'habit', 'habits'))}</span></div></div>
     <button class="nav" data-a="nav" data-v="habits" ${cur('habits')}>${icon('list-checks', 22)}${T('Gewohnheiten', 'Habits')}</button>
+    <button class="nav" data-a="nav" data-v="todos" ${cur('todos')}>${icon('square-check-big', 22)}${T('To-Dos', 'To-dos')}${nb ? `<span class="badge num" aria-label="${T(`${nb} offen`, `${nb} open`)}">${nb > 99 ? '99+' : nb}</span>` : ''}</button>
     <button class="nav" data-a="nav" data-v="stats" ${cur('stats')}>${icon('chart-column', 22)}${T('Statistiken', 'Statistics')}</button>
     <button class="nav" data-a="nav" data-v="score" ${cur('score')}>${icon('star', 22)}${T('Tages-Score', 'Daily score')}</button>
     <div class="foot"><hr><button class="nav" data-a="nav" data-v="settings" ${cur('settings')}>${icon('settings', 22)}${T('Einstellungen', 'Settings')}</button></div>
@@ -1968,19 +2253,23 @@ function render() {
     case 'stats': html = viewStats(); break;
     case 'score': html = viewScore(); break;
     case 'settings': html = viewSettings(); break;
+    case 'todos': html = viewTodos(); break;
     default: ui.view = 'habits'; html = viewHabits();
   }
   if (ui.view !== 'onboarding' && ui.view !== 'auth') {
     if (ui.drawer) html += drawerHtml();
     if (ui.attrEdit) html += attrSheetHtml();
     if (ui.habitMenu) html += habitMenuHtml();
+    if (ui.todoEdit) html += todoSheetHtml();
+    if (ui.catList && !ui.catEdit) html += catListHtml();
+    if (ui.catEdit) html += catSheetHtml();
     if (ui.confirm) html += confirmHtml();
   }
   const ae = document.activeElement;
   const focusId = ae && ae.id ? ae.id : null;
   const entering = lastView !== ui.view;
   app.innerHTML = html;
-  const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : '';
+  const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : ui.catEdit ? 'ce' : ui.catList ? 'cl' : ui.todoEdit ? 't' : '';
   if (ovKey && ovKey !== lastOv) app.querySelectorAll('.scrim, .drawer, .sheet, .dialog').forEach(e => e.classList.add('anim'));
   lastOv = ovKey;
   if (entering) {
@@ -2021,7 +2310,7 @@ function render() {
     else fill.style.width = w + '%';
     ui.prevPct = w;
   }
-  document.body.classList.toggle('lock', !!(ui.drawer || ui.attrEdit || ui.confirm || ui.habitMenu));
+  document.body.classList.toggle('lock', anyOverlay());
   const sw = document.getElementById('swipe');
   if (sw) {
     sw.scrollLeft = ui.swipeLeft || 0;
@@ -2036,7 +2325,7 @@ function render() {
   if (focusId) { const el = document.getElementById(focusId); if (el && el.tagName === 'INPUT') { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) { /* date inputs */ } } }
   if (lastView !== ui.view) {
     lastView = ui.view;
-    const titles = { onboarding: T('Willkommen', 'Welcome'), habits: T('Gewohnheiten', 'Habits'), detail: T('Gewohnheit', 'Habit'), edit: T('Bearbeiten', 'Edit'), icons: T('Icon wählen', 'Choose icon'), stats: T('Statistiken', 'Statistics'), score: T('Tages-Score', 'Daily score'), settings: T('Einstellungen', 'Settings'), auth: T('Anmelden', 'Sign in') };
+    const titles = { onboarding: T('Willkommen', 'Welcome'), habits: T('Gewohnheiten', 'Habits'), detail: T('Gewohnheit', 'Habit'), edit: T('Bearbeiten', 'Edit'), icons: T('Icon wählen', 'Choose icon'), stats: T('Statistiken', 'Statistics'), score: T('Tages-Score', 'Daily score'), settings: T('Einstellungen', 'Settings'), todos: T('To-Dos', 'To-dos'), auth: T('Anmelden', 'Sign in') };
     document.title = (titles[ui.view] || 'Habits') + ' · Habit Tracker';
   }
 }
@@ -2092,7 +2381,8 @@ const actions = {
   openDrawer: () => { ui.drawer = true; render(); setTimeout(() => { const n = document.querySelector('.drawer .nav'); if (n) n.focus(); }, 0); },
   closeOverlay: () => {
     if (ui.confirm) { const c = ui.confirm; ui.confirm = null; if (c.onCancel) c.onCancel(); render(); return; }
-    ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; render();
+    if (ui.catEdit && (ui.catList || ui.todoEdit)) { ui.catEdit = null; render(); return; }
+    ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; render();
   },
   nav: el => setTop(el.dataset.v),
 
@@ -2310,6 +2600,135 @@ const actions = {
   },
   confirmOk: () => { const c = ui.confirm; ui.confirm = null; if (c && c.onOk) c.onOk(); render(); },
 
+  // to-dos
+  todoFilter: el => { ui.todoFilter = el.dataset.v; render(); fx('.tsec', 'fx-in', 450); },
+  toggleDone: () => { ui.showDone = !ui.showDone; render(); },
+  quickAdd: () => {
+    const title = ui.qa.trim();
+    if (!title) return;
+    const id = 't' + uid();
+    const now = Date.now();
+    S.todos[id] = normTodo({ title, cat: ui.todoFilter !== 'all' ? ui.todoFilter : '', createdAt: now }, id);
+    touchTodo(id);
+    ui.qa = '';
+    haptic('light');
+    commit();
+    const inp = document.getElementById('qa'); if (inp) { inp.value = ''; inp.focus(); }
+    fx(`.trow[data-tid="${id}"]`, 'fx-new', 600);
+  },
+  qaMore: () => { actions.newTodo(); },
+  newTodo: () => {
+    ui.todoEdit = { id: null, title: ui.qa.trim(), due: '', time: '', cat: ui.todoFilter !== 'all' ? ui.todoFilter : '', pick: false };
+    render();
+    setTimeout(() => { const i = document.getElementById('te-title'); if (i && !ui.todoEdit.title) i.focus(); }, 60);
+  },
+  openTodo: el => {
+    const x = S.todos[el.dataset.id];
+    if (!x) return;
+    ui.todoEdit = { id: x.id, title: x.title, due: x.due, time: x.time, cat: x.cat, pick: false };
+    render();
+  },
+  teDue: el => {
+    const e = ui.todoEdit, v = el.dataset.v, t = todayK();
+    if (v === 'today') { e.due = t; e.pick = false; }
+    else if (v === 'tomorrow') { e.due = addD(t, 1); e.pick = false; }
+    else if (v === 'none') { e.due = ''; e.time = ''; e.pick = false; }
+    else { e.pick = true; if (!e.due) e.due = addD(t, 2); }
+    render();
+    if (v === 'pick') setTimeout(() => { const d = document.getElementById('te-date'); if (d) { try { d.showPicker(); } catch (err) { d.focus(); } } }, 50);
+  },
+  teNoTime: () => { ui.todoEdit.time = ''; render(); },
+  teCat: el => { const e = ui.todoEdit; e.cat = e.cat === el.dataset.v ? '' : el.dataset.v; render(); },
+  saveTodo: () => {
+    const e = ui.todoEdit;
+    if (!e || !e.title.trim()) return;
+    const id = e.id || 't' + uid();
+    const prev = S.todos[id];
+    S.todos[id] = normTodo({ ...(prev || { createdAt: Date.now() }), title: e.title.trim(), due: e.due, time: e.due ? e.time : '', cat: e.cat }, id);
+    touchTodo(id);
+    const isNew = !e.id;
+    ui.todoEdit = null;
+    if (isNew) { ui.qa = ''; }
+    if (ui.view !== 'todos') { setTop('todos'); } 
+    commit();
+    fx(`.trow[data-tid="${id}"]`, isNew ? 'fx-new' : 'fx-in', 600);
+    if (isNew) toast(T('Aufgabe hinzugefügt', 'Task added'));
+  },
+  todoToggle: el => {
+    const x = S.todos[el.dataset.id];
+    if (!x) return;
+    const row = el.closest('.trow');
+    x.done = !x.done; x.doneAt = x.done ? Date.now() : 0;
+    touchTodo(x.id);
+    commit({ render: false });
+    if (x.done) {
+      haptic('success');
+      el.classList.add('on'); el.setAttribute('aria-checked', 'true');
+      fx(`.trow[data-tid="${x.id}"] .tchk`, 'fx-pop', 700);
+      if (row) row.classList.add('done', 'leaving');
+      const g = todoGroups();
+      if (!g.overdue.length && !g.today.length && (x.due && x.due <= todayK())) setTimeout(() => toast(T('Alles für heute erledigt', 'Everything for today is done')), 500);
+    } else {
+      haptic('light');
+      if (row) row.classList.remove('done');
+      el.classList.remove('on'); el.setAttribute('aria-checked', 'false');
+    }
+    clearTimeout(ui.todoTimer);
+    ui.todoTimer = setTimeout(() => safeRender(), x.done ? 650 : 250);
+  },
+  todoIcs: () => {
+    const e = ui.todoEdit;
+    if (!e || !e.due) return;
+    exportIcs({ ...(S.todos[e.id] || {}), id: e.id || 'new', title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, cat: e.cat });
+  },
+  deleteTodo: () => {
+    const e = ui.todoEdit;
+    const x = e && S.todos[e.id];
+    if (!x) return;
+    x.deleted = true; x.title = '';
+    touchTodo(x.id);
+    ui.todoEdit = null;
+    commit();
+    toast(T('Aufgabe gelöscht', 'Task deleted'));
+  },
+  clearDone: () => openConfirm({
+    title: T('Erledigte löschen?', 'Clear completed?'), text: T('Alle erledigten Aufgaben werden auf allen Geräten gelöscht.', 'All completed tasks are deleted on every device.'), ok: T('Löschen', 'Delete'), danger: true,
+    onOk: () => { for (const x of liveTodos()) if (x.done) { x.deleted = true; x.title = ''; touchTodo(x.id); } ui.showDone = false; commit(); },
+  }),
+  openCats: () => { ui.catList = true; render(); },
+  newCat: () => { ui.catEdit = { id: null, name: '', color: COLOR_LIST[todoCats().length % COLOR_LIST.length][0] }; render(); setTimeout(() => { const i = document.getElementById('cat-name'); if (i) i.focus(); }, 60); },
+  editCat: el => { const c = catById(el.dataset.id); if (!c) return; ui.catEdit = { id: c.id, name: catName(c), color: c.color }; render(); },
+  catColor: el => { ui.catEdit.color = el.dataset.c; render(); },
+  saveCat: () => {
+    const e = ui.catEdit;
+    if (!e || !e.name.trim()) return;
+    const name = e.name.trim().slice(0, 24);
+    if (e.id) {
+      const c = catById(e.id);
+      if (c) { c.name = name === catName({ id: c.id, name: '' }) ? '' : name; c.color = e.color; }
+    } else {
+      const id = 'c' + uid();
+      S.meta.todoCats = [...todoCats(), { id, name, color: e.color }];
+      if (ui.todoEdit) ui.todoEdit.cat = id;
+    }
+    ui.catEdit = null;
+    touchMeta(); commit();
+  },
+  deleteCat: () => {
+    const e = ui.catEdit;
+    if (!e || !e.id) return;
+    openConfirm({
+      title: T('Kategorie löschen?', 'Delete category?'), text: T('Die Aufgaben bleiben erhalten, sie haben danach nur keine Kategorie mehr.', 'The tasks stay. They just won\'t have a category anymore.'), ok: T('Löschen', 'Delete'), danger: true,
+      onOk: () => {
+        S.meta.todoCats = todoCats().filter(c => c.id !== e.id);
+        for (const x of Object.values(S.todos)) if (x.cat === e.id) { x.cat = ''; touchTodo(x.id); }
+        if (ui.todoFilter === e.id) ui.todoFilter = 'all';
+        if (ui.todoEdit && ui.todoEdit.cat === e.id) ui.todoEdit.cat = '';
+        ui.catEdit = null; touchMeta(); commit();
+      },
+    });
+  },
+
   theme: el => { S.meta.theme = el.dataset.v; touchMeta(); applyTheme(); commit(); },
   setLang: el => {
     const v = el.dataset.v === 'de' ? 'de' : 'en';
@@ -2375,7 +2794,7 @@ const actions = {
     },
   }),
   resetAll: () => openConfirm({
-    title: T('Alle Daten löschen?', 'Delete all data?'), text: T('Gewohnheiten, Verlauf, Tages-Scores und dein Name werden gelöscht. Exportiere vorher ein Backup, falls du sie behalten willst.', 'Habits, history, daily scores and your name will be deleted. Export a backup first if you want to keep them.'), ok: T('Alles löschen', 'Delete everything'), danger: true,
+    title: T('Alle Daten löschen?', 'Delete all data?'), text: T('Gewohnheiten, Verlauf, Tages-Scores, To-Dos und dein Name werden gelöscht. Exportiere vorher ein Backup, falls du sie behalten willst.', 'Habits, history, daily scores, to-dos and your name will be deleted. Export a backup first if you want to keep them.'), ok: T('Alles löschen', 'Delete everything'), danger: true,
     onOk: async () => {
       const keep = new Set(['meta']);
       S = blank(); S.meta.resetAt = Date.now(); touchMeta();
@@ -2392,14 +2811,14 @@ function replaceAll(next) {
   next.meta.resetAt = now - 1;
   S = next;
   markAllDirty();
-  const keep = new Set(['meta', ...Object.keys(S.habits).map(id => 'habit-' + id), ...Object.keys(S.scores).map(y => 'scores-' + y)]);
+  const keep = new Set(['meta', ...Object.keys(S.habits).map(id => 'habit-' + id), ...Object.keys(S.scores).map(y => 'scores-' + y), ...Object.keys(S.todos).map(id => 'todo-' + id)]);
   wipeRemoteExcept(keep).then(() => scheduleSync());
   saveLocal(); applyTheme();
 }
 
 // ---------- events ----------
 // ---------- press ripple ----------
-const RIPPLE_SEL = '.btn, .seg button, .nav, .li, .chip, .tpl button, .ib, .dd, .cd, .igrid button, .chk, .hopen, .card.habit, .crow, .slide, .linkbtn, .rowbtn, .colors button, .star, .srow';
+const RIPPLE_SEL = '.topen, .tchk, .btn, .seg button, .nav, .li, .chip, .tpl button, .ib, .dd, .cd, .igrid button, .chk, .hopen, .card.habit, .crow, .slide, .linkbtn, .rowbtn, .colors button, .star, .srow';
 document.addEventListener('pointerdown', e => {
   if (e.button && e.button !== 0) return;
   const el = e.target.closest(RIPPLE_SEL);
@@ -2508,7 +2927,7 @@ document.addEventListener('click', e => {
   if (!fn) return;
   e.preventDefault();
   const a = el.dataset.a, v = el.dataset.v;
-  if (!['toggleToday', 'toggleDay', 'rate', 'closeOverlay'].includes(a)) haptic('light');
+  if (!['toggleToday', 'toggleDay', 'rate', 'closeOverlay', 'todoToggle', 'quickAdd'].includes(a)) haptic('light');
   fn(el, e);
   if (el.closest('.seg') && v != null) fx(`.seg [data-a="${a}"][data-v="${v}"]`, 'fx-pill', 400);
   if (['statsTab', 'scoreTab', 'statsPeriod', 'scoreStatsPeriod', 'overviewPeriod', 'layout', 'tableMonth', 'detailMonth', 'scoreDay'].includes(a)) {
@@ -2536,7 +2955,11 @@ document.addEventListener('input', e => {
     const g = document.getElementById('icon-grid'); if (g) g.innerHTML = iconGridHtml();
   } else if (b === 'attrEdit.name') {
     ui.attrEdit.name = v; const s = document.getElementById('save-attr'); if (s) s.disabled = !v.trim();
-  } else if (b === 'auth.email') { ui.auth.email = v; }
+  } else if (b === 'qa') { ui.qa = v; const g = document.getElementById('qa-go'); if (g) g.disabled = !v.trim(); }
+  else if (b === 'te.title') { ui.todoEdit.title = v; const s = document.getElementById('te-save'); if (s) s.disabled = !v.trim(); }
+  else if (b === 'te.time') { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(v) ? v : ''; }
+  else if (b === 'catEdit.name') { ui.catEdit.name = v; const s = document.getElementById('save-cat'); if (s) s.disabled = !v.trim(); }
+  else if (b === 'auth.email') { ui.auth.email = v; }
   else if (b === 'auth.pw') { ui.auth.pw = v; }
   else if (b === 'meta.name') {
     S.meta.name = v.slice(0, 40); touchMeta(); saveLocal(); scheduleSync();
@@ -2544,6 +2967,8 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const el = e.target;
+  if (el.id === 'te-date' && ui.todoEdit) { ui.todoEdit.due = isKey(el.value) ? el.value : ''; ui.todoEdit.pick = !!ui.todoEdit.due; if (!ui.todoEdit.due) ui.todoEdit.time = ''; el.blur(); render(); }
+  if (el.id === 'te-time' && ui.todoEdit) { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(el.value) ? el.value : ''; render(); }
   if (el.id === 'set-name') {
     const v = el.value.trim();
     if (!v) { S.meta.name = S.meta.name.trim() || T('Du', 'You'); el.value = S.meta.name; }
@@ -2574,12 +2999,15 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   if (e.target.dataset.form === 'onboard') actions.finishOnboarding();
   if (e.target.dataset.form === 'auth') actions.authSubmit();
+  if (e.target.dataset.form === 'quickadd') actions.quickAdd();
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && (ui.drawer || ui.attrEdit || ui.confirm || ui.habitMenu)) { actions.closeOverlay(); return; }
+  if (e.key === 'Escape' && anyOverlay()) { actions.closeOverlay(); return; }
   if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT') {
     if (e.target.id === 'f-name' || e.target.id === 'f-desc') { e.preventDefault(); if (ui.edit && ui.edit.name.trim()) actions.saveHabit(); }
     if (e.target.id === 'attr-name') { e.preventDefault(); actions.saveAttr(); }
+    if (e.target.id === 'cat-name') { e.preventDefault(); actions.saveCat(); }
+    if (e.target.id === 'te-title') { e.preventDefault(); if (ui.todoEdit && ui.todoEdit.title.trim()) actions.saveTodo(); }
     if (e.target.id === 'set-name') e.target.blur();
   }
 });
@@ -2591,42 +3019,28 @@ setInterval(() => { const t = todayK(); if (t !== lastDay) { lastDay = t; safeRe
 function showSplash() {
   if (navigator.webdriver && !window.__SPLASH) return;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const palette = ['#F97316', '#06B6D4', '#22C55E', '#A855F7', '#EC4899', '#EAB308', '#3B82F6', '#EF4444'];
-  const STEP = 30;
-  const cols = Math.ceil(window.innerWidth / STEP) + 1, rows = Math.ceil(window.innerHeight / STEP) + 1;
-  const cx = (cols - 1) / 2, cy = (rows - 1) / 2;
-  let tiles = '';
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const d = Math.hypot(c - cx, (r - cy) * 1.1);
-    const color = palette[Math.floor(d / 2.2) % palette.length];
-    const jitter = ((r * 31 + c * 17) % 7) * 12;
-    tiles += `<i style="--c:${color};--d:${Math.round(d * 70 + jitter)}ms"></i>`;
-  }
-  const word = 'Habit';
-  const mark = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i style="--c:${palette[i % palette.length]};--m:${i * 70}ms"></i>`).join('');
+  const palette = ['#F97316', '#EAB308', '#22C55E', '#EC4899', '#FAFAFA', '#06B6D4', '#A855F7', '#3B82F6', '#EF4444'];
+  // the 3x3 mark fills in a spiral, like days on a heatmap
+  const order = [0, 1, 2, 5, 8, 7, 6, 3, 4];
+  const mark = palette.map((c, i) => `<i style="--c:${c};--m:${order.indexOf(i) * 65}ms"></i>`).join('');
   const el = document.createElement('div');
   el.id = 'splash';
-  el.setAttribute('role', 'presentation');
-  el.innerHTML = `<div class="sp-grid" style="grid-template-columns:repeat(${cols}, ${STEP - 6}px)">${tiles}</div>
-    <div class="sp-center">
-      <div class="sp-glow"></div>
-      <div class="sp-mark">${mark}</div>
-      <div class="sp-word">${word.split('').map((ch, i) => `<span style="--l:${i * 60}ms">${ch}</span>`).join('')}</div>
-      <div class="sp-sub">TRACKER</div>
-      <div class="sp-bar"><i></i></div>
-    </div>`;
+  el.setAttribute('role', 'progressbar');
+  el.setAttribute('aria-label', T('App wird geladen', 'Loading app'));
+  el.innerHTML = `<div class="sp-center"><div class="sp-halo"></div><div class="sp-mark">${mark}</div><div class="sp-bar"><i></i><b></b></div></div>`;
   document.body.appendChild(el);
   document.body.classList.add('lock');
   let done = false;
   const finish = () => {
     if (done) return; done = true;
     el.classList.add('out');
-    document.body.classList.toggle('lock', !!(ui.drawer || ui.attrEdit || ui.confirm || ui.habitMenu));
+    document.body.classList.toggle('lock', anyOverlay());
     lastView = null; render();
-    setTimeout(() => el.remove(), 600);
+    setTimeout(() => el.remove(), 500);
   };
   el.addEventListener('click', finish);
-  setTimeout(finish, reduce ? 900 : 3800);
+  // bar is full at 2.35 s, fade-out ends before 3 s
+  setTimeout(finish, reduce ? 700 : 2450);
 }
 
 // ---------- boot ----------
