@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zum Kalender</title>
+<meta name="theme-color" content="#000000">
+<style>
+:root { --bg: #000; --surface: #18181B; --line: #27272A; --text: #FAFAFA; --muted: #A1A1AA; --invert: #FAFAFA; --on-invert: #09090B; color-scheme: dark; }
+@media (prefers-color-scheme: light) { :root { --bg: #F4F4F5; --surface: #FFF; --line: #E4E4E7; --text: #09090B; --muted: #52525B; --invert: #09090B; --on-invert: #FAFAFA; color-scheme: light; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font: 16px/1.45 -apple-system, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+main { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 4px; }
+.card b { font-size: 20px; overflow-wrap: anywhere; }
+.card span { color: var(--muted); font-size: 14px; }
+a.btn { height: 54px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; text-decoration: none; }
+.primary { background: var(--invert); color: var(--on-invert); }
+.soft { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+p { margin: 0; color: var(--muted); font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card"><span id="when">Aufgabe</span><b id="title">–</b></div>
+  <a id="add" class="btn primary" href="#">Zum Kalender hinzufügen</a>
+  <a id="file" class="btn soft" href="#" download="aufgabe.ics">Als Datei laden</a>
+  <p id="hint">Danach kannst du diese Seite schließen.</p>
+</main>
+<script>
+function show() {
+  var b = location.hash.slice(1).replace(/-/g, '+').replace(/_/g, '/');
+  var text = '';
+  try {
+    var bin = atob(b + '==='.slice((b.length + 3) % 4));
+    text = new TextDecoder().decode(Uint8Array.from(bin, function (c) { return c.charCodeAt(0); }));
+  } catch (e) { text = ''; }
+  if (text.indexOf('BEGIN:VCALENDAR') !== 0) {
+    document.getElementById('title').textContent = 'Kein Termin gefunden';
+    document.getElementById('add').hidden = true; document.getElementById('file').hidden = true;
+    document.getElementById('hint').textContent = 'Öffne die Aufgabe nochmal in der App und tippe dort auf Kalender.';
+    return;
+  }
+  var get = function (k) { var m = text.match(new RegExp('^' + k + '[^:]*:(.*)$', 'm')); return m ? m[1].replace(/\r$/, '') : ''; };
+  var title = get('SUMMARY').replace(/\\([,;\\])/g, '$1').replace(/\\n/g, ' ');
+  var st = get('DTSTART');
+  var when = st.slice(6, 8) + '.' + st.slice(4, 6) + '.' + st.slice(0, 4) + (st.length > 8 ? ', ' + st.slice(9, 11) + ':' + st.slice(11, 13) + ' Uhr' : ', ganztägig');
+  document.getElementById('title').textContent = title;
+  document.getElementById('when').textContent = when;
+  var name = (title.replace(/[^\wÀ-ɏ -]+/g, '').trim().slice(0, 40) || 'aufgabe').replace(/\s+/g, '-') + '.ics';
+  var add = document.getElementById('add'), file = document.getElementById('file');
+  add.hidden = false; file.hidden = false;
+  // installed service worker: a real calendar address; otherwise the calendar file as a data link
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) add.href = 'event.ics?d=' + location.hash.slice(1) + '&n=' + encodeURIComponent(name);
+  else add.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(text);
+  file.href = URL.createObjectURL(new Blob([text], { type: 'text/calendar;charset=utf-8' }));
+  file.download = name;
+}
+show();
+window.addEventListener('hashchange', show);
+</script>
+</body>
+</html>

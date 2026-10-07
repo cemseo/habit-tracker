@@ -678,6 +678,7 @@ input[type="date"].inp, input[type="time"].inp { -webkit-appearance: none; appea
 @keyframes t-new { from { opacity: 0; transform: translateY(-10px) scale(.96); } 60% { opacity: 1; } }
 .tsheet .btn .i { flex: none; }
 #app { overflow-x: clip; }
+.linkbtn.calalt { align-self: center; --c: var(--muted); font-size: 13px; display: inline-flex; align-items: center; text-decoration: none; margin-top: -6px; }
 
 :root { padding-top: env(safe-area-inset-top, 0px); }
 </style>
@@ -1237,7 +1238,7 @@ const anyOverlay = () => !!(ui.confirm || ui.attrEdit || ui.drawer || ui.habitMe
 function closeAllOverlays() { ui.confirm = null; ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; }
 function setTop(view) {
   if (STANDALONE && ui.stack.length) { try { history.go(-ui.stack.length); } catch (e) { /* ignore */ } }
-  ui.stack = []; ui.view = view; ui.drawer = false; ui.navDir = 'top';
+  ui.stack = []; ui.view = view; ui.drawer = false; ui.navDir = 'top'; ui.attrSorting = false;
   render(); window.scrollTo(0, 0);
 }
 
@@ -1761,8 +1762,24 @@ function viewStats() {
 }
 
 // ---------- daily score ----------
+function attrSortRow(a, i, n) {
+  return `<div class="srow" data-id="${a.id}" data-group="a" style="${cvars(a.color)}">
+    <span class="grip" data-drag="${a.id}" aria-hidden="true">${icon('grip-vertical', 20)}</span>
+    <span class="dot"></span>
+    <span class="sname">${esc(a.name)}</span>
+    <button class="ib ghost" data-a="attrStep" data-id="${a.id}" data-v="-1" aria-label="${T('Nach oben', 'Move up')}: ${esc(a.name)}" ${i === 0 ? 'disabled' : ''}>${icon('chevron-up', 18)}</button>
+    <button class="ib ghost" data-a="attrStep" data-id="${a.id}" data-v="1" aria-label="${T('Nach unten', 'Move down')}: ${esc(a.name)}" ${i === n - 1 ? 'disabled' : ''}>${icon('chevron-down', 18)}</button>
+  </div>`;
+}
 function viewScoreRate() {
   const t = todayK();
+  if (ui.attrSorting && attrs().length > 1) {
+    const list = attrs();
+    return `<p class="hint" style="margin:0 4px">${T('Zieh ein Attribut am Griff nach oben oder unten, oder nutz die Pfeile.', 'Drag an attribute by its handle, or use the arrows.')}</p>
+      <div class="sgroup">${list.map((a, i) => attrSortRow(a, i, list.length)).join('')}</div>
+      <button class="btn primary block" data-a="attrSortDone">${T('Fertig', 'Done')}</button>`;
+  }
+  ui.attrSorting = false;
   const k = ui.scoreDate || t;
   const day = scoreDay(k) || {};
   const vals = attrs().map(a => day[a.id]).filter(v => v != null);
@@ -1790,9 +1807,10 @@ function viewScoreRate() {
       <div class="mid"><b>${esc(label)}</b><span>${k === t || k === addD(t, -1) ? esc(fmtLong(k)) : (avg == null ? T('noch nichts bewertet', 'nothing rated yet') : '')}${avg != null ? (k === t || k === addD(t, -1) ? ' · ' : '') + T('Tagesschnitt ', 'Day average ') + num(avg) : ''}</span></div>
       <button class="ib ghost" data-a="scoreDay" data-v="1" aria-label="${T('Nächster Tag', 'Next day')}" ${k >= t ? 'disabled' : ''}>${icon('chevron-right')}</button>
     </div>
-    ${attrs().length ? `<p class="hint" style="margin:0 4px">${T('Tippe auf einen Stern. Tippst du denselben Stern nochmal, wird es ein halber.', 'Tap a star. Tap the same star again for a half star.')}</p>` : ''}
+    ${attrs().length ? `<p class="hint" style="margin:0 4px">${T('Tippe auf einen Stern. Nochmal tippen macht einen halben daraus, ein drittes Mal löscht die Bewertung.', 'Tap a star. Tap it again for a half star, a third time to clear the rating.')}</p>` : ''}
     ${cards || `<div class="card"><p class="hint" style="margin:0">${T('Noch keine Attribute. Leg eins an, zum Beispiel Fokus, Energie oder Schlaf.', 'No attributes yet. Add one, like focus, energy or sleep.')}</p></div>`}
-    <button class="btn dashed" data-a="newAttr">${icon('plus', 18, 2.5)} ${T('Attribut hinzufügen', 'Add attribute')}</button>`;
+    <div class="row2"><button class="btn dashed" data-a="newAttr">${icon('plus', 18, 2.5)} ${T('Hinzufügen', 'Add')}</button>
+    ${attrs().length > 1 ? `<button class="btn dashed" data-a="attrSort">${icon('grip-vertical', 18)} ${T('Reihenfolge', 'Reorder')}</button>` : ''}</div>`;
 }
 
 // values per bucket: daily up to 120 days, weekly averages beyond
@@ -2122,7 +2140,7 @@ function todoSheetHtml() {
     ${e.id ? `<div class="row2">
       <button class="btn soft" data-a="todoIcs" ${e.due ? '' : 'disabled'}>${icon('calendar-plus', 18)}${T('Kalender', 'Calendar')}</button>
       <button class="btn danger" data-a="deleteTodo">${icon('trash-2', 18)}${T('Löschen', 'Delete')}</button></div>
-      ${e.due ? '' : `<p class="hint" style="margin:-6px 4px 0">${T('Für den Kalender braucht die Aufgabe ein Datum.', 'Add a date to put this task in your calendar.')}</p>`}` : ''}
+      ${e.due ? (isAppleTouch() && !window.claude?.use ? `<a class="linkbtn calalt" href="${icsPageUrl({ id: e.id, title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, cat: e.cat })}" target="_blank" rel="noopener">${T('Klappt nicht? In Safari öffnen', 'Not working? Open in Safari')}</a>` : '') : `<p class="hint" style="margin:-6px 4px 0">${T('Für den Kalender braucht die Aufgabe ein Datum.', 'Add a date to put this task in your calendar.')}</p>`}` : ''}
   </div>`;
 }
 function catListHtml() {
@@ -2172,18 +2190,24 @@ function todoIcs(x) {
   return lines.join('\r\n') + '\r\n';
 }
 const isAppleTouch = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const b64url = str => { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b => { bin += String.fromCharCode(b); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+function icsName(x) { return (x.title.replace(/[^\p{L}\p{N} _-]+/gu, '').trim().slice(0, 40) || 'aufgabe').replace(/\s+/g, '-') + '.ics'; }
+// A real https address that answers with text/calendar. The service worker builds the answer, so no server is needed.
+// iPhone and iPad only open the "Add to Calendar" sheet for such an address, not for files made in the page.
+function icsUrl(x) { return 'event.ics?d=' + b64url(todoIcs(x)) + '&n=' + encodeURIComponent(icsName(x)); }
+// Same event as a page that also works outside the installed app (Safari)
+function icsPageUrl(x) { return 'cal.html#' + b64url(todoIcs(x)); }
 async function exportIcs(x) {
   const data = todoIcs(x);
-  const base = (x.title.replace(/[^\p{L}\p{N} _-]+/gu, '').trim().slice(0, 40) || 'aufgabe').replace(/\s+/g, '-');
-  const filename = base + '.ics';
+  const filename = icsName(x);
   let dl = null;
   try { dl = window.claude && window.claude.use && !window.FIREBASE_CONFIG ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
   if (dl) {
     try { await dl.save({ filename, data }); toast(T('Kalender-Datei gespeichert', 'Calendar file saved')); } catch (e) { if (!e || e.code !== 'declined') toast(T('Hier gerade nicht möglich.', 'Not possible here right now.')); }
     return;
   }
-  // iPhone and iPad open a calendar file directly and offer "Add to Calendar"
-  if (isAppleTouch()) { location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(data); return; }
+  const sw = 'serviceWorker' in navigator && navigator.serviceWorker.controller;
+  if (sw && isAppleTouch()) { location.href = icsUrl(x); return; }
   try {
     const url = URL.createObjectURL(new Blob([data], { type: 'text/calendar;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = filename;
@@ -2529,7 +2553,7 @@ const actions = {
   statsPeriod: el => { ui.statsPeriod = el.dataset.v; render(); },
   scoreStatsPeriod: el => { ui.scoreStatsPeriod = el.dataset.v; render(); },
 
-  scoreTab: el => { ui.scoreTab = el.dataset.v; render(); },
+  scoreTab: el => { ui.scoreTab = el.dataset.v; ui.attrSorting = false; render(); },
   scoreDay: el => {
     const t = todayK();
     let k = addD(ui.scoreDate || t, Number(el.dataset.v));
@@ -2540,10 +2564,21 @@ const actions = {
     const k = ui.scoreDate || todayK();
     const a = el.dataset.attr, n = Number(el.dataset.n);
     const cur = scoreVal(k, a);
-    const v = cur === n ? n - 0.5 : cur === n - 0.5 ? n : n;
+    // same star: full -> half -> cleared -> full
+    const v = cur === n ? n - 0.5 : cur === n - 0.5 ? null : n;
     setScore(k, a, v); commit();
     haptic(v === n ? 'medium' : 'light');
-    fx(`[data-a="rate"][data-attr="${a}"][data-n="${n}"]`, 'fx-star', 500);
+    if (v != null) fx(`[data-a="rate"][data-attr="${a}"][data-n="${n}"]`, 'fx-star', 500);
+    else fx(`[data-a="rate"][data-attr="${a}"]`, 'fx-pill', 400);
+  },
+  attrSort: () => { ui.attrSorting = true; render(); },
+  attrSortDone: () => { ui.attrSorting = false; render(); },
+  attrStep: el => {
+    const xs = attrs(), i = xs.findIndex(a => a.id === el.dataset.id), j = i + Number(el.dataset.v);
+    if (i < 0 || j < 0 || j >= xs.length) return;
+    [xs[i], xs[j]] = [xs[j], xs[i]];
+    touchMeta(); commit(); haptic('light');
+    fx(`.srow[data-id="${el.dataset.id}"]`, 'fx-drop', 500);
   },
   clearRate: el => { setScore(ui.scoreDate || todayK(), el.dataset.attr, null); commit(); },
   overviewPeriod: el => { ui.overviewPeriod = el.dataset.v; render(); },
@@ -2896,6 +2931,12 @@ function endDrag() {
   const ids = d.rows.map(r => r.dataset.id);
   const [m] = ids.splice(d.idx, 1);
   ids.splice(d.target, 0, m);
+  if (d.row.dataset.group === 'a') {
+    S.meta.attrs = ids.map(id => attrs().find(a => a.id === id)).filter(Boolean);
+    touchMeta(); commit(); haptic('medium');
+    fx(`.srow[data-id="${m}"]`, 'fx-drop', 500);
+    return;
+  }
   const list = habitList();
   const pinnedGroup = d.row.dataset.group === 'p';
   const pinned = pinnedGroup ? ids : list.filter(x => x.pinned).map(x => x.id);
