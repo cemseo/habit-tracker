@@ -120,12 +120,20 @@ button:disabled { cursor: default; }
 .row2 > * { flex: 1; min-width: 0; }
 
 /* Segmented control */
-.seg { display: flex; padding: 4px; gap: 4px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.seg { position: relative; display: flex; padding: 4px; gap: 4px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.seg-ind {
+  position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 9px; background: var(--invert);
+  width: calc((100% - 8px - (var(--n) - 1) * 4px) / var(--n));
+  transform: translateX(calc(var(--i) * (100% + 4px)));
+  transition: transform .38s cubic-bezier(.3, 1.3, .4, 1);
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .5);
+}
+.seg button { position: relative; z-index: 1; }
 .seg button {
   flex: 1; min-width: 0; height: 40px; padding: 0 6px; border: none; border-radius: 9px; background: transparent;
   color: var(--muted); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-.seg button[aria-pressed="true"] { background: var(--invert); color: var(--on-invert); }
+.seg button[aria-pressed="true"] { background: transparent; color: var(--on-invert); transition: color .25s ease .05s; }
 .seg button:disabled { opacity: 0.45; }
 
 /* Inputs */
@@ -531,6 +539,86 @@ main.enter, .onb.enter { animation: enter .32s cubic-bezier(.2, .8, .2, 1); }
 .switch[aria-checked="true"] { background: #22C55E; }
 .switch[aria-checked="true"] span { transform: translateX(20px); background: #FFFFFF; }
 .switch:active:not(:disabled) { transform: none; }
+
+
+/* ---------- Page transitions & staggered entrance ---------- */
+main.enter > *, .onb.enter > * { animation: rise-in .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--k, 0) * 45ms); }
+main.enter.from-right > * { animation-name: in-right; }
+main.enter.from-left > * { animation-name: in-left; }
+main.enter.from-right, main.enter.from-left, main.enter.from-below, .onb.enter { animation: none; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(16px) scale(.985); } }
+@keyframes in-right { from { opacity: 0; transform: translateX(28px); } }
+@keyframes in-left { from { opacity: 0; transform: translateX(-28px); } }
+.enter .heat .hw, .fx-in .heat .hw { animation: col-in .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(120ms + var(--w, 0) * 14ms); }
+@keyframes col-in { from { opacity: 0; transform: translateY(6px) scaleY(.6); } }
+.enter .bar i, .fx-in .bar i, .fx-in.card .bar i { animation: grow-y .7s cubic-bezier(.2, .8, .2, 1) both; transform-origin: bottom; }
+.enter .spark i, .fx-in .spark i { animation: grow-y .6s cubic-bezier(.2, .8, .2, 1) both; transform-origin: bottom; }
+.enter .ptrack i, .fx-in .ptrack i { animation: grow-x .8s cubic-bezier(.2, .8, .2, 1) both; transform-origin: left; }
+.enter .ln, .fx-in .ln, .fx-in.chart .ln { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-line 1.1s cubic-bezier(.3, .7, .2, 1) forwards; }
+@keyframes grow-y { from { transform: scaleY(0); } }
+@keyframes grow-x { from { transform: scaleX(0); } }
+@keyframes draw-line { to { stroke-dashoffset: 0; } }
+.fx-in { animation: rise-in .38s cubic-bezier(.2, .8, .2, 1) both; }
+
+/* ---------- Press ripple ---------- */
+.ripple-wrap { position: fixed; overflow: hidden; pointer-events: none; z-index: 60; transition: opacity .4s ease; }
+.ripple-wrap span { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple .55s cubic-bezier(.2, .8, .2, 1) forwards; }
+.ripple-wrap.out { opacity: 0; }
+@keyframes ripple { to { transform: scale(1); } }
+.card.habit:active, .crow:active, .slide:active { transform: scale(.985); }
+.btn:active:not(:disabled), .nav:active, .li:active:not(:disabled) { transform: scale(.975); }
+.ib:active:not(:disabled), .chk:active, .dd:active:not(:disabled), .cd:active:not(:disabled) { transform: scale(.9); }
+
+/* ---------- Splash ---------- */
+#splash {
+  position: fixed; inset: 0; z-index: 100; background: #000; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .55s ease, transform .55s cubic-bezier(.2, .8, .2, 1);
+}
+#splash.out { opacity: 0; transform: scale(1.08); pointer-events: none; }
+.sp-grid { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; gap: 6px; }
+.sp-grid i {
+  width: 24px; height: 24px; border-radius: 6px; background: #18181B; opacity: 0;
+  animation: sp-tile 2.6s cubic-bezier(.2, .8, .2, 1) var(--d) both, sp-wave 2.2s ease-in-out calc(var(--d) + 1.2s) infinite;
+}
+@keyframes sp-tile {
+  0% { opacity: 0; transform: scale(.2); }
+  22% { opacity: 1; transform: scale(1.12); background: var(--c); box-shadow: 0 0 18px var(--c); }
+  45% { opacity: .95; transform: scale(1); background: var(--c); box-shadow: 0 0 6px var(--c); }
+  100% { opacity: .22; transform: scale(.82); background: var(--c); box-shadow: none; }
+}
+@keyframes sp-wave { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.9); } }
+.sp-center {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 34px 40px 30px; border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .92), rgba(0, 0, 0, .75) 70%, rgba(0, 0, 0, 0));
+}
+.sp-glow {
+  position: absolute; inset: -40px; z-index: -1; border-radius: 50%; filter: blur(46px); opacity: .55;
+  background: conic-gradient(from 0deg, #F97316, #EAB308, #22C55E, #06B6D4, #3B82F6, #A855F7, #EC4899, #F97316);
+  animation: sp-spin 4s linear infinite, sp-fade .9s ease .3s both;
+}
+@keyframes sp-spin { to { transform: rotate(360deg); } }
+@keyframes sp-fade { from { opacity: 0; transform: scale(.6); } }
+.sp-mark { display: grid; grid-template-columns: repeat(3, 14px); gap: 4px; margin-bottom: 6px; }
+.sp-mark i { width: 14px; height: 14px; border-radius: 4px; background: var(--c); animation: sp-pop .5s cubic-bezier(.2, .9, .3, 1.5) calc(.35s + var(--m)) both; box-shadow: 0 0 10px var(--c); }
+@keyframes sp-pop { from { opacity: 0; transform: scale(0) rotate(-30deg); } }
+.sp-word { font: 800 64px/1.05 var(--font); letter-spacing: -0.045em; display: flex; color: #FFFFFF; }
+.sp-word span {
+  display: inline-block; color: transparent; -webkit-background-clip: text; background-clip: text;
+  background-image: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 30%, #F97316 40%, #EC4899 50%, #A855F7 60%, #06B6D4 70%, #FFFFFF 80%, #FFFFFF 100%);
+  background-size: 400% 100%; background-position: 100% 0;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, .25));
+  animation: sp-letter .7s cubic-bezier(.2, .9, .3, 1.3) calc(.55s + var(--l)) both, sp-shine 1.8s ease-in-out calc(1.4s + var(--l)) both;
+}
+@keyframes sp-letter { from { opacity: 0; transform: translateY(26px) scale(.8); filter: blur(6px); } }
+@keyframes sp-shine { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+.sp-sub { font: 700 13px/1 var(--font); letter-spacing: .62em; margin-right: -.62em; color: #A1A1AA; animation: sp-sub .8s ease 1.1s both; }
+@keyframes sp-sub { from { opacity: 0; letter-spacing: 1.2em; } }
+.sp-bar { width: 132px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; margin-top: 14px; animation: sp-sub .6s ease 1.2s both; }
+.sp-bar i { display: block; height: 100%; width: 100%; transform-origin: left; background: linear-gradient(90deg, #F97316, #EC4899, #A855F7, #06B6D4, #22C55E); animation: grow-x 2.2s cubic-bezier(.4, 0, .2, 1) 1.2s both; }
+@media (prefers-reduced-motion: reduce) { #splash * { animation: none !important; opacity: 1 !important; } .sp-grid i { opacity: .25 !important; background: var(--c) !important; } }
+#app { overflow-x: clip; }
 
 :root { padding-top: env(safe-area-inset-top, 0px); }
 </style>
@@ -1020,12 +1108,12 @@ const ui = {
 };
 function go(view) {
   ui.stack.push(ui.view);
-  ui.view = view; ui.drawer = false;
+  ui.view = view; ui.drawer = false; ui.navDir = 'fwd';
   if (STANDALONE) { try { history.pushState({ d: ui.stack.length }, ''); } catch (e) { /* ignore */ } }
   render(); window.scrollTo(0, 0);
 }
 function back() {
-  ui.view = ui.stack.pop() || 'habits';
+  ui.view = ui.stack.pop() || 'habits'; ui.navDir = 'back';
   render(); window.scrollTo(0, 0);
 }
 function goBack() {
@@ -1038,7 +1126,7 @@ window.addEventListener('popstate', () => {
 });
 function setTop(view) {
   if (STANDALONE && ui.stack.length) { try { history.go(-ui.stack.length); } catch (e) { /* ignore */ } }
-  ui.stack = []; ui.view = view; ui.drawer = false;
+  ui.stack = []; ui.view = view; ui.drawer = false; ui.navDir = 'top';
   render(); window.scrollTo(0, 0);
 }
 
@@ -1089,7 +1177,8 @@ function header({ left = 'menu', title, sub = '', right = '' }) {
   return `<header class="top">${l}<div class="tt">${sub ? `<small>${esc(sub)}</small>` : ''}<h1>${esc(title)}</h1></div>${right}</header>`;
 }
 function seg(action, current, options, extra = '') {
-  return `<div class="seg" role="group" ${extra}>${options.map(([v, label, dis]) =>
+  const idx = Math.max(0, options.findIndex(o => String(o[0]) === String(current)));
+  return `<div class="seg" role="group" data-seg="${action}" style="--n:${options.length};--i:${idx}" ${extra}><span class="seg-ind" aria-hidden="true"></span>${options.map(([v, label, dis]) =>
     `<button data-a="${action}" data-v="${v}" aria-pressed="${String(v) === String(current)}" ${dis ? 'disabled' : ''}>${label}</button>`).join('')}</div>`;
 }
 function starSvg(fillPct, color, size = 36) {
@@ -1140,7 +1229,7 @@ function habitCard(h) {
   const W = 26, thisMon = addD(t, -wday(t)), startMon = addD(thisMon, -(W - 1) * 7);
   let heat = '';
   for (let w = 0; w < W; w++) {
-    heat += '<div class="hw">';
+    heat += `<div class="hw" style="--w:${w}">`;
     for (let d = 0; d < 7; d++) {
       const k = addD(startMon, w * 7 + d);
       let cls = 'hc';
@@ -1175,7 +1264,7 @@ function heatHtml(h, weeks, big) {
   const thisMon = addD(t, -wday(t)), startMon = addD(thisMon, -(weeks - 1) * 7);
   let heat = '';
   for (let w = 0; w < weeks; w++) {
-    heat += '<div class="hw">';
+    heat += `<div class="hw" style="--w:${w}">`;
     for (let d = 0; d < 7; d++) {
       const k = addD(startMon, w * 7 + d);
       let cls = 'hc';
@@ -1629,7 +1718,7 @@ function lineChart(P) {
       path += (last ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.v).toFixed(1) + ' ';
       last = [x(i), y(p.v)];
     });
-    if (path) g += `<path d="${path}" fill="none" stroke="${a.color}" stroke-opacity="${op}" stroke-width="${a.id === focus ? 3 : 2}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (path) g += `<path class="ln" pathLength="1" d="${path}" fill="none" stroke="${a.color}" stroke-opacity="${op}" stroke-width="${a.id === focus ? 3 : 2}" stroke-linejoin="round" stroke-linecap="round"/>`;
     if (a.id === focus) pts.forEach((p, i) => { if (p.v != null) g += `<circle cx="${x(i)}" cy="${y(p.v)}" r="2.5" fill="${a.color}"/>`; });
     if (last) g += `<circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="${a.color}" fill-opacity="${op}" stroke="var(--surface)" stroke-width="1.5"/>`;
   }
@@ -1861,7 +1950,8 @@ function confirmHtml() {
 
 // ---------- render ----------
 const app = document.getElementById('app');
-let lastView = null, lastOv = '';
+let lastView = null, lastOv = '', prevSwitch = null;
+const segPrev = {};
 function render() {
   pendingRender = false;
   let html;
@@ -1893,7 +1983,36 @@ function render() {
   const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : '';
   if (ovKey && ovKey !== lastOv) app.querySelectorAll('.scrim, .drawer, .sheet, .dialog').forEach(e => e.classList.add('anim'));
   lastOv = ovKey;
-  if (entering) { const m = app.querySelector('main, .onb'); if (m) m.classList.add('enter'); }
+  if (entering) {
+    const m = app.querySelector('main, .onb');
+    if (m) {
+      m.classList.add('enter', ui.navDir === 'fwd' ? 'from-right' : ui.navDir === 'back' ? 'from-left' : 'from-below');
+      [...m.children].slice(0, 14).forEach((c, i) => c.style.setProperty('--k', i));
+    }
+    ui.navDir = null;
+  }
+  app.querySelectorAll('.seg[data-seg]').forEach(sg => {
+    const key = sg.dataset.seg, i = Number(sg.style.getPropertyValue('--i'));
+    const ind = sg.querySelector('.seg-ind');
+    const prev = segPrev[key];
+    segPrev[key] = i;
+    if (!ind || entering || prev == null || prev === i) return;
+    ind.style.transition = 'none';
+    ind.style.transform = `translateX(calc(${prev} * (100% + 4px)))`;
+    void ind.offsetWidth;
+    ind.style.transition = '';
+    ind.style.transform = '';
+  });
+  const sw2 = app.querySelector('.switch');
+  if (sw2) {
+    const on = sw2.getAttribute('aria-checked') === 'true';
+    if (prevSwitch != null && prevSwitch !== on && !entering) {
+      const k = sw2.querySelector('span');
+      k.style.transition = 'none'; k.style.transform = on ? 'translateX(0)' : 'translateX(20px)';
+      void k.offsetWidth; k.style.transition = ''; k.style.transform = '';
+    }
+    prevSwitch = on;
+  }
   const fill = app.querySelector('.daybar .fill');
   if (fill) {
     const w = Number(fill.dataset.w);
@@ -1923,26 +2042,29 @@ function render() {
 }
 
 // ---------- feel: haptics and small animations ----------
-let hapticEl = null;
+function iosTick() {
+  const l = document.createElement('label');
+  l.setAttribute('aria-hidden', 'true');
+  l.setAttribute('data-haptic', '');
+  l.style.display = 'none';
+  const i = document.createElement('input');
+  i.type = 'checkbox';
+  i.setAttribute('switch', '');
+  l.appendChild(i);
+  document.head.appendChild(l);
+  l.click();
+  l.remove();
+}
 function haptic(kind = 'light') {
   if (S.meta.haptics === false) return;
   try {
-    if (navigator.vibrate) {
+    if (typeof navigator.vibrate === 'function') {
       navigator.vibrate(kind === 'heavy' ? [22, 50, 22] : kind === 'success' ? [12, 40, 16] : kind === 'medium' ? 16 : 8);
       return;
     }
-    // iOS 18+: toggling a native switch control produces a system haptic tick
-    if (!hapticEl) {
-      hapticEl = document.createElement('label');
-      hapticEl.setAttribute('aria-hidden', 'true');
-      hapticEl.style.cssText = 'position:fixed;left:-200px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none';
-      const i = document.createElement('input');
-      i.type = 'checkbox'; i.setAttribute('switch', ''); i.tabIndex = -1; i.id = 'haptic-switch';
-      hapticEl.appendChild(i);
-      document.body.appendChild(hapticEl);
-    }
-    hapticEl.click();
-    if (kind === 'success' || kind === 'heavy') setTimeout(() => { if (hapticEl) hapticEl.click(); }, 110);
+    // iPhone (iOS 18+): toggling a native switch control gives a system haptic tick
+    iosTick();
+    if (kind === 'success' || kind === 'heavy') setTimeout(() => { try { iosTick(); } catch (e) { /* ignore */ } }, 120);
   } catch (e) { /* no haptics here */ }
 }
 function fx(selector, cls = 'fx-pop', ms = 700) {
@@ -2276,6 +2398,31 @@ function replaceAll(next) {
 }
 
 // ---------- events ----------
+// ---------- press ripple ----------
+const RIPPLE_SEL = '.btn, .seg button, .nav, .li, .chip, .tpl button, .ib, .dd, .cd, .igrid button, .chk, .hopen, .card.habit, .crow, .slide, .linkbtn, .rowbtn, .colors button, .star, .srow';
+document.addEventListener('pointerdown', e => {
+  if (e.button && e.button !== 0) return;
+  const el = e.target.closest(RIPPLE_SEL);
+  if (!el || el.disabled || el.closest('[data-drag]')) return;
+  const target = el.classList.contains('hopen') ? (el.closest('.card') || el) : el;
+  const r = target.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  const cs = getComputedStyle(target);
+  const wrap = document.createElement('div');
+  wrap.className = 'ripple-wrap';
+  wrap.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;border-radius:${cs.borderRadius}`;
+  const dot = document.createElement('span');
+  const size = Math.hypot(r.width, r.height) * 2;
+  const tint = target.matches('.chk.on, .btn.accent, .btn.primary, .dd.on, .cd.on') ? 'rgba(255,255,255,0.35)' : `color-mix(in srgb, ${getComputedStyle(target).getPropertyValue('--c').trim() || 'var(--text)'} 22%, transparent)`;
+  dot.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px;background:${tint}`;
+  wrap.appendChild(dot);
+  document.body.appendChild(wrap);
+  const end = () => { wrap.classList.add('out'); setTimeout(() => wrap.remove(), 450); document.removeEventListener('pointerup', end); document.removeEventListener('pointercancel', end); };
+  document.addEventListener('pointerup', end);
+  document.addEventListener('pointercancel', end);
+  setTimeout(end, 1200);
+}, { passive: true });
+
 // ---------- long press (habit menu) and drag (sort mode) ----------
 let lp = null, suppressClick = false, drag = null, lpFired = false;
 function openHabitMenu(id) {
@@ -2350,6 +2497,7 @@ document.addEventListener('contextmenu', e => {
   openHabitMenu(card.dataset.hold);
 });
 document.addEventListener('click', e => {
+  if (e.target && e.target.closest && e.target.closest('[data-haptic]')) return;
   if (suppressClick) { suppressClick = false; e.preventDefault(); e.stopPropagation(); return; }
 }, true);
 
@@ -2439,12 +2587,55 @@ document.addEventListener('keydown', e => {
 let lastDay = todayK();
 setInterval(() => { const t = todayK(); if (t !== lastDay) { lastDay = t; safeRender(); } }, 60000);
 
+// ---------- splash ----------
+function showSplash() {
+  if (navigator.webdriver && !window.__SPLASH) return;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const palette = ['#F97316', '#06B6D4', '#22C55E', '#A855F7', '#EC4899', '#EAB308', '#3B82F6', '#EF4444'];
+  const STEP = 30;
+  const cols = Math.ceil(window.innerWidth / STEP) + 1, rows = Math.ceil(window.innerHeight / STEP) + 1;
+  const cx = (cols - 1) / 2, cy = (rows - 1) / 2;
+  let tiles = '';
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const d = Math.hypot(c - cx, (r - cy) * 1.1);
+    const color = palette[Math.floor(d / 2.2) % palette.length];
+    const jitter = ((r * 31 + c * 17) % 7) * 12;
+    tiles += `<i style="--c:${color};--d:${Math.round(d * 70 + jitter)}ms"></i>`;
+  }
+  const word = 'Habit';
+  const mark = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i style="--c:${palette[i % palette.length]};--m:${i * 70}ms"></i>`).join('');
+  const el = document.createElement('div');
+  el.id = 'splash';
+  el.setAttribute('role', 'presentation');
+  el.innerHTML = `<div class="sp-grid" style="grid-template-columns:repeat(${cols}, ${STEP - 6}px)">${tiles}</div>
+    <div class="sp-center">
+      <div class="sp-glow"></div>
+      <div class="sp-mark">${mark}</div>
+      <div class="sp-word">${word.split('').map((ch, i) => `<span style="--l:${i * 60}ms">${ch}</span>`).join('')}</div>
+      <div class="sp-sub">TRACKER</div>
+      <div class="sp-bar"><i></i></div>
+    </div>`;
+  document.body.appendChild(el);
+  document.body.classList.add('lock');
+  let done = false;
+  const finish = () => {
+    if (done) return; done = true;
+    el.classList.add('out');
+    document.body.classList.toggle('lock', !!(ui.drawer || ui.attrEdit || ui.confirm || ui.habitMenu));
+    lastView = null; render();
+    setTimeout(() => el.remove(), 600);
+  };
+  el.addEventListener('click', finish);
+  setTimeout(finish, reduce ? 900 : 3800);
+}
+
 // ---------- boot ----------
 loadLocal();
 setLang(S.meta.lang || lsGet(LANG_KEY) || 'en');
 if (S.meta.onboarded) ui.view = 'habits';
 applyTheme();
 render();
+showSplash();
 initCloud();
 if (STANDALONE && 'serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('sw.js').catch(() => {});
