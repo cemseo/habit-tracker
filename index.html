@@ -679,6 +679,67 @@ input[type="date"].inp, input[type="time"].inp { -webkit-appearance: none; appea
 .tsheet .btn .i { flex: none; }
 #app { overflow-x: clip; }
 .linkbtn.calalt { align-self: center; --c: var(--muted); font-size: 13px; display: inline-flex; align-items: center; text-decoration: none; margin-top: -6px; }
+.durin { align-items: center; }
+.durin .inp { width: 84px; flex: none; text-align: center; }
+.durin span { color: var(--muted); font-size: 14px; }
+.arbtns { display: flex; align-items: center; gap: 6px; flex: none; }
+.tdel { width: 40px; height: 40px; flex: none; }
+.trow.gone { opacity: 0; transform: translateX(-24px) scale(.97); transition: opacity .28s ease, transform .28s ease; }
+
+/* ---------- Profile, friends, projects, chat ---------- */
+button.prof { width: 100%; border: none; background: transparent; color: var(--text); text-align: left; border-radius: 14px; padding: 8px 8px 8px; margin-bottom: 14px; }
+button.prof .i { margin-left: auto; color: var(--faint); }
+button.prof[aria-current="page"] { background: var(--surface); }
+.avatar.img { overflow: hidden; background: var(--surface-2); padding: 0; }
+.avatar.img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar { flex: none; }
+.profhero { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 6px; }
+.profhero h2 { margin: 4px 0 0; font-size: 24px; }
+.bigav { position: relative; border-radius: 999px; cursor: pointer; display: block; }
+.bigav.off { cursor: default; }
+.bigav .avatar { box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px var(--line); }
+.bigav .pen { position: absolute; right: 0; bottom: 0; width: 34px; height: 34px; border-radius: 999px; background: var(--invert); color: var(--on-invert); display: flex; align-items: center; justify-content: center; border: 3px solid var(--bg); }
+.bigav:active .avatar { transform: scale(.96); transition: transform .15s ease; }
+.codecard { display: flex; flex-direction: column; gap: 12px; align-items: stretch; text-align: center; }
+.codecard .code { font-size: 38px; font-weight: 700; letter-spacing: .28em; margin-right: -.28em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.codein { text-transform: uppercase; letter-spacing: .2em; font-weight: 700; }
+.codein::placeholder { letter-spacing: .02em; font-weight: 400; text-transform: none; }
+.pcard { display: flex; align-items: center; gap: 14px; text-align: left; width: 100%; color: var(--text); position: relative; overflow: hidden; padding: 14px 14px 14px 18px; }
+.pcard .pbar { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
+.pcard .pmain { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pcard b { font-size: 17px; }
+.pcard .plast { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcard .plast.new { color: var(--text); font-weight: 600; }
+.pcard .pmem { display: flex; align-items: center; margin-top: 4px; }
+.pcard .pmem .avatar { margin-right: -6px; box-shadow: 0 0 0 2px var(--surface); }
+.pcard .pmem em { font-style: normal; font-size: 12px; color: var(--faint); margin-left: 14px; }
+.pcard .i { color: var(--faint); }
+.badge { min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--bad); color: var(--on-accent); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; animation: dot-in .35s cubic-bezier(.2, .9, .3, 1.5); }
+.segdot { font-style: normal; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--bad); color: var(--on-accent); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.chat { padding-bottom: 0; }
+.msgs { display: flex; flex-direction: column; gap: 3px; padding-block: 4px 8px; min-height: 40vh; }
+.chatday { align-self: center; font-size: 12px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; margin: 10px 0 6px; }
+.msg { display: flex; align-items: flex-end; gap: 8px; max-width: 86%; }
+.msg.new { animation: msg-in .3s cubic-bezier(.2, .8, .2, 1) both; }
+.msg.first { margin-top: 6px; }
+.msg.me { align-self: flex-end; flex-direction: row-reverse; }
+.msg .avsp { width: 28px; flex: none; }
+.bub { background: var(--surface); border: 1px solid var(--line); border-radius: 18px 18px 18px 6px; padding: 8px 12px 6px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.msg.me .bub { background: var(--c); border-color: var(--c); color: var(--on-accent); border-radius: 18px 18px 6px 18px; }
+.bub b { font-size: 12px; color: var(--muted); }
+.bub .tx { font-size: 15px; line-height: 1.38; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bub .tm { font-size: 10.5px; opacity: .6; align-self: flex-end; font-variant-numeric: tabular-nums; }
+.msg.pending .bub { opacity: .7; }
+.receipt { align-self: flex-end; font-size: 11.5px; color: var(--muted); margin: 2px 4px 0; }
+.chatempty { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); padding: 40px 20px; text-align: center; }
+.chatempty p { margin: 0; }
+.composer { position: sticky; bottom: 0; display: flex; gap: 8px; align-items: center; background: var(--bg); padding-block: 10px calc(12px + env(safe-area-inset-bottom, 0px)); margin-top: auto; z-index: 3; }
+.composer .inp { flex: 1; min-width: 0; border-radius: 999px; padding: 0 18px; }
+.composer .ib { width: 50px; height: 50px; border-radius: 999px; }
+.composer .ib.solid:disabled { opacity: .3; }
+.tiles .v.num { font-variant-numeric: tabular-nums; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+main.chat { min-height: calc(100vh - 96px); min-height: calc(100dvh - 96px); }
 
 :root { padding-top: env(safe-area-inset-top, 0px); }
 </style>
@@ -702,9 +763,10 @@ const ICON_CATALOG=[{"n":"dumbbell","k":"Hantel Gym Krafttraining Fitness","c":"
    ============================================================ */
 
 // ---------- constants ----------
-const LS_KEY = 'habit-tracker-v1';
+const LS_NS = (typeof window !== 'undefined' && window.__LS_NS) || ''; // tests only: several accounts in one browser
+const LS_KEY = LS_NS + 'habit-tracker-v1';
 // ---------- language (English default, German optional) ----------
-const LANG_KEY = 'habit-tracker-lang';
+const LANG_KEY = LS_NS + 'habit-tracker-lang';
 let LANG = 'en';
 const T = (de, en) => (LANG === 'de' ? de : en);
 const L10N = {
@@ -802,6 +864,7 @@ function normTodo(t, id) {
     doneAt: Number(t.doneAt) || 0,
     createdAt: Number(t.createdAt) || Number(t._t) || 0,
     deleted: !!t.deleted,
+    dur: Math.min(1440, Math.max(5, Math.round(Number(t.dur) || 60))),
   };
 }
 
@@ -897,13 +960,13 @@ function markAllDirty() {
   for (const y in S.scores) touchYear(y);
   for (const id in S.todos) touchTodo(id);
 }
-function commit(opts) { saveLocal(); scheduleSync(); if (!opts || opts.render !== false) render(); }
+function commit(opts) { saveLocal(); scheduleSync(); syncProfileName(); if (!opts || opts.render !== false) render(); }
 
 // ---------- cloud sync ----------
 // Backends share one shape: list() -> [{id, data}], set(id, body), del(id).
 // 'claude'  : the Claude artifact's private per-user store
 // 'firebase': own login (email + password) and Firestore, for the hosted app
-const OWNER_KEY = 'habit-tracker-owner';
+const OWNER_KEY = LS_NS + 'habit-tracker-owner';
 const cloud = { backend: null, mode: 'local', ready: false, status: 'local', lastSync: 0, authState: 'none', user: null };
 let syncTimer = null, flushing = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -943,6 +1006,7 @@ function initFirebase() {
   const fs = firebase.firestore();
   auth.onAuthStateChanged(async user => {
     if (!user) {
+      stopSocial();
       cloud.user = null; cloud.backend = null; cloud.authState = 'signedOut'; cloud.ready = true; cloud.status = 'local';
       render();
       return;
@@ -961,6 +1025,7 @@ function initFirebase() {
     if (!S.meta.onboarded && !ui.onboardName && user.email) ui.onboardName = '';
     render();
     try { await pull(); } catch (e) { console.warn('Laden fehlgeschlagen', e); cloud.status = 'error'; }
+    try { startSocial(fs, user.uid); } catch (e) { console.warn('Freunde/Projekte nicht verfügbar', e); }
     finally {
       cloud.ready = true;
       if (S.meta.onboarded && ui.view === 'onboarding') ui.view = 'habits';
@@ -1234,8 +1299,8 @@ window.addEventListener('popstate', () => {
   if (anyOverlay()) closeAllOverlays();
   if (ui.stack.length) back(); else render();
 });
-const anyOverlay = () => !!(ui.confirm || ui.attrEdit || ui.drawer || ui.habitMenu || ui.todoEdit || ui.catList || ui.catEdit);
-function closeAllOverlays() { ui.confirm = null; ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; }
+const anyOverlay = () => !!(ui.confirm || ui.attrEdit || ui.drawer || ui.habitMenu || ui.todoEdit || ui.catList || ui.catEdit || ui.projSheet);
+function closeAllOverlays() { ui.confirm = null; ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; ui.projSheet = null; }
 function setTop(view) {
   if (STANDALONE && ui.stack.length) { try { history.go(-ui.stack.length); } catch (e) { /* ignore */ } }
   ui.stack = []; ui.view = view; ui.drawer = false; ui.navDir = 'top'; ui.attrSorting = false;
@@ -1280,7 +1345,7 @@ function toast(msg) {
 // ---------- shared view pieces ----------
 function header({ left = 'menu', title, sub = '', right = '' }) {
   const l = left === 'menu'
-    ? `<button class="ib menu" data-a="openDrawer" aria-label="${T('Menü öffnen', 'Open menu')}${todoBadge() ? T(' – offene Aufgaben', ' – open tasks') : ''}">${icon('menu')}${todoBadge() ? '<i class="mdot" aria-hidden="true"></i>' : ''}</button>`
+    ? `<button class="ib menu" data-a="openDrawer" aria-label="${T('Menü öffnen', 'Open menu')}${todoBadge() || socialUnread() ? T(' – Neues', ' – something new') : ''}">${icon('menu')}${todoBadge() || socialUnread() ? '<i class="mdot" aria-hidden="true"></i>' : ''}</button>`
     : left === 'back'
       ? `<button class="ib" data-a="back" aria-label="${T('Zurück', 'Back')}">${icon('chevron-left')}</button>`
       : left === 'close'
@@ -2032,10 +2097,11 @@ function viewSettings() {
     <div class="field"><span class="label">${T('Archiv', 'Archive')}</span>
       ${archived.length ? `<div class="list">${archived.map(h => `<div class="li" style="${cvars(h.color)}">
           <span class="lt"><span>${esc(h.name)}</span><span class="sub">${h.type === 'quit' ? T('Abgewöhnen', 'Quit') : T('Aufbauen', 'Build')}</span></span>
-          <button class="btn soft" style="height:40px;font-size:14px" data-a="restoreHabit" data-id="${h.id}">${icon('archive-restore', 16)} ${T('Zurückholen', 'Restore')}</button></div>`).join('')}</div>`
+          <span class="arbtns"><button class="btn soft" style="height:40px;font-size:14px" data-a="restoreHabit" data-id="${h.id}">${icon('archive-restore', 16)} ${T('Zurückholen', 'Restore')}</button>
+          <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.2</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.3</p>
   </main>`;
 }
 
@@ -2054,6 +2120,11 @@ function relDay(k) {
   return fmtShort(k);
 }
 const fmtTime = hm => { if (LANG === 'de') return hm; const [h, m] = hm.split(':').map(Number); return ((h + 11) % 12 + 1) + ':' + pad(m) + (h < 12 ? ' AM' : ' PM'); };
+function timeRange(x) {
+  const [h, m] = x.time.split(':').map(Number);
+  const e = h * 60 + m + (x.dur || 60);
+  return e < 1440 ? fmtTime(x.time) + '–' + fmtTime(pad(Math.floor(e / 60)) + ':' + pad(e % 60)) : fmtTime(x.time);
+}
 function todoGroups() {
   const t = todayK(), tm = addD(t, 1);
   const f = ui.todoFilter;
@@ -2074,10 +2145,11 @@ function todoRow(x, overdue) {
   const col = c ? c.color : 'var(--text)';
   const meta = [];
   if (c) meta.push(`<span class="tcat"><i class="dot"></i>${esc(catName(c))}</span>`);
-  if (x.due && !x.done) meta.push(`<span class="${overdue ? 'late' : ''}">${esc(relDay(x.due))}${x.time ? ' · ' + fmtTime(x.time) : ''}</span>`);
+  if (x.due && !x.done) meta.push(`<span class="${overdue ? 'late' : ''}">${esc(relDay(x.due))}${x.time ? ' · ' + timeRange(x) : ''}</span>`);
   return `<div class="trow${x.done ? ' done' : ''}" data-tid="${x.id}" style="--c:${col}">
     <button class="tchk${x.done ? ' on' : ''}${overdue ? ' late' : ''}" data-a="todoToggle" data-id="${x.id}" role="checkbox" aria-checked="${x.done}" aria-label="${esc(x.title)}">${icon('check', 16, 3.2)}</button>
     <button class="topen" data-a="openTodo" data-id="${x.id}"><span class="ttl">${esc(x.title)}</span>${meta.length ? `<span class="tmeta">${meta.join('<b aria-hidden="true">·</b>')}</span>` : ''}</button>
+    ${x.done ? `<button class="ib ghost tdel" data-a="deleteDone" data-id="${x.id}" aria-label="${T('Löschen', 'Delete')}: ${esc(x.title)}">${icon('trash-2', 17)}</button>` : ''}
   </div>`;
 }
 function viewTodos() {
@@ -2095,9 +2167,10 @@ function viewTodos() {
       <button type="submit" id="qa-go" class="ib solid" aria-label="${T('Hinzufügen', 'Add')}" ${ui.qa.trim() ? '' : 'disabled'}>${icon('arrow-up', 20, 2.5)}</button>
     </form>
     <div class="chips" role="group" aria-label="${T('Kategorie filtern', 'Filter by category')}">
-      ${chips.map(([id, n, col]) => `<button class="chip" data-a="todoFilter" data-v="${id}" aria-pressed="${ui.todoFilter === id}">${col ? `<i class="dot" style="--c:${col}"></i>` : ''}${esc(n)}</button>`).join('')}
+      ${chips.map(([id, n, col]) => `<button class="chip" data-a="todoFilter" data-v="${id}" ${id !== 'all' ? `data-hold="cat:${id}"` : ''} aria-pressed="${ui.todoFilter === id}">${col ? `<i class="dot" style="--c:${col}"></i>` : ''}${esc(n)}</button>`).join('')}
       <button class="chip" data-a="openCats" aria-label="${T('Kategorien bearbeiten', 'Edit categories')}">${icon('pencil', 14)}</button>
     </div>
+    ${todoCats().length && !lsGet('habit-tracker-cathint') ? `<p class="hint" style="margin:-4px 4px 0">${T('Tipp: Kategorie gedrückt halten zum Umbenennen oder Löschen.', 'Tip: press and hold a category to rename or delete it.')} <button class="linkbtn" data-a="hideCatHint" style="--c:var(--muted);min-height:28px;padding:0 4px">${T('Verstanden', 'Got it')}</button></p>` : ''}
     ${empty ? `<div class="card empty"><h2>${T('Keine Aufgaben', 'No tasks')}</h2><p class="hint" style="margin:0">${T('Schreib oben rein, was ansteht. Mit dem Regler-Symbol gibst du Datum, Uhrzeit und Kategorie an.', 'Type what you need to do above. The slider icon adds a date, time and category.')}</p></div>` : ''}
     ${sec(T('Überfällig', 'Overdue'), g.overdue, 'late')}
     ${sec(T('Heute', 'Today'), g.today)}
@@ -2131,6 +2204,16 @@ function todoSheetHtml() {
     ${e.due ? `<div class="field"><label for="te-time" class="flabel">${T('Uhrzeit (optional)', 'Time (optional)')}</label>
       <div class="trowin"><input id="te-time" class="inp" type="time" data-bind="te.time" value="${e.time}">
       ${e.time ? `<button class="ib" data-a="teNoTime" aria-label="${T('Uhrzeit entfernen', 'Remove time')}">${icon('x', 18)}</button>` : ''}</div></div>` : ''}
+    ${e.due && e.time ? (() => {
+      const presets = [15, 30, 60, 120];
+      const custom = e.durCustom || !presets.includes(e.dur);
+      const lbl = m => m < 60 ? m + ' Min' : (m % 60 ? num(m / 60, 1) : m / 60) + ' ' + T('Std', 'h');
+      return `<div class="field"><span class="flabel">${T('Dauer im Kalender', 'Calendar duration')}</span>
+      <div class="chips wrap">${presets.map(m => `<button class="chip" data-a="teDur" data-v="${m}" aria-pressed="${!custom && e.dur === m}">${lbl(m)}</button>`).join('')}
+        <button class="chip" data-a="teDur" data-v="custom" aria-pressed="${custom}">${T('Eigene', 'Custom')}</button></div>
+      ${custom ? `<div class="trowin durin"><input id="te-dur-h" class="inp" type="number" inputmode="numeric" min="0" max="23" value="${Math.floor(e.dur / 60)}" aria-label="${T('Stunden', 'Hours')}"><span>${T('Std', 'h')}</span>
+        <input id="te-dur-m" class="inp" type="number" inputmode="numeric" min="0" max="59" step="5" value="${e.dur % 60}" aria-label="${T('Minuten', 'Minutes')}"><span>Min</span></div>` : ''}</div>`;
+    })() : ''}
     <div class="field"><span class="flabel">${T('Kategorie', 'Category')}</span>
       <div class="chips wrap">
         ${todoCats().map(cc => `<button class="chip" data-a="teCat" data-v="${cc.id}" aria-pressed="${e.cat === cc.id}"><i class="dot" style="--c:${cc.color}"></i>${esc(catName(cc))}</button>`).join('')}
@@ -2140,7 +2223,7 @@ function todoSheetHtml() {
     ${e.id ? `<div class="row2">
       <button class="btn soft" data-a="todoIcs" ${e.due ? '' : 'disabled'}>${icon('calendar-plus', 18)}${T('Kalender', 'Calendar')}</button>
       <button class="btn danger" data-a="deleteTodo">${icon('trash-2', 18)}${T('Löschen', 'Delete')}</button></div>
-      ${e.due ? (isAppleTouch() && !window.claude?.use ? `<a class="linkbtn calalt" href="${icsPageUrl({ id: e.id, title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, cat: e.cat })}" target="_blank" rel="noopener">${T('Klappt nicht? In Safari öffnen', 'Not working? Open in Safari')}</a>` : '') : `<p class="hint" style="margin:-6px 4px 0">${T('Für den Kalender braucht die Aufgabe ein Datum.', 'Add a date to put this task in your calendar.')}</p>`}` : ''}
+      ${e.due ? (isAppleTouch() && !window.claude?.use ? `<a class="linkbtn calalt" href="${icsPageUrl({ id: e.id, title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, dur: e.dur, cat: e.cat })}" target="_blank" rel="noopener">${T('Klappt nicht? In Safari öffnen', 'Not working? Open in Safari')}</a>` : '') : `<p class="hint" style="margin:-6px 4px 0">${T('Für den Kalender braucht die Aufgabe ein Datum.', 'Add a date to put this task in your calendar.')}</p>`}` : ''}
   </div>`;
 }
 function catListHtml() {
@@ -2176,7 +2259,7 @@ function todoIcs(x) {
     'UID:' + x.id + '@habit-tracker', 'DTSTAMP:' + now];
   if (x.time) {
     const [h, m] = x.time.split(':').map(Number);
-    const end = h * 60 + m + 30;
+    const end = h * 60 + m + (x.dur || 60);
     const endD = end >= 1440 ? addD(x.due, 1).replace(/-/g, '') : d;
     const e2 = end % 1440;
     lines.push('DTSTART:' + d + 'T' + pad(h) + pad(m) + '00', 'DTEND:' + endD + 'T' + pad(Math.floor(e2 / 60)) + pad(e2 % 60) + '00');
@@ -2225,9 +2308,10 @@ function drawerHtml() {
   const nm = S.meta.name || T('Du', 'You');
   return `<div class="scrim" data-a="closeOverlay"></div>
   <nav class="drawer" aria-label="${T('Hauptmenü', 'Main menu')}">
-    <div class="prof"><span class="avatar">${esc(nm.trim().charAt(0).toUpperCase() || 'D')}</span><div style="min-width:0"><b>${esc(nm)}</b><span>${habitList().length} ${T(plural(habitList().length, 'Gewohnheit', 'Gewohnheiten'), plural(habitList().length, 'habit', 'habits'))}</span></div></div>
+    <button class="prof" data-a="nav" data-v="profile" ${cur('profile')}>${myAvatar(52)}<div style="min-width:0"><b>${esc(nm)}</b><span>${T('Profil & Freunde', 'Profile & friends')}</span></div>${icon('chevron-right', 18)}</button>
     <button class="nav" data-a="nav" data-v="habits" ${cur('habits')}>${icon('list-checks', 22)}${T('Gewohnheiten', 'Habits')}</button>
     <button class="nav" data-a="nav" data-v="todos" ${cur('todos')}>${icon('square-check-big', 22)}${T('To-Dos', 'To-dos')}${nb ? `<span class="badge num" aria-label="${T(`${nb} offen`, `${nb} open`)}">${nb > 99 ? '99+' : nb}</span>` : ''}</button>
+    <button class="nav" data-a="nav" data-v="projects" ${cur('projects') || (v === 'project' ? 'aria-current="page"' : '')}>${icon('users', 22)}${T('Projekte', 'Projects')}${socialUnread() ? `<span class="badge num" aria-label="${T('Ungelesene Nachrichten', 'Unread messages')}">${socialUnread() > 99 ? '99+' : socialUnread()}</span>` : ''}</button>
     <button class="nav" data-a="nav" data-v="stats" ${cur('stats')}>${icon('chart-column', 22)}${T('Statistiken', 'Statistics')}</button>
     <button class="nav" data-a="nav" data-v="score" ${cur('score')}>${icon('star', 22)}${T('Tages-Score', 'Daily score')}</button>
     <div class="foot"><hr><button class="nav" data-a="nav" data-v="settings" ${cur('settings')}>${icon('settings', 22)}${T('Einstellungen', 'Settings')}</button></div>
@@ -2263,6 +2347,7 @@ let lastView = null, lastOv = '', prevSwitch = null;
 const segPrev = {};
 function render() {
   pendingRender = false;
+  if (ui.view !== 'project' && social.unsub.todos) closeProject();
   let html;
   const gate = cloud.mode === 'firebase' && cloud.authState !== 'signedIn';
   if (gate) { ui.view = 'auth'; ui.drawer = false; ui.attrEdit = null; ui.confirm = null; }
@@ -2278,6 +2363,9 @@ function render() {
     case 'score': html = viewScore(); break;
     case 'settings': html = viewSettings(); break;
     case 'todos': html = viewTodos(); break;
+    case 'profile': html = viewProfile(); break;
+    case 'projects': html = viewProjects(); break;
+    case 'project': html = social.projects[ui.projectId] ? viewProject() : (ui.view = 'projects', viewProjects()); break;
     default: ui.view = 'habits'; html = viewHabits();
   }
   if (ui.view !== 'onboarding' && ui.view !== 'auth') {
@@ -2287,13 +2375,14 @@ function render() {
     if (ui.todoEdit) html += todoSheetHtml();
     if (ui.catList && !ui.catEdit) html += catListHtml();
     if (ui.catEdit) html += catSheetHtml();
+    if (ui.projSheet) html += projSheetHtml();
     if (ui.confirm) html += confirmHtml();
   }
   const ae = document.activeElement;
   const focusId = ae && ae.id ? ae.id : null;
   const entering = lastView !== ui.view;
   app.innerHTML = html;
-  const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : ui.catEdit ? 'ce' : ui.catList ? 'cl' : ui.todoEdit ? 't' : '';
+  const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : ui.catEdit ? 'ce' : ui.catList ? 'cl' : ui.todoEdit ? 't' : ui.projSheet ? 'p' + ui.projSheet.kind : '';
   if (ovKey && ovKey !== lastOv) app.querySelectorAll('.scrim, .drawer, .sheet, .dialog').forEach(e => e.classList.add('anim'));
   lastOv = ovKey;
   if (entering) {
@@ -2347,12 +2436,43 @@ function render() {
     }, { passive: true });
   }
   if (focusId) { const el = document.getElementById(focusId); if (el && el.tagName === 'INPUT') { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) { /* date inputs */ } } }
+  if (ui.view === 'stats' && (entering || ui.countAgain)) { ui.countAgain = false; countUp(COUNT_SEL); }
   if (lastView !== ui.view) {
     lastView = ui.view;
-    const titles = { onboarding: T('Willkommen', 'Welcome'), habits: T('Gewohnheiten', 'Habits'), detail: T('Gewohnheit', 'Habit'), edit: T('Bearbeiten', 'Edit'), icons: T('Icon wählen', 'Choose icon'), stats: T('Statistiken', 'Statistics'), score: T('Tages-Score', 'Daily score'), settings: T('Einstellungen', 'Settings'), todos: T('To-Dos', 'To-dos'), auth: T('Anmelden', 'Sign in') };
+    const titles = { onboarding: T('Willkommen', 'Welcome'), habits: T('Gewohnheiten', 'Habits'), detail: T('Gewohnheit', 'Habit'), edit: T('Bearbeiten', 'Edit'), icons: T('Icon wählen', 'Choose icon'), stats: T('Statistiken', 'Statistics'), score: T('Tages-Score', 'Daily score'), settings: T('Einstellungen', 'Settings'), todos: T('To-Dos', 'To-dos'), profile: T('Profil', 'Profile'), projects: T('Projekte', 'Projects'), project: T('Projekt', 'Project'), auth: T('Anmelden', 'Sign in') };
     document.title = (titles[ui.view] || 'Habits') + ' · Habit Tracker';
   }
 }
+
+// ---------- count-up numbers (statistics) ----------
+// Every number inside the given elements counts up from 0 to its value; text around it stays.
+function countUp(sel, ms = 950) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const nodes = [];
+  document.querySelectorAll(sel).forEach(el => {
+    const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) if (/\d/.test(n.nodeValue) && !n.parentElement.closest('svg')) nodes.push({ n, txt: n.nodeValue });
+  });
+  if (!nodes.length) return;
+  const run = ++countUp.run;
+  const t0 = performance.now();
+  const frame = now => {
+    if (run !== countUp.run) return;
+    const p = Math.min(1, (now - t0) / ms), k = 1 - Math.pow(1 - p, 3);
+    nodes.forEach(({ n, txt }) => {
+      n.nodeValue = p >= 1 ? txt : txt.replace(/\d+(?:[.,]\d+)?/g, m => {
+        const sep = m.includes(',') ? ',' : '.';
+        const dec = m.includes(sep) ? m.split(sep)[1].length : 0;
+        const v = (Number(m.replace(',', '.')) * k).toFixed(dec);
+        return sep === ',' ? v.replace('.', ',') : v;
+      });
+    });
+    if (p < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+countUp.run = 0;
+const COUNT_SEL = '.kpi .v, .prow .sub, .rk .sum';
 
 // ---------- feel: haptics and small animations ----------
 function iosTick() {
@@ -2397,6 +2517,536 @@ function celebrateIfAllDone(before) {
 }
 const doneCount = () => { const t = todayK(); return habitList().filter(h => hOk(h, t, t)).length; };
 
+// ---------- social: profile, friends, shared projects with chat (hosted app with Firebase only) ----------
+// Firestore layout (see firestore.rules):
+//   profiles/{uid}            name, photo (small JPEG data URL), code      – readable by any signed-in user via get
+//   codes/{CODE}              uid                                           – friend code lookup
+//   friendships/{a_b}         members [a, b] (sorted)                      – both see it
+//   projects/{pid}            name, color, members[], code, msgCount, readCount{uid}, readAt{uid}, lastMsg
+//   projects/{pid}/todos/*    title, done, by, doneBy, at, doneAt
+//   projects/{pid}/messages/* uid, text, at
+//   projectCodes/{CODE}       pid                                           – join by code
+const social = {
+  on: false, db: null, uid: null, profile: null, profileReady: false,
+  friends: [], profiles: {}, projects: {}, projLoaded: false,
+  todos: {}, messages: {}, unsub: {}, pending: {}, nameTimer: null,
+};
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O, 1/I
+const newCode = () => { let c = ''; const r = new Uint32Array(6); crypto.getRandomValues(r); r.forEach(n => { c += CODE_CHARS[n % CODE_CHARS.length]; }); return c; };
+const cleanCode = v => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+const tsMs = v => (v && typeof v.toMillis === 'function' ? v.toMillis() : typeof v === 'number' ? v : 0);
+const FV = () => firebase.firestore.FieldValue;
+const PROJ_COLORS = ['#F97316', '#06B6D4', '#22C55E', '#A855F7', '#EC4899', '#EAB308', '#3B82F6', '#EF4444'];
+
+function socialAvailable() { return cloud.mode === 'firebase' && !!social.uid; }
+function socialUnread() {
+  if (!social.uid) return 0;
+  let n = 0;
+  for (const p of Object.values(social.projects)) n += projUnread(p);
+  return n;
+}
+const projUnread = p => Math.max(0, (p.msgCount || 0) - ((p.readCount || {})[social.uid] || 0));
+
+function startSocial(fs, uid) {
+  if (social.on && social.uid === uid) return;
+  stopSocial();
+  social.on = true; social.db = fs; social.uid = uid;
+  const db = fs;
+  social.unsub.profile = db.collection('profiles').doc(uid).onSnapshot(snap => {
+    social.profile = snap.exists ? snap.data() : null;
+    social.profileReady = true;
+    if (social.profile) social.profiles[uid] = social.profile;
+    // only trust "no profile yet" when the server said so, not an empty local cache
+    if ((!social.profile || !social.profile.code) && !(snap.metadata && snap.metadata.fromCache)) ensureProfile();
+    socialRender();
+  }, e => console.warn('Profil', e));
+  social.unsub.friends = db.collection('friendships').where('members', 'array-contains', uid).onSnapshot(qs => {
+    social.friends = qs.docs.map(d => d.data().members.find(m => m !== uid)).filter(Boolean);
+    loadProfiles(social.friends);
+    socialRender();
+  }, e => console.warn('Freunde', e));
+  social.unsub.projects = db.collection('projects').where('members', 'array-contains', uid).onSnapshot(qs => {
+    const next = {};
+    qs.docs.forEach(d => { next[d.id] = { id: d.id, ...d.data({ serverTimestamps: 'estimate' }) }; });
+    social.projects = next; social.projLoaded = true;
+    const all = new Set(); Object.values(next).forEach(p => (p.members || []).forEach(m => all.add(m)));
+    loadProfiles([...all]);
+    if (ui.projectId && !next[ui.projectId] && ui.view === 'project') { closeProject(); setTop('projects'); toast(T('Du bist nicht mehr in diesem Projekt.', 'You\'re no longer in this project.')); return; }
+    if (ui.view === 'project' && ui.projTab === 'chat') markRead();
+    socialRender();
+  }, e => console.warn('Projekte', e));
+}
+function stopSocial() {
+  Object.values(social.unsub).forEach(u => { try { u(); } catch (e) { /* ignore */ } });
+  Object.assign(social, { on: false, uid: null, profile: null, profileReady: false, friends: [], profiles: {}, projects: {}, projLoaded: false, todos: {}, messages: {}, unsub: {}, pending: {} });
+}
+// re-render without throwing away what someone is typing in the chat box
+function socialRender() {
+  const a = document.activeElement;
+  if (a && a.id === 'chat-in' && ui.view === 'project') { updateChatDom(); return; }
+  if (a && a.id === 'pqa') { render(); return; } // value lives in ui.pqa, focus is restored
+  safeRender();
+}
+async function loadProfiles(uids) {
+  const need = uids.filter(u => u && !social.profiles[u] && !social.pending[u]);
+  if (!need.length) return;
+  need.forEach(u => { social.pending[u] = true; });
+  await Promise.all(need.map(async u => {
+    try { const d = await social.db.collection('profiles').doc(u).get(); social.profiles[u] = d.exists ? d.data() : { name: '?' }; }
+    catch (e) { social.profiles[u] = { name: '?' }; }
+    finally { delete social.pending[u]; }
+  }));
+  socialRender();
+}
+async function ensureProfile() {
+  if (social.creating || !social.uid) return;
+  social.creating = true;
+  const uid = social.uid, db = social.db;
+  try {
+    let code = social.profile && social.profile.code;
+    for (let i = 0; !code && i < 6; i++) {
+      const c = newCode();
+      try { await db.collection('codes').doc(c).set({ uid }); code = c; } catch (e) { /* taken, try another */ }
+    }
+    if (!code) throw new Error('no code');
+    await db.collection('profiles').doc(uid).set({ name: (S.meta.name || '').slice(0, 40), code, photo: (social.profile && social.profile.photo) || '' }, { merge: true });
+  } catch (e) { console.warn('Profil anlegen', e); }
+  finally { social.creating = false; }
+}
+function syncProfileName() {
+  if (!social.uid || !social.profile) return;
+  const name = (S.meta.name || '').trim().slice(0, 40);
+  if (!name || social.profile.name === name) return;
+  clearTimeout(social.nameTimer);
+  social.nameTimer = setTimeout(() => { if (social.uid) social.db.collection('profiles').doc(social.uid).set({ name }, { merge: true }).catch(() => {}); }, 800);
+}
+const profName = uid => (uid === social.uid ? (S.meta.name || T('Du', 'You')) : ((social.profiles[uid] || {}).name || '…'));
+function avatarHtml(uid, size = 36) {
+  const p = uid === social.uid ? (social.profile || {}) : (social.profiles[uid] || {});
+  const name = uid === social.uid ? (S.meta.name || '') : (p.name || '');
+  const hue = [...String(uid || name)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+  const st = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.42)}px`;
+  if (p.photo) return `<span class="avatar img" style="${st}"><img src="${esc(p.photo)}" alt=""></span>`;
+  return `<span class="avatar" style="${st};background:hsl(${hue} 45% 32%);color:#fff">${esc((name.trim().charAt(0) || '?').toUpperCase())}</span>`;
+}
+function myAvatar(size) {
+  if (social.uid) return avatarHtml(social.uid, size);
+  const nm = S.meta.name || T('Du', 'You');
+  return `<span class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size * 0.42)}px">${esc(nm.trim().charAt(0).toUpperCase() || 'D')}</span>`;
+}
+
+// ----- profile photo: center crop, 160 px JPEG, stays well under the document limit -----
+async function setPhoto(file) {
+  if (!socialAvailable()) { toast(T('Profilbilder gibt es nur mit Konto.', 'Profile photos need an account.')); return; }
+  try {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+    const n = 160, c = document.createElement('canvas'); c.width = n; c.height = n;
+    const s = Math.min(img.naturalWidth, img.naturalHeight);
+    c.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, n, n);
+    URL.revokeObjectURL(url);
+    let q = 0.82, data = c.toDataURL('image/jpeg', q);
+    while (data.length > 60000 && q > 0.4) { q -= 0.12; data = c.toDataURL('image/jpeg', q); }
+    await social.db.collection('profiles').doc(social.uid).set({ photo: data }, { merge: true });
+    haptic('success'); toast(T('Profilbild gespeichert', 'Profile photo saved'));
+  } catch (e) { console.warn(e); toast(T('Das Bild konnte nicht geladen werden.', 'Couldn\'t load that image.')); }
+}
+
+// ----- views -----
+function bestStreakNow() { let b = 0; for (const h of habitList()) b = Math.max(b, hStats(h).cur); return b; }
+function viewProfile() {
+  const can = socialAvailable();
+  const p = social.profile || {};
+  const doneTodos = liveTodos().filter(x => x.done).length;
+  const friends = social.friends.slice().sort((a, b) => profName(a).localeCompare(profName(b)));
+  return header({ title: T('Profil', 'Profile') }) + `<main class="stack" style="gap:18px">
+    <div class="profhero">
+      <label class="bigav${can ? '' : ' off'}" for="photo-file" aria-label="${T('Profilbild ändern', 'Change profile photo')}">${myAvatar(104)}${can ? `<span class="pen">${icon('pencil', 15)}</span>` : ''}</label>
+      ${can ? `<input id="photo-file" class="sr" type="file" accept="image/*" tabindex="-1">` : ''}
+      <h2>${esc(S.meta.name || T('Du', 'You'))}</h2>
+      ${can && p.photo ? `<button class="linkbtn" data-a="removePhoto" style="--c:var(--muted)">${T('Foto entfernen', 'Remove photo')}</button>` : ''}
+    </div>
+    <div class="tiles">
+      <div class="tile"><span class="v num">${habitList().length}</span><span class="k">${T('Gewohnheiten', 'Habits')}</span></div>
+      <div class="tile"><span class="v num">${bestStreakNow()}</span><span class="k">${T('Bester Streak gerade', 'Top streak now')}</span></div>
+      <div class="tile"><span class="v num">${doneTodos}</span><span class="k">${T('To-Dos erledigt', 'To-dos done')}</span></div>
+    </div>
+    ${!can ? `<div class="card"><p class="hint" style="margin:0">${T('Freunde und gemeinsame Projekte gibt es in der App mit Konto (Anmeldung mit E-Mail).', 'Friends and shared projects are available in the app with an account (email sign-in).')}</p></div>` : `
+    <section class="card codecard">
+      <span class="label">${T('Dein Freundescode', 'Your friend code')}</span>
+      <div class="code num" aria-label="${esc((p.code || '').split('').join(' '))}">${p.code ? esc(p.code) : '······'}</div>
+      <button class="btn soft" data-a="copyCode" data-v="${esc(p.code || '')}" ${p.code ? '' : 'disabled'}>${T('Code kopieren', 'Copy code')}</button>
+      <p class="hint" style="margin:0">${T('Gib den Code deinen Freunden. Wer ihn eingibt, ist mit dir befreundet und kann dich zu Projekten hinzufügen.', 'Give this code to your friends. Anyone who enters it becomes your friend and can add you to projects.')}</p>
+    </section>
+    <form class="field" data-form="friendAdd" autocomplete="off">
+      <label for="friend-code">${T('Freund hinzufügen', 'Add a friend')}</label>
+      <div class="qa"><input id="friend-code" class="inp codein" data-sbind="friendCode" value="${esc(ui.friendCode || '')}" maxlength="6" placeholder="${T('Code, z. B. K7M2QX', 'Code, e.g. K7M2QX')}" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+      <button type="submit" id="friend-go" class="ib solid" aria-label="${T('Hinzufügen', 'Add')}" ${cleanCode(ui.friendCode).length === 6 ? '' : 'disabled'}>${icon('plus', 20, 2.5)}</button></div>
+    </form>
+    <div class="field"><span class="label">${T('Freunde', 'Friends')} · ${friends.length}</span>
+      ${friends.length ? `<div class="list">${friends.map(f => `<div class="li"><span style="display:flex;align-items:center;gap:12px;min-width:0">${avatarHtml(f, 36)}<span class="lt"><span>${esc(profName(f))}</span></span></span>
+        <button class="ib ghost" data-a="removeFriend" data-id="${f}" aria-label="${T('Entfernen', 'Remove')}: ${esc(profName(f))}">${icon('x', 18)}</button></div>`).join('')}</div>`
+        : `<p class="hint" style="margin:0 4px">${T('Noch keine Freunde. Tausch Codes aus, dann tauchen sie hier auf.', 'No friends yet. Swap codes and they show up here.')}</p>`}</div>`}
+  </main>`;
+}
+function viewProjects() {
+  if (!socialAvailable()) return header({ title: T('Projekte', 'Projects') }) + `<main class="stack"><div class="card empty"><h2>${T('Nur mit Konto', 'Account needed')}</h2><p class="hint" style="margin:0">${T('Gemeinsame Projekte mit Freunden gibt es in der App mit Anmeldung.', 'Shared projects with friends need the app with sign-in.')}</p></div></main>`;
+  const list = Object.values(social.projects).sort((a, b) => tsMs((b.lastMsg || {}).at || b.createdAt) - tsMs((a.lastMsg || {}).at || a.createdAt));
+  return header({ title: T('Projekte', 'Projects'), sub: T('Gemeinsam mit Freunden', 'Together with friends'), right: `<button class="ib solid" data-a="newProject" aria-label="${T('Neues Projekt', 'New project')}">${icon('plus', 20, 2.5)}</button>` }) + `<main class="stack">
+    ${list.map(p => {
+      const un = projUnread(p);
+      const lm = p.lastMsg && p.lastMsg.text ? `${p.lastMsg.uid === social.uid ? T('Du', 'You') : esc(profName(p.lastMsg.uid))}: ${esc(p.lastMsg.text)}` : T('Noch keine Nachrichten', 'No messages yet');
+      return `<button class="card pcard" data-a="openProject" data-id="${p.id}" style="--c:${esc(p.color || '#A855F7')}">
+        <span class="pbar"></span>
+        <span class="pmain"><b>${esc(p.name)}</b><span class="plast${un ? ' new' : ''}">${lm}</span>
+          <span class="pmem">${(p.members || []).slice(0, 5).map(m => avatarHtml(m, 24)).join('')}<em>${(p.members || []).length} ${T(plural((p.members || []).length, 'Mitglied', 'Mitglieder'), plural((p.members || []).length, 'member', 'members'))}</em></span></span>
+        ${un ? `<span class="badge num">${un > 99 ? '99+' : un}</span>` : icon('chevron-right', 18)}
+      </button>`;
+    }).join('')}
+    ${!list.length ? `<div class="card empty"><h2>${social.projLoaded ? T('Noch keine Projekte', 'No projects yet') : T('Lade …', 'Loading …')}</h2><p class="hint" style="margin:0">${T('Leg ein Projekt an, z. B. für die Band oder ein Referat, und lade Freunde ein. Ihr habt dann gemeinsame Aufgaben und einen Chat.', 'Create a project, for your band or a school presentation, and invite friends. You get shared tasks and a chat.')}</p></div>` : ''}
+    <div class="row2"><button class="btn soft" data-a="newProject">${icon('plus', 18, 2.5)} ${T('Neues Projekt', 'New project')}</button>
+      <button class="btn soft" data-a="joinProject">${icon('users', 18)} ${T('Beitreten', 'Join')}</button></div>
+  </main>`;
+}
+function projectTodosHtml(pid) {
+  const xs = (social.todos[pid] || []).slice();
+  const open = xs.filter(x => !x.done).sort((a, b) => a.at - b.at);
+  const done = xs.filter(x => x.done).sort((a, b) => b.doneAt - a.doneAt);
+  const row = x => `<div class="trow${x.done ? ' done' : ''}" data-tid="${x.id}" style="--c:var(--text)">
+    <button class="tchk${x.done ? ' on' : ''}" data-a="ptToggle" data-id="${x.id}" role="checkbox" aria-checked="${x.done}" aria-label="${esc(x.title)}">${icon('check', 16, 3.2)}</button>
+    <span class="topen"><span class="ttl">${esc(x.title)}</span><span class="tmeta">${x.done ? T(`erledigt von ${esc(profName(x.doneBy))}`, `done by ${esc(profName(x.doneBy))}`) : T(`von ${esc(profName(x.by))}`, `by ${esc(profName(x.by))}`)}</span></span>
+    <button class="ib ghost tdel" data-a="ptDelete" data-id="${x.id}" aria-label="${T('Löschen', 'Delete')}: ${esc(x.title)}">${icon('trash-2', 17)}</button>
+  </div>`;
+  return `<form class="qa" data-form="ptAdd" autocomplete="off">
+      <label for="pqa" class="sr">${T('Neue Aufgabe', 'New task')}</label>
+      <input id="pqa" class="inp" data-sbind="pqa" value="${esc(ui.pqa || '')}" maxlength="140" placeholder="${T('Gemeinsame Aufgabe …', 'Shared task …')}" enterkeyhint="done">
+      <button type="submit" id="pqa-go" class="ib solid" aria-label="${T('Hinzufügen', 'Add')}" ${(ui.pqa || '').trim() ? '' : 'disabled'}>${icon('arrow-up', 20, 2.5)}</button>
+    </form>
+    ${social.todos[pid] == null ? `<p class="hint" style="margin:4px">${T('Lade …', 'Loading …')}</p>` : ''}
+    ${open.length ? `<section class="tsec"><span class="label">${T('Offen', 'Open')}<em class="num">${open.length}</em></span>${open.map(row).join('')}</section>` : ''}
+    ${done.length ? `<section class="tsec"><span class="label">${T('Erledigt', 'Done')}<em class="num">${done.length}</em></span>${done.map(row).join('')}</section>` : ''}
+    ${social.todos[pid] && !xs.length ? `<div class="card empty"><p class="hint" style="margin:0">${T('Noch keine gemeinsamen Aufgaben. Alles, was ihr hier eintragt, sehen alle im Projekt.', 'No shared tasks yet. Everything you add here, everyone in the project sees.')}</p></div>` : ''}`;
+}
+function fmtMsgTime(ms) { const d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function dayKeyOf(ms) { const d = new Date(ms); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+const seenMsgs = new Set();
+function chatListHtml(pid) {
+  const p = social.projects[pid];
+  const msgs = social.messages[pid];
+  if (msgs == null) return `<p class="hint" style="text-align:center">${T('Lade …', 'Loading …')}</p>`;
+  seenMsgs.ready = seenMsgs.pid === pid; seenMsgs.pid = pid;
+  if (!msgs.length) return `<div class="chatempty">${icon('message-circle', 28)}<p>${T('Noch keine Nachrichten. Schreib die erste.', 'No messages yet. Write the first one.')}</p></div>`;
+  let out = '', lastDay = '', lastUid = '';
+  const t = todayK();
+  // read receipt under my newest message, if it's the newest overall
+  const last = msgs[msgs.length - 1];
+  let receipt = '';
+  if (last && last.uid === social.uid) {
+    const at = tsMs(last.at) || Date.now();
+    const readers = (p.members || []).filter(m => m !== social.uid && tsMs((p.readAt || {})[m]) >= at);
+    const others = (p.members || []).filter(m => m !== social.uid);
+    receipt = !others.length ? '' : readers.length === others.length ? (others.length === 1 ? T('Gelesen', 'Seen') : T('Von allen gelesen', 'Seen by everyone'))
+      : readers.length ? T('Gelesen von ', 'Seen by ') + readers.map(r => esc(profName(r))).join(', ') : T('Gesendet', 'Sent');
+  }
+  msgs.forEach((m, i) => {
+    const ms = tsMs(m.at) || Date.now();
+    const dk = dayKeyOf(ms);
+    if (dk !== lastDay) { lastDay = dk; lastUid = ''; out += `<div class="chatday">${dk === t ? T('Heute', 'Today') : dk === addD(t, -1) ? T('Gestern', 'Yesterday') : fmtLong(dk)}</div>`; }
+    const mine = m.uid === social.uid;
+    const first = m.uid !== lastUid; lastUid = m.uid;
+    const fresh = !seenMsgs.has(m.id); seenMsgs.add(m.id);
+    out += `<div class="msg${mine ? ' me' : ''}${first ? ' first' : ''}${fresh && seenMsgs.ready ? ' new' : ''}">
+      ${!mine ? (first ? avatarHtml(m.uid, 28) : '<span class="avsp"></span>') : ''}
+      <div class="bub">${!mine && first ? `<b>${esc(profName(m.uid))}</b>` : ''}<span class="tx">${esc(m.text)}</span><span class="tm">${fmtMsgTime(ms)}</span></div>
+    </div>`;
+    if (i === msgs.length - 1 && receipt) out += `<div class="receipt">${receipt}</div>`;
+  });
+  return out;
+}
+function viewProject() {
+  const p = social.projects[ui.projectId];
+  const tab = ui.projTab || 'todos';
+  const un = projUnread(p);
+  const right = `<button class="ib" data-a="projSettings" aria-label="${T('Projekt-Einstellungen', 'Project settings')}">${icon('settings', 20)}</button>`;
+  const segHtml = seg('projTab', tab, [['todos', `${icon('list-checks', 16)}${T('Aufgaben', 'Tasks')}`], ['chat', `${icon('message-circle', 16)}Chat${un && tab !== 'chat' ? `<i class="segdot num">${un}</i>` : ''}`]]);
+  if (tab === 'chat') {
+    return header({ left: 'back', title: p.name, sub: (p.members || []).map(profName).join(', '), right }) +
+      `<main class="stack chat" style="--c:${esc(p.color || '#A855F7')}">${segHtml}<div id="msgs" class="msgs" aria-live="polite">${chatListHtml(p.id)}</div>
+      <form class="composer" data-form="chatSend" autocomplete="off">
+        <label for="chat-in" class="sr">${T('Nachricht', 'Message')}</label>
+        <input id="chat-in" class="inp" data-sbind="chat" value="${esc(ui.chatDraft || '')}" maxlength="2000" placeholder="${T('Nachricht …', 'Message …')}" enterkeyhint="send">
+        <button type="submit" id="chat-go" class="ib solid" aria-label="${T('Senden', 'Send')}" ${(ui.chatDraft || '').trim() ? '' : 'disabled'}>${icon('arrow-up', 20, 2.5)}</button>
+      </form></main>`;
+  }
+  return header({ left: 'back', title: p.name, sub: (p.members || []).map(profName).join(', '), right }) +
+    `<main class="stack" style="--c:${esc(p.color || '#A855F7')}">${segHtml}${projectTodosHtml(p.id)}</main>`;
+}
+function updateChatDom() {
+  const box = document.getElementById('msgs');
+  if (!box || !social.projects[ui.projectId]) return;
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 140;
+  box.innerHTML = chatListHtml(ui.projectId);
+  if (nearBottom) window.scrollTo(0, document.body.scrollHeight);
+}
+function projSheetHtml() {
+  const s = ui.projSheet;
+  const close = `<button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button>`;
+  if (s.kind === 'new') {
+    return `<div class="scrim" data-a="closeOverlay"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ps-h" style="--c:${s.color}">
+      <div class="sheethead"><h2 id="ps-h">${T('Neues Projekt', 'New project')}</h2>${close}</div>
+      <form class="field" data-form="projCreate" autocomplete="off"><label for="proj-name">Name</label>
+        <input id="proj-name" class="inp" data-sbind="projName" value="${esc(s.name)}" maxlength="40" placeholder="${T('z. B. Bio-Referat oder Band', 'e.g. Biology talk or Band')}"></form>
+      <div class="field"><span class="flabel">${T('Farbe', 'Color')}</span>
+        <div class="colors">${PROJ_COLORS.map(c => `<button data-a="projColor" data-c="${c}" style="--sw:${c}" aria-label="${c}" aria-pressed="${c === s.color}"></button>`).join('')}</div></div>
+      <button id="proj-save" class="btn accent block" data-a="projCreate" ${s.name.trim() && !s.busy ? '' : 'disabled'}>${s.busy ? T('Einen Moment …', 'One moment …') : T('Projekt anlegen', 'Create project')}</button>
+    </div>`;
+  }
+  if (s.kind === 'join') {
+    return `<div class="scrim" data-a="closeOverlay"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pj-h">
+      <div class="sheethead"><h2 id="pj-h">${T('Projekt beitreten', 'Join project')}</h2>${close}</div>
+      <form class="field" data-form="projJoin" autocomplete="off"><label for="join-code">${T('Projekt-Code', 'Project code')}</label>
+        <input id="join-code" class="inp codein" data-sbind="joinCode" value="${esc(s.code)}" maxlength="6" placeholder="K7M2QX" autocapitalize="characters" spellcheck="false" enterkeyhint="go"></form>
+      ${s.error ? `<p class="hint" role="alert" style="margin:0;color:var(--bad)">${esc(s.error)}</p>` : ''}
+      <button id="join-go" class="btn primary block" data-a="projJoin" ${cleanCode(s.code).length === 6 && !s.busy ? '' : 'disabled'}>${s.busy ? T('Einen Moment …', 'One moment …') : T('Beitreten', 'Join')}</button>
+    </div>`;
+  }
+  // settings of an open project
+  const p = social.projects[ui.projectId];
+  if (!p) return '';
+  const addable = social.friends.filter(f => !(p.members || []).includes(f));
+  return `<div class="scrim" data-a="closeOverlay"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pe-h" style="--c:${esc(p.color || '#A855F7')}">
+    <div class="sheethead"><h2 id="pe-h">${esc(p.name)}</h2>${close}</div>
+    <section class="card codecard"><span class="label">${T('Einladungs-Code', 'Invite code')}</span>
+      <div class="code num">${esc(p.code || '')}</div>
+      <button class="btn soft" data-a="copyCode" data-v="${esc(p.code || '')}">${T('Code kopieren', 'Copy code')}</button>
+      <p class="hint" style="margin:0">${T('Wer den Code unter „Projekte → Mit Code beitreten“ eingibt, ist dabei.', 'Anyone who enters it under “Projects → Join with code” is in.')}</p></section>
+    ${addable.length ? `<div class="field"><span class="label">${T('Freunde hinzufügen', 'Add friends')}</span><div class="list">${addable.map(f => `<div class="li"><span style="display:flex;align-items:center;gap:12px;min-width:0">${avatarHtml(f, 32)}<span>${esc(profName(f))}</span></span>
+      <button class="btn soft" style="height:38px;font-size:14px;flex:none" data-a="projAddFriend" data-id="${f}">${icon('plus', 16, 2.5)} ${T('Hinzufügen', 'Add')}</button></div>`).join('')}</div></div>` : ''}
+    <div class="field"><span class="label">${T('Mitglieder', 'Members')} · ${(p.members || []).length}</span><div class="list">${(p.members || []).map(m => `<div class="li"><span style="display:flex;align-items:center;gap:12px;min-width:0">${avatarHtml(m, 32)}<span>${esc(profName(m))}${m === social.uid ? T(' (du)', ' (you)') : ''}</span></span></div>`).join('')}</div></div>
+    <div class="field"><label for="proj-rename">Name</label><input id="proj-rename" class="inp" value="${esc(p.name)}" maxlength="40" autocomplete="off"></div>
+    <button class="btn danger block" data-a="projLeave">${(p.members || []).length === 1 ? T('Projekt löschen', 'Delete project') : T('Projekt verlassen', 'Leave project')}</button>
+  </div>`;
+}
+
+// ----- project data while one is open -----
+function openProjectData(pid) {
+  closeProject();
+  const ref = social.db.collection('projects').doc(pid);
+  social.unsub.todos = ref.collection('todos').onSnapshot(qs => {
+    social.todos[pid] = qs.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (ui.projectId === pid) socialRender();
+  }, e => console.warn('Projekt-Aufgaben', e));
+  social.unsub.msgs = ref.collection('messages').orderBy('at', 'desc').limit(150).onSnapshot(qs => {
+    const before = (social.messages[pid] || []).length;
+    social.messages[pid] = qs.docs.map(d => ({ id: d.id, ...d.data({ serverTimestamps: 'estimate' }) })).reverse();
+    if (ui.projectId !== pid) return;
+    if (ui.view === 'project' && ui.projTab === 'chat') {
+      markRead();
+      const a = document.activeElement;
+      if (a && a.id === 'chat-in') updateChatDom(); else { render(); }
+      if (social.messages[pid].length > before) window.scrollTo(0, document.body.scrollHeight);
+    } else socialRender();
+  }, e => console.warn('Chat', e));
+}
+function closeProject() {
+  ['todos', 'msgs'].forEach(k => { if (social.unsub[k]) { try { social.unsub[k](); } catch (e) { /* ignore */ } delete social.unsub[k]; } });
+}
+function markRead() {
+  const p = social.projects[ui.projectId];
+  if (!p || document.hidden) return;
+  if (((p.readCount || {})[social.uid] || 0) >= (p.msgCount || 0)) return;
+  const upd = {}; upd['readCount.' + social.uid] = p.msgCount || 0; upd['readAt.' + social.uid] = FV().serverTimestamp();
+  p.readCount = { ...(p.readCount || {}), [social.uid]: p.msgCount || 0 };
+  social.db.collection('projects').doc(p.id).update(upd).catch(e => console.warn('Gelesen', e));
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && ui.view === 'project' && ui.projTab === 'chat') markRead(); });
+
+// ----- typing -----
+function socialInput(el) {
+  const v = el.value, b = el.dataset.sbind;
+  const en = (id, on) => { const x = document.getElementById(id); if (x) x.disabled = !on; };
+  if (b === 'friendCode') { const c = cleanCode(v); if (c !== v) el.value = c; ui.friendCode = c; en('friend-go', c.length === 6); }
+  else if (b === 'joinCode') { const c = cleanCode(v); if (c !== v) el.value = c; ui.projSheet.code = c; en('join-go', c.length === 6 && !ui.projSheet.busy); }
+  else if (b === 'projName') { ui.projSheet.name = v; en('proj-save', v.trim()); }
+  else if (b === 'pqa') { ui.pqa = v; en('pqa-go', v.trim()); }
+  else if (b === 'chat') { ui.chatDraft = v; en('chat-go', v.trim()); }
+}
+const socialForms = {
+  friendAdd: () => socialActions.friendAdd(),
+  projCreate: () => socialActions.projCreate(),
+  projJoin: () => socialActions.projJoin(),
+  ptAdd: () => socialActions.ptAdd(),
+  chatSend: () => socialActions.chatSend(),
+};
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id === 'proj-rename' && social.projects[ui.projectId]) {
+    const name = el.value.trim().slice(0, 40);
+    if (name && name !== social.projects[ui.projectId].name) social.db.collection('projects').doc(ui.projectId).update({ name }).then(() => toast(T('Name gespeichert', 'Name saved'))).catch(() => toast(T('Das hat nicht geklappt.', 'That didn\'t work.')));
+  }
+});
+const offline = e => (e && (e.code === 'unavailable' || /offline|network/i.test(String(e.message))));
+const failToast = e => toast(offline(e) ? T('Keine Verbindung. Versuch es gleich nochmal.', 'No connection. Try again in a moment.') : T('Das hat nicht geklappt. Versuch es nochmal.', 'That didn\'t work. Try again.'));
+
+const socialActions = {
+  removePhoto: async () => { try { await social.db.collection('profiles').doc(social.uid).set({ photo: '' }, { merge: true }); } catch (e) { failToast(e); } },
+  copyCode: async el => {
+    const c = el.dataset.v; if (!c) return;
+    try { await navigator.clipboard.writeText(c); toast(T('Code kopiert', 'Code copied')); }
+    catch (e) { toast(T(`Code: ${c}`, `Code: ${c}`)); }
+  },
+  friendAdd: async () => {
+    const code = cleanCode(ui.friendCode);
+    if (code.length !== 6 || !socialAvailable()) return;
+    if (social.profile && code === social.profile.code) { toast(T('Das ist dein eigener Code.', 'That\'s your own code.')); return; }
+    try {
+      const d = await social.db.collection('codes').doc(code).get();
+      if (!d.exists) { haptic('heavy'); fx('#friend-code', 'fx-shake', 450); toast(T('Diesen Code gibt es nicht. Prüf ihn nochmal.', 'That code doesn\'t exist. Check it again.')); return; }
+      const other = d.data().uid;
+      if (social.friends.includes(other)) { toast(T('Ihr seid schon befreundet.', 'You\'re already friends.')); return; }
+      const members = [social.uid, other].sort();
+      await social.db.collection('friendships').doc(members.join('_')).set({ members, at: FV().serverTimestamp() });
+      ui.friendCode = '';
+      haptic('success');
+      await loadProfiles([other]);
+      toast(T(`${profName(other)} ist jetzt dein Freund`, `${profName(other)} is now your friend`));
+      render();
+    } catch (e) { console.warn(e); failToast(e); }
+  },
+  removeFriend: el => {
+    const f = el.dataset.id;
+    openConfirm({
+      title: T(`${profName(f)} entfernen?`, `Remove ${profName(f)}?`), text: T('Ihr seid dann keine Freunde mehr. Gemeinsame Projekte bleiben bestehen.', 'You won\'t be friends anymore. Shared projects stay.'), ok: T('Entfernen', 'Remove'), danger: true,
+      onOk: async () => { try { await social.db.collection('friendships').doc([social.uid, f].sort().join('_')).delete(); } catch (e) { failToast(e); } },
+    });
+  },
+  newProject: () => {
+    if (!socialAvailable()) return;
+    ui.projSheet = { kind: 'new', name: '', color: PROJ_COLORS[Object.keys(social.projects).length % PROJ_COLORS.length], busy: false };
+    render(); setTimeout(() => { const i = document.getElementById('proj-name'); if (i) i.focus(); }, 60);
+  },
+  projColor: el => { ui.projSheet.color = el.dataset.c; render(); },
+  projCreate: async () => {
+    const s = ui.projSheet; if (!s || s.kind !== 'new' || !s.name.trim() || s.busy) return;
+    s.busy = true; render();
+    try {
+      const ref = social.db.collection('projects').doc();
+      let code = '';
+      const base = { name: s.name.trim().slice(0, 40), color: s.color, members: [social.uid], createdBy: social.uid, createdAt: FV().serverTimestamp(), msgCount: 0, readCount: { [social.uid]: 0 } };
+      await ref.set(base);
+      for (let i = 0; !code && i < 6; i++) { const c = newCode(); try { await social.db.collection('projectCodes').doc(c).set({ pid: ref.id }); code = c; } catch (e) { /* taken */ } }
+      if (code) await ref.update({ code });
+      ui.projSheet = null; haptic('success');
+      socialActions.openProject({ dataset: { id: ref.id } });
+    } catch (e) { console.warn(e); s.busy = false; failToast(e); render(); }
+  },
+  joinProject: () => {
+    if (!socialAvailable()) return;
+    ui.projSheet = { kind: 'join', code: '', busy: false, error: '' }; render();
+    setTimeout(() => { const i = document.getElementById('join-code'); if (i) i.focus(); }, 60);
+  },
+  projJoin: async () => {
+    const s = ui.projSheet; if (!s || s.kind !== 'join' || s.busy) return;
+    const code = cleanCode(s.code); if (code.length !== 6) return;
+    s.busy = true; s.error = ''; render();
+    try {
+      const d = await social.db.collection('projectCodes').doc(code).get();
+      if (!d.exists) { s.busy = false; s.error = T('Zu diesem Code gibt es kein Projekt.', 'There\'s no project with this code.'); haptic('heavy'); render(); return; }
+      const pid = d.data().pid;
+      if (social.projects[pid]) { ui.projSheet = null; socialActions.openProject({ dataset: { id: pid } }); return; }
+      await social.db.collection('projects').doc(pid).update({ members: FV().arrayUnion(social.uid), joinCode: code });
+      ui.projSheet = null; haptic('success'); toast(T('Du bist dabei!', 'You\'re in!'));
+      socialActions.openProject({ dataset: { id: pid } });
+    } catch (e) { console.warn(e); s.busy = false; s.error = offline(e) ? T('Keine Verbindung.', 'No connection.') : T('Beitreten hat nicht geklappt.', 'Joining didn\'t work.'); render(); }
+  },
+  openProject: el => {
+    const pid = el.dataset.id;
+    ui.projectId = pid; ui.projTab = social.projects[pid] && projUnread(social.projects[pid]) ? 'chat' : 'todos'; ui.pqa = ''; ui.chatDraft = '';
+    if (!social.projects[pid]) {
+      // just created or joined: the list listener catches up in a moment
+      let tries = 0;
+      const wait = () => { if (social.projects[pid]) { openProjectData(pid); go('project'); } else if (tries++ < 40) setTimeout(wait, 100); else render(); };
+      wait(); return;
+    }
+    openProjectData(pid);
+    go('project');
+    if (ui.projTab === 'chat') { markRead(); setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 30); }
+  },
+  projTab: el => {
+    ui.projTab = el.dataset.v; render();
+    if (ui.projTab === 'chat') { markRead(); window.scrollTo(0, document.body.scrollHeight); }
+  },
+  projSettings: () => { ui.projSheet = { kind: 'edit' }; render(); },
+  projAddFriend: async el => {
+    try { await social.db.collection('projects').doc(ui.projectId).update({ members: FV().arrayUnion(el.dataset.id) }); haptic('success'); toast(T(`${profName(el.dataset.id)} ist dabei`, `${profName(el.dataset.id)} is in`)); }
+    catch (e) { failToast(e); }
+  },
+  projLeave: () => {
+    const p = social.projects[ui.projectId]; if (!p) return;
+    const last = (p.members || []).length === 1;
+    openConfirm({
+      title: last ? T('Projekt löschen?', 'Delete project?') : T('Projekt verlassen?', 'Leave project?'),
+      text: last ? T('Du bist das letzte Mitglied. Aufgaben und Chat werden gelöscht.', 'You\'re the last member. Tasks and chat get deleted.') : T('Die anderen behalten das Projekt. Du kannst mit dem Code wieder beitreten.', 'The others keep the project. You can rejoin with the code.'),
+      ok: last ? T('Löschen', 'Delete') : T('Verlassen', 'Leave'), danger: true,
+      onOk: async () => {
+        const pid = p.id;
+        ui.projSheet = null; closeProject(); ui.projectId = null;
+        setTop('projects');
+        try {
+          if (last) {
+            const ref = social.db.collection('projects').doc(pid);
+            const [ts, ms] = await Promise.all([ref.collection('todos').get(), ref.collection('messages').get()]);
+            const b = social.db.batch();
+            ts.docs.forEach(d => b.delete(d.ref)); ms.docs.slice(0, 450).forEach(d => b.delete(d.ref));
+            if (p.code) b.delete(social.db.collection('projectCodes').doc(p.code));
+            await b.commit();
+            await ref.delete();
+          } else await social.db.collection('projects').doc(pid).update({ members: FV().arrayRemove(social.uid) });
+        } catch (e) { console.warn(e); failToast(e); }
+      },
+    });
+  },
+  ptAdd: async () => {
+    const title = (ui.pqa || '').trim(); if (!title) return;
+    ui.pqa = '';
+    const inp = document.getElementById('pqa'); if (inp) inp.value = '';
+    const go2 = document.getElementById('pqa-go'); if (go2) go2.disabled = true;
+    haptic('light');
+    try { await social.db.collection('projects').doc(ui.projectId).collection('todos').add({ title: title.slice(0, 140), done: false, by: social.uid, at: Date.now(), doneBy: '', doneAt: 0 }); }
+    catch (e) { failToast(e); }
+  },
+  ptToggle: async el => {
+    const x = (social.todos[ui.projectId] || []).find(t => t.id === el.dataset.id); if (!x) return;
+    const done = !x.done;
+    el.classList.toggle('on', done); el.closest('.trow')?.classList.toggle('done', done);
+    if (done) { haptic('success'); fx(`.trow[data-tid="${x.id}"] .tchk`, 'fx-pop', 700); } else haptic('light');
+    try { await social.db.collection('projects').doc(ui.projectId).collection('todos').doc(x.id).update({ done, doneBy: done ? social.uid : '', doneAt: done ? Date.now() : 0 }); }
+    catch (e) { failToast(e); render(); }
+  },
+  ptDelete: async el => {
+    const row = el.closest('.trow'); if (row) row.classList.add('gone');
+    haptic('medium');
+    try { await social.db.collection('projects').doc(ui.projectId).collection('todos').doc(el.dataset.id).delete(); }
+    catch (e) { failToast(e); render(); }
+  },
+  chatSend: async () => {
+    const text = (ui.chatDraft || '').trim(); if (!text || !social.projects[ui.projectId]) return;
+    ui.chatDraft = '';
+    const inp = document.getElementById('chat-in'); if (inp) { inp.value = ''; inp.focus(); }
+    const go2 = document.getElementById('chat-go'); if (go2) go2.disabled = true;
+    const pid = ui.projectId;
+    const ref = social.db.collection('projects').doc(pid);
+    const b = social.db.batch();
+    b.set(ref.collection('messages').doc(), { uid: social.uid, text: text.slice(0, 2000), at: FV().serverTimestamp() });
+    const upd = { msgCount: FV().increment(1), lastMsg: { uid: social.uid, text: text.slice(0, 80), at: FV().serverTimestamp() } };
+    upd['readCount.' + social.uid] = FV().increment(1);
+    b.update(ref, upd);
+    haptic('light');
+    try { await b.commit(); } catch (e) { console.warn(e); ui.chatDraft = text; if (inp) inp.value = text; failToast(e); }
+  },
+};
+
 // ---------- actions ----------
 function openConfirm(c) { ui.confirm = c; render(); setTimeout(() => { const b = document.querySelector('.dialog [data-a="closeOverlay"]'); if (b) b.focus(); }, 0); }
 
@@ -2406,7 +3056,7 @@ const actions = {
   closeOverlay: () => {
     if (ui.confirm) { const c = ui.confirm; ui.confirm = null; if (c.onCancel) c.onCancel(); render(); return; }
     if (ui.catEdit && (ui.catList || ui.todoEdit)) { ui.catEdit = null; render(); return; }
-    ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; render();
+    ui.attrEdit = null; ui.drawer = false; ui.habitMenu = null; ui.todoEdit = null; ui.catList = false; ui.catEdit = null; ui.projSheet = null; render();
   },
   nav: el => setTop(el.dataset.v),
 
@@ -2531,7 +3181,7 @@ const actions = {
         touchMeta(); dirty.add('h:' + h.id);
         saveLocal(); scheduleSync();
         toast(T('Gelöscht', 'Deleted'));
-        setTop('habits');
+        if (ui.view === 'settings') render(); else setTop('habits');
       },
     });
   },
@@ -2549,9 +3199,9 @@ const actions = {
   hmArchive: () => { const id = ui.habitMenu; ui.habitMenu = null; actions.archiveHabit({ dataset: { id } }); },
   sortStep: el => { moveHabit(el.dataset.id, Number(el.dataset.v)); commit(); },
   sortDone: () => { ui.sorting = false; render(); },
-  statsTab: el => { ui.statsTab = el.dataset.v; render(); },
-  statsPeriod: el => { ui.statsPeriod = el.dataset.v; render(); },
-  scoreStatsPeriod: el => { ui.scoreStatsPeriod = el.dataset.v; render(); },
+  statsTab: el => { ui.statsTab = el.dataset.v; ui.countAgain = true; render(); },
+  statsPeriod: el => { ui.statsPeriod = el.dataset.v; ui.countAgain = true; render(); },
+  scoreStatsPeriod: el => { ui.scoreStatsPeriod = el.dataset.v; ui.countAgain = true; render(); },
 
   scoreTab: el => { ui.scoreTab = el.dataset.v; ui.attrSorting = false; render(); },
   scoreDay: el => {
@@ -2653,14 +3303,14 @@ const actions = {
   },
   qaMore: () => { actions.newTodo(); },
   newTodo: () => {
-    ui.todoEdit = { id: null, title: ui.qa.trim(), due: '', time: '', cat: ui.todoFilter !== 'all' ? ui.todoFilter : '', pick: false };
+    ui.todoEdit = { id: null, title: ui.qa.trim(), due: '', time: '', dur: 60, cat: ui.todoFilter !== 'all' ? ui.todoFilter : '', pick: false };
     render();
     setTimeout(() => { const i = document.getElementById('te-title'); if (i && !ui.todoEdit.title) i.focus(); }, 60);
   },
   openTodo: el => {
     const x = S.todos[el.dataset.id];
     if (!x) return;
-    ui.todoEdit = { id: x.id, title: x.title, due: x.due, time: x.time, cat: x.cat, pick: false };
+    ui.todoEdit = { id: x.id, title: x.title, due: x.due, time: x.time, dur: x.dur || 60, cat: x.cat, pick: false };
     render();
   },
   teDue: el => {
@@ -2673,13 +3323,18 @@ const actions = {
     if (v === 'pick') setTimeout(() => { const d = document.getElementById('te-date'); if (d) { try { d.showPicker(); } catch (err) { d.focus(); } } }, 50);
   },
   teNoTime: () => { ui.todoEdit.time = ''; render(); },
+  teDur: el => {
+    const e = ui.todoEdit;
+    if (el.dataset.v === 'custom') { e.durCustom = true; render(); setTimeout(() => { const i = document.getElementById('te-dur-h'); if (i) i.focus(); }, 50); return; }
+    e.dur = Number(el.dataset.v); e.durCustom = false; render();
+  },
   teCat: el => { const e = ui.todoEdit; e.cat = e.cat === el.dataset.v ? '' : el.dataset.v; render(); },
   saveTodo: () => {
     const e = ui.todoEdit;
     if (!e || !e.title.trim()) return;
     const id = e.id || 't' + uid();
     const prev = S.todos[id];
-    S.todos[id] = normTodo({ ...(prev || { createdAt: Date.now() }), title: e.title.trim(), due: e.due, time: e.due ? e.time : '', cat: e.cat }, id);
+    S.todos[id] = normTodo({ ...(prev || { createdAt: Date.now() }), title: e.title.trim(), due: e.due, time: e.due ? e.time : '', cat: e.cat, dur: e.dur }, id);
     touchTodo(id);
     const isNew = !e.id;
     ui.todoEdit = null;
@@ -2714,7 +3369,7 @@ const actions = {
   todoIcs: () => {
     const e = ui.todoEdit;
     if (!e || !e.due) return;
-    exportIcs({ ...(S.todos[e.id] || {}), id: e.id || 'new', title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, cat: e.cat });
+    exportIcs({ ...(S.todos[e.id] || {}), id: e.id || 'new', title: e.title.trim() || T('Aufgabe', 'Task'), due: e.due, time: e.time, dur: e.dur, cat: e.cat });
   },
   deleteTodo: () => {
     const e = ui.todoEdit;
@@ -2726,11 +3381,21 @@ const actions = {
     commit();
     toast(T('Aufgabe gelöscht', 'Task deleted'));
   },
+  deleteDone: el => {
+    const x = S.todos[el.dataset.id]; if (!x) return;
+    const row = el.closest('.trow');
+    x.deleted = true; x.title = ''; touchTodo(x.id);
+    commit({ render: false });
+    if (row) row.classList.add('gone');
+    haptic('medium');
+    setTimeout(() => safeRender(), 320);
+  },
   clearDone: () => openConfirm({
     title: T('Erledigte löschen?', 'Clear completed?'), text: T('Alle erledigten Aufgaben werden auf allen Geräten gelöscht.', 'All completed tasks are deleted on every device.'), ok: T('Löschen', 'Delete'), danger: true,
     onOk: () => { for (const x of liveTodos()) if (x.done) { x.deleted = true; x.title = ''; touchTodo(x.id); } ui.showDone = false; commit(); },
   }),
   openCats: () => { ui.catList = true; render(); },
+  hideCatHint: () => { lsSet('habit-tracker-cathint', '1'); render(); },
   newCat: () => { ui.catEdit = { id: null, name: '', color: COLOR_LIST[todoCats().length % COLOR_LIST.length][0] }; render(); setTimeout(() => { const i = document.getElementById('cat-name'); if (i) i.focus(); }, 60); },
   editCat: el => { const c = catById(el.dataset.id); if (!c) return; ui.catEdit = { id: c.id, name: catName(c), color: c.color }; render(); },
   catColor: el => { ui.catEdit.color = el.dataset.c; render(); },
@@ -2841,6 +3506,8 @@ const actions = {
   }),
 };
 
+Object.assign(actions, socialActions);
+
 function replaceAll(next) {
   const now = Date.now();
   next.meta.resetAt = now - 1;
@@ -2853,7 +3520,7 @@ function replaceAll(next) {
 
 // ---------- events ----------
 // ---------- press ripple ----------
-const RIPPLE_SEL = '.topen, .tchk, .btn, .seg button, .nav, .li, .chip, .tpl button, .ib, .dd, .cd, .igrid button, .chk, .hopen, .card.habit, .crow, .slide, .linkbtn, .rowbtn, .colors button, .star, .srow';
+const RIPPLE_SEL = '.pcard, .prof, .topen, .tchk, .btn, .seg button, .nav, .li, .chip, .tpl button, .ib, .dd, .cd, .igrid button, .chk, .hopen, .card.habit, .crow, .slide, .linkbtn, .rowbtn, .colors button, .star, .srow';
 document.addEventListener('pointerdown', e => {
   if (e.button && e.button !== 0) return;
   const el = e.target.closest(RIPPLE_SEL);
@@ -2880,6 +3547,11 @@ document.addEventListener('pointerdown', e => {
 // ---------- long press (habit menu) and drag (sort mode) ----------
 let lp = null, suppressClick = false, drag = null, lpFired = false;
 function openHabitMenu(id) {
+  if (id.startsWith('cat:')) {
+    const c = catById(id.slice(4));
+    if (c && !ui.catEdit) { ui.catEdit = { id: c.id, name: catName(c), color: c.color, fromHold: true }; render(); }
+    return;
+  }
   if (!S.habits[id] || ui.habitMenu === id) return;
   ui.habitMenu = id; render();
   setTimeout(() => { const b = document.querySelector('.sheet .li'); if (b) b.focus(); }, 0);
@@ -2978,8 +3650,15 @@ document.addEventListener('click', e => {
     if (n) { const items = [n]; let x = n.nextElementSibling; while (x && items.length < 6) { items.push(x); x = x.nextElementSibling; } items.forEach(it => { it.classList.remove('fx-in'); void it.offsetWidth; it.classList.add('fx-in'); setTimeout(() => it.classList.remove('fx-in'), 450); }); }
   }
 });
+function readDur() {
+  const h = Math.max(0, Math.min(23, Math.round(Number(document.getElementById('te-dur-h')?.value) || 0)));
+  const m = Math.max(0, Math.min(59, Math.round(Number(document.getElementById('te-dur-m')?.value) || 0)));
+  ui.todoEdit.dur = Math.max(5, h * 60 + m);
+}
 document.addEventListener('input', e => {
   const el = e.target;
+  if ((el.id === 'te-dur-h' || el.id === 'te-dur-m') && ui.todoEdit) { readDur(); return; }
+  if (el.dataset && el.dataset.sbind) { socialInput(el); return; }
   const b = el.dataset && el.dataset.bind;
   if (!b) return;
   const v = el.value;
@@ -3009,7 +3688,9 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const el = e.target;
   if (el.id === 'te-date' && ui.todoEdit) { ui.todoEdit.due = isKey(el.value) ? el.value : ''; ui.todoEdit.pick = !!ui.todoEdit.due; if (!ui.todoEdit.due) ui.todoEdit.time = ''; el.blur(); render(); }
+  if ((el.id === 'te-dur-h' || el.id === 'te-dur-m') && ui.todoEdit) readDur();
   if (el.id === 'te-time' && ui.todoEdit) { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(el.value) ? el.value : ''; render(); }
+  if (el.id === 'photo-file' && el.files && el.files[0]) { setPhoto(el.files[0]); el.value = ''; }
   if (el.id === 'set-name') {
     const v = el.value.trim();
     if (!v) { S.meta.name = S.meta.name.trim() || T('Du', 'You'); el.value = S.meta.name; }
@@ -3041,6 +3722,7 @@ document.addEventListener('submit', e => {
   if (e.target.dataset.form === 'onboard') actions.finishOnboarding();
   if (e.target.dataset.form === 'auth') actions.authSubmit();
   if (e.target.dataset.form === 'quickadd') actions.quickAdd();
+  if (e.target.dataset.form && socialForms[e.target.dataset.form]) socialForms[e.target.dataset.form]();
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && anyOverlay()) { actions.closeOverlay(); return; }

@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+
+    // ===== Habit Tracker: private data, only the owner =====
+    match /users/{uid}/{document=**} {
+      allow read, write: if signedIn() && me() == uid;
+    }
+
+    // ===== Habit Tracker: profiles and friend codes =====
+    // A profile can be fetched by anyone signed in who knows the uid (no listing of all users).
+    match /profiles/{uid} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create, update: if signedIn() && me() == uid
+        && (!('photo' in request.resource.data) || request.resource.data.photo.size() < 200000)
+        && (!('name' in request.resource.data) || request.resource.data.name.size() <= 40);
+      allow delete: if signedIn() && me() == uid;
+    }
+    match /codes/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn() && request.resource.data.uid == me();
+      allow delete: if signedIn() && resource.data.uid == me();
+    }
+    // friendships/{a_b}: members [a, b] sorted, both may read and remove it
+    match /friendships/{fid} {
+      allow read: if signedIn() && me() in resource.data.members;
+      allow create: if signedIn()
+        && request.resource.data.members.size() == 2
+        && me() in request.resource.data.members
+        && fid == request.resource.data.members[0] + '_' + request.resource.data.members[1];
+      allow delete: if signedIn() && me() in resource.data.members;
+    }
+
+    // ===== Habit Tracker: shared projects (tasks + chat), members only =====
+    function isMember(pid) {
+      return signedIn() && me() in get(/databases/$(database)/documents/projects/$(pid)).data.members;
+    }
+    match /projects/{pid} {
+      allow read: if signedIn() && me() in resource.data.members;
+      allow create: if signedIn() && me() in request.resource.data.members;
+      allow update: if signedIn() && (
+        me() in resource.data.members
+        // join with a project code: only add yourself
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'joinCode'])
+            && request.resource.data.members.hasAll(resource.data.members)
+            && request.resource.data.members.size() == resource.data.members.size() + 1
+            && me() in request.resource.data.members
+            && get(/databases/$(database)/documents/projectCodes/$(request.resource.data.joinCode)).data.pid == pid)
+      );
+      allow delete: if signedIn() && me() in resource.data.members && resource.data.members.size() == 1;
+
+      match /todos/{tid} {
+        allow read, write: if isMember(pid);
+      }
+      match /messages/{mid} {
+        allow read: if isMember(pid);
+        allow create: if isMember(pid) && request.resource.data.uid == me()
+          && request.resource.data.text is string && request.resource.data.text.size() <= 2000;
+        // own messages; the last member may clear everything when deleting the project
+        allow delete: if isMember(pid) && (resource.data.uid == me()
+          || get(/databases/$(database)/documents/projects/$(pid)).data.members.size() == 1);
+      }
+    }
+    match /projectCodes/{code} {
+      allow get: if signedIn();
+      allow create: if isMember(request.resource.data.pid);
+      allow delete: if isMember(resource.data.pid);
+    }
+
+    // ===== Other apps (e.g. school games) add their own match blocks below this line =====
+  }
+}

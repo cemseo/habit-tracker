@@ -1,5 +1,5 @@
 // Offline cache for the app shell. Data requests to Firebase are never touched.
-const CACHE = 'habits-1791398606580';
+const CACHE = 'habits-1791422554966';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './firebase-app-compat.js', './firebase-auth-compat.js', './firebase-firestore-compat.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
