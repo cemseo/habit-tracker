@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#3355E0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Schüler OS">
+<title>Schüler OS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css?v=1791435114">
+</head>
+<body>
+<div id="app" aria-live="polite"><div class="boot">Lädt …</div></div>
+<div id="toasts" aria-live="assertive"></div>
+<noscript>Bitte JavaScript aktivieren.</noscript>
+<script src="firebase-app-compat.js"></script>
+<script src="firebase-auth-compat.js"></script>
+<script src="firebase-firestore-compat.js"></script>
+<script src="js/canvas.js?v=1791435114"></script>
+<script src="js/core.js?v=1791435114"></script>
+<script src="js/kritzelpost.js?v=1791435114"></script>
+<script>App.boot();</script>
+</body>
+</html>
