@@ -2197,7 +2197,7 @@ function viewSettings() {
           <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.5</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.6</p>
   </main>`;
 }
 
@@ -3222,6 +3222,9 @@ const SCHOOL = {
       [7, 'D G6', 'KN', ''],
     ],
   ],
+  // Routine an Schultagen (Cem, 23.10.2026): vor Schultagen um 22:00 schlafen, an Schultagen 05:30 aufstehen,
+  // 05:30–07:30 Gym. Gym wird mit einer Gewohnheit verknüpft, deren Name "Gym" enthält (falls vorhanden).
+  routine: { sleep: 22 * 60, wake: 5 * 60 + 30, gym: [5 * 60 + 30, 7 * 60 + 30] },
   // schulfreie Tage: [von, bis, Name] (inklusive)
   off: [
     ['2026-10-17', '2026-10-31', 'Herbstferien'],
@@ -3293,7 +3296,7 @@ function blockInfo(b, k) {
   if (b.kind === 'habit') {
     const h = S.habits[b.ref];
     if (h && !h.archived) {
-      Object.assign(info, { title: h.name, color: h.color, icon: h.icon, linked: true, done: k <= t && !!h.log[k], sub: 'Habit' });
+      Object.assign(info, { title: h.name, color: h.color, icon: h.icon, linked: true, done: k <= t && !!h.log[k], sub: b.school ? T('Habit · Schultag', 'Habit · school day') : 'Habit' });
       info.canDo = k <= t;
     } else info.sub = T('Habit gelöscht', 'Habit deleted');
   } else if (b.kind === 'todo') {
@@ -3303,9 +3306,9 @@ function blockInfo(b, k) {
       Object.assign(info, { title: x.title, color: c ? c.color : '#E4E4E7', icon: 'square-check-big', linked: true, done: x.done, sub: 'To-Do' + (c ? ' · ' + catName(c) : '') });
     } else info.sub = T('To-Do gelöscht', 'To-do deleted');
   } else {
-    info.icon = b.school ? 'school' : 'clock';
+    info.icon = b.icon || (b.school ? 'school' : 'clock');
     info.done = b.rep ? !!((S.plan[k] || {}).rdone || {})[b.id] : !!b.done;
-    info.sub = b.school ? T('Stundenplan', 'Timetable') : b.rep ? T('jede Woche', 'every week') : '';
+    info.sub = b.lesson ? T('Stundenplan', 'Timetable') : b.school ? T('Schultag', 'School day') : b.rep ? T('jede Woche', 'every week') : '';
     if (!b.color) info.color = '#A1A1AA';
   }
   return info;
@@ -3321,17 +3324,38 @@ function dayBlocks(k) {
   return out.sort((a, b) => a.s - b.s || b.e - a.e);
 }
 
-// ----- built-in timetable (stundenplan.js): one block per lesson on every school day -----
+// ----- built-in timetable (stundenplan.js): one block per lesson on every school day,
+// plus the school-day routine: sleep until 05:30, gym 05:30–07:30, sleep from 22:00 the evening before -----
 function schoolOff(k) { const o = SCHOOL.off.find(([a, b]) => k >= a && k <= b); return o ? o[2] : ''; }
+function isSchoolDay(k) { return k >= SCHOOL.from && k <= SCHOOL.to && wday(k) < 5 && !schoolOff(k); }
+const gymHabit = () => habitList().find(h => h.type === 'build' && /gym|fitness|krafttraining/i.test(h.name)) || null;
 function schoolBlocks(k) {
-  const wd = wday(k);
-  if (k < SCHOOL.from || k > SCHOOL.to || wd > 4 || schoolOff(k)) return [];
-  const c = catById('school');
-  const color = c ? c.color : '#38BDF8';
-  return (SCHOOL.week[wd] || []).map(([p, subj, teacher, room]) => {
-    const [s, e] = SCHOOL.periods[p];
-    return { id: `sch${SCHOOL.version}-${wd}-${p}`, s, e, kind: 'custom', title: [subj, teacher, room].filter(Boolean).join(' · '), ref: '', color, done: false, rep: true, school: true, period: p };
-  });
+  const out = [], v = SCHOOL.version, R = SCHOOL.routine;
+  const gen = { ref: '', done: false, rep: true, school: true };
+  const SLEEP = '#6366F1';
+  if (isSchoolDay(k)) {
+    const wd = wday(k);
+    const c = catById('school');
+    const color = c ? c.color : '#38BDF8';
+    out.push({ ...gen, id: `sch${v}-wake`, s: 0, e: R.wake, kind: 'custom', title: T('Schlaf', 'Sleep'), color: SLEEP, icon: 'moon', noCheck: true });
+    const g = gymHabit();
+    out.push({ ...gen, id: `sch${v}-gym`, s: R.gym[0], e: R.gym[1], kind: g ? 'habit' : 'custom', ref: g ? g.id : '', title: 'Gym', color: '#F97316', icon: 'dumbbell' });
+    for (const [p, subj, teacher, room] of SCHOOL.week[wd] || []) {
+      const [s, e] = SCHOOL.periods[p];
+      out.push({ ...gen, id: `sch${v}-${wd}-${p}`, s, e, kind: 'custom', title: [subj, teacher, room].filter(Boolean).join(' · '), color, lesson: true, noCheck: true, period: p });
+    }
+  }
+  if (isSchoolDay(addD(k, 1))) out.push({ ...gen, id: `sch${v}-sleep`, s: R.sleep, e: 1440, kind: 'custom', title: T('Schlaf', 'Sleep'), color: SLEEP, icon: 'moon', noCheck: true });
+  return out;
+}
+// minutes of the day covered by at least one block
+function coveredMinutes(list) {
+  let total = 0, end = -1;
+  for (const b of list.slice().sort((x, y) => x.s - y.s)) {
+    if (b.e <= end) continue;
+    total += b.e - Math.max(b.s, end); end = b.e;
+  }
+  return total;
 }
 // side-by-side columns for overlapping blocks
 function layoutBlocks(list) {
@@ -3361,9 +3385,12 @@ function viewPlan() {
   const k = ui.planDate || todayK(), t = todayK();
   const list = dayBlocks(k);
   const lay = layoutBlocks(list);
-  const planned = list.reduce((a, b) => a + (b.e - b.s), 0);
+  // breaks between lessons are still school time, so the school day counts from first to last lesson
+  const lessons = list.filter(b => b.lesson);
+  const span = lessons.length ? [{ s: Math.min(...lessons.map(b => b.s)), e: Math.max(...lessons.map(b => b.e)) }] : [];
+  const planned = coveredMinutes([...list.filter(b => !b.lesson), ...span]);
   const infos = new Map(list.map(b => [b.id, blockInfo(b, k)]));
-  const tasks = list.filter(b => !b.school); // lessons count as planned time, not as things to check off
+  const tasks = list.filter(b => !b.noCheck); // lessons and sleep count as planned time, not as things to check off
   const doneN = tasks.filter(b => infos.get(b.id).done).length;
   const ws = weekStart(k);
   const days = [0, 1, 2, 3, 4, 5, 6].map(i => addD(ws, i));
@@ -3377,10 +3404,10 @@ function viewPlan() {
     const small = h < 36, tiny = h < 17;
     const w = `calc((100% - 48px) / ${n})`;
     const style = `top:${at(b.s)};height:max(12px, calc(${at(b.e - b.s)} - 2px));left:calc(48px + ${c} * ${w});width:calc(${w} - ${n > 1 ? 4 : 0}px);--c:${i.color}`;
-    const chk = i.canDo && !tiny && !b.school ? `<button class="pchk${i.done ? ' on' : ''}" data-a="planToggle" data-id="${b.id}" data-rep="${b.rep ? 1 : ''}" role="checkbox" aria-checked="${i.done}" aria-label="${esc(i.title)}">${icon('check', small ? 11 : 14, 3.2)}</button>` : '';
+    const chk = i.canDo && !tiny && !b.noCheck ? `<button class="pchk${i.done ? ' on' : ''}" data-a="planToggle" data-id="${b.id}" data-rep="${b.rep ? 1 : ''}" role="checkbox" aria-checked="${i.done}" aria-label="${esc(i.title)}">${icon('check', small ? 11 : 14, 3.2)}</button>` : '';
     return `<div class="pblk${small ? ' small' : ''}${tiny ? ' tiny' : ''}${i.done ? ' done' : ''}${b.kind === 'custom' && !b.color ? ' plain' : ''}" style="${style}" data-a="planOpen" data-id="${b.id}" data-rep="${b.rep ? 1 : ''}" role="button" tabindex="0" aria-label="${esc(i.title)} ${hhmm(b.s)}–${hhmm(b.e)}">
       ${small ? `<span class="pt">${esc(i.title)}${tiny ? '' : ` <span class="pts">· ${hhmm(b.s)}–${hhmm(b.e)}</span>`}</span>`
-        : `<span class="pic">${icon(i.icon, 14, 2.4)}</span><span class="ptx"><span class="pt">${esc(i.title)}</span><span class="pts">${hhmm(b.s)}–${hhmm(b.e)}${i.sub ? ' · ' + esc(i.sub) : ''}${b.rep && b.kind !== 'custom' ? ' · ' + T('jede Woche', 'every week') : ''}</span></span>`}
+        : `<span class="pic">${icon(i.icon, 14, 2.4)}</span><span class="ptx"><span class="pt">${esc(i.title)}</span><span class="pts">${hhmm(b.s)}–${hhmm(b.e)}${i.sub ? ' · ' + esc(i.sub) : ''}${b.rep && !b.school && b.kind !== 'custom' ? ' · ' + T('jede Woche', 'every week') : ''}</span></span>`}
       ${chk}</div>`;
   }).join('');
   const gaps = freeGaps(list).map(([a, b]) => `<button class="pgap${(b - a) * H / 60 < 30 ? ' bare' : ''}" style="top:${at(a)};height:calc(${at(b - a)} - 2px)" data-a="planGap" data-s="${a}" data-e="${b}">${icon('plus', 15, 2.4)} ${T('Frei', 'Free')} ${hhmm(a)}–${hhmm(b)}${(b - a) * H / 60 >= 70 ? `<span> · ${T('tippen zum Planen', 'tap to plan')}</span>` : ''}</button>`).join('');
@@ -3393,8 +3420,8 @@ function viewPlan() {
       <button class="ib ghost" data-a="planWeek" data-v="7" aria-label="${T('Nächste Woche', 'Next week')}">${icon('chevron-right', 18)}</button>
     </div>
     <div class="daybar"><button class="ib ghost pz" data-a="planZoom" data-v="out" aria-label="${T('Rauszoomen', 'Zoom out')}" ${H <= planFitH() ? 'disabled' : ''}>${icon('zoom-out', 18)}</button>
-      <button class="ib ghost pz" data-a="planZoom" data-v="in" aria-label="${T('Reinzoomen', 'Zoom in')}" ${H >= PLAN_MAX ? 'disabled' : ''}>${icon('zoom-in', 18)}</button><div class="track"><div class="fill" style="width:${Math.min(100, Math.round(planned / 960 * 100))}%"></div></div>
-      <span class="num">${list.length ? (tasks.length ? T(`${durLabel(planned)} verplant · ${doneN} von ${tasks.length} erledigt`, `${durLabel(planned)} planned · ${doneN} of ${tasks.length} done`) : T(`${durLabel(planned)} verplant`, `${durLabel(planned)} planned`)) : T('Noch nichts geplant', 'Nothing planned yet')}</span></div>
+      <button class="ib ghost pz" data-a="planZoom" data-v="in" aria-label="${T('Reinzoomen', 'Zoom in')}" ${H >= PLAN_MAX ? 'disabled' : ''}>${icon('zoom-in', 18)}</button><div class="track"><div class="fill" style="width:${Math.round(planned / 1440 * 100)}%"></div></div>
+      <span class="num">${list.length ? T(`${durLabel(1440 - planned)} frei`, `${durLabel(1440 - planned)} free`) + (tasks.length ? T(` · ${doneN} von ${tasks.length} erledigt`, ` · ${doneN} of ${tasks.length} done`) : '') : T('Noch nichts geplant', 'Nothing planned yet')}</span></div>
     ${schoolOff(k) && wday(k) < 5 ? `<div class="poff">${icon('sun', 16)}<span>${esc(schoolOff(k))} · ${T('kein Unterricht', 'no school')}</span></div>` : ''}
     <div class="ptl" id="ptl" data-a="planTap" style="--ph:${H}px;height:calc(var(--ph) * 24)">
       ${hours}${gaps}${blocks}
@@ -3443,16 +3470,16 @@ function planSheetHtml() {
     return `<div class="scrim" data-a="closeOverlay"></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ps-h" style="--c:${i.color}">
       <div class="sheethead"><div style="display:flex;align-items:center;gap:12px;min-width:0"><span class="hic" style="--cbg:${hexA(i.color, 0.18)}">${icon(i.icon, 20)}</span>
-        <div style="min-width:0"><h2 id="ps-h" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.title)}</h2><span class="hint">${b.school ? T(`Stundenplan · ${b.period}. Stunde`, `Timetable · lesson ${b.period}`) : (b.kind === 'habit' ? 'Habit' : b.kind === 'todo' ? 'To-Do' : T('Eigener Block', 'Own block')) + (p.rep ? ' · ' + T(`jeden ${wdName}`, `every ${wdName}`) : '')}</span></div></div>${close}</div>
+        <div style="min-width:0"><h2 id="ps-h" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.title)}</h2><span class="hint">${b.lesson ? T(`Stundenplan · ${b.period}. Stunde`, `Timetable · lesson ${b.period}`) : b.school ? T('Schultag-Routine', 'School-day routine') + (b.kind === 'habit' ? ' · Habit' : '') : (b.kind === 'habit' ? 'Habit' : b.kind === 'todo' ? 'To-Do' : T('Eigener Block', 'Own block')) + (p.rep ? ' · ' + T(`jeden ${wdName}`, `every ${wdName}`) : '')}</span></div></div>${close}</div>
       ${b.kind === 'custom' ? `<div class="field"><label for="ps-title">${T('Titel', 'Title')}</label><input id="ps-title" class="inp" data-pbind="title" value="${esc(p.title)}" maxlength="80" autocomplete="off"></div>` : ''}
       ${times}
       <div class="row2">
-        ${b.school ? '' : i.canDo ? `<button class="btn ${i.done ? 'soft' : 'accent'}" data-a="planToggle" data-id="${b.id}" data-rep="${p.rep ? 1 : ''}">${icon('check', 18, 2.6)} ${i.done ? T('Erledigt', 'Done') : T('Abhaken', 'Check off')}</button>` : `<button class="btn soft" disabled>${T('Erst am Tag abhakbar', 'Check off on the day')}</button>`}
+        ${b.noCheck ? '' : i.canDo ? `<button class="btn ${i.done ? 'soft' : 'accent'}" data-a="planToggle" data-id="${b.id}" data-rep="${p.rep ? 1 : ''}">${icon('check', 18, 2.6)} ${i.done ? T('Erledigt', 'Done') : T('Abhaken', 'Check off')}</button>` : `<button class="btn soft" disabled>${T('Erst am Tag abhakbar', 'Check off on the day')}</button>`}
         <button class="btn soft" data-a="planIcs">${icon('calendar-plus', 18)} ${T('Kalender', 'Calendar')}</button>
       </div>
       ${b.kind !== 'custom' && i.linked ? `<p class="hint" style="margin:-4px 4px 0">${b.kind === 'habit' ? T('Abhaken hier hakt die Gewohnheit für diesen Tag ab.', 'Checking off here checks off the habit for this day.') : T('Abhaken hier erledigt auch die Aufgabe in deiner To-Do-Liste.', 'Checking off here also completes the task in your to-do list.')}</p>` : ''}
       <button id="ps-save" class="btn primary block" data-a="planSave">${T('Speichern', 'Save')}</button>
-      ${b.school ? `<button class="btn danger block" data-a="planDelete" data-v="one">${T('Stunde an diesem Tag entfernen', 'Remove this lesson on this day')}</button>
+      ${b.school ? `<button class="btn danger block" data-a="planDelete" data-v="one">${b.lesson ? T('Stunde an diesem Tag entfernen', 'Remove this lesson on this day') : T('An diesem Tag entfernen', 'Remove on this day')}</button>
         <p class="hint" style="margin:-6px 4px 0;text-align:center">${T('Z. B. wenn sie ausfällt. Die anderen Wochen bleiben, wie sie sind.', 'E.g. when it\'s cancelled. Other weeks stay as they are.')}</p>`
         : p.rep ? `<div class="row2"><button class="btn danger" data-a="planDelete" data-v="one">${T('Nur heute weg', 'Remove today')}</button><button class="btn danger" data-a="planDelete" data-v="all">${T('Alle löschen', 'Delete all')}</button></div>`
         : `<button class="btn danger block" data-a="planDelete" data-v="one">${T('Block löschen', 'Delete block')}</button>`}
@@ -3579,7 +3606,7 @@ const planActions = {
         if (p.s === b.s && p.e === b.e && title === b.title) { ui.planSheet = null; render(); return; }
         touchPlan(k);
         const nid = 'b' + uid();
-        S.plan[k].blocks[nid] = normPlanBlock({ id: nid, s: p.s, e: p.e, kind: 'custom', title, color: b.color, done: !!S.plan[k].rdone[b.id] }, nid);
+        S.plan[k].blocks[nid] = normPlanBlock({ id: nid, s: p.s, e: p.e, kind: b.kind, ref: b.ref, title, color: b.color, done: !!S.plan[k].rdone[b.id] }, nid);
         S.plan[k].skip[b.id] = 1;
         ui.planSheet = null; commit(); haptic('success');
         fx(`.pblk[data-id="${nid}"]`, 'fx-new', 600);
@@ -3645,7 +3672,7 @@ const planActions = {
       else { touchPlan(k); S.plan[k].skip[p.id] = 1; }
     } else { touchPlan(k); delete S.plan[k].blocks[p.id]; }
     ui.planSheet = null; commit(); haptic('medium');
-    toast(p.school ? T('Stunde entfernt', 'Lesson removed') : T('Block entfernt', 'Block removed'));
+    toast(T('Block entfernt', 'Block removed'));
   },
 };
 
