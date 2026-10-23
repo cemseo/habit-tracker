@@ -744,7 +744,12 @@ main.chat { min-height: calc(100vh - 96px); min-height: calc(100dvh - 96px); }
 @keyframes pulse { 50% { opacity: .25; } }
 
 /* ---------- Day planner ---------- */
-.pweek { display: flex; align-items: center; gap: 2px; }
+.pweek { display: flex; align-items: center; gap: 2px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 76px); z-index: 4; background: var(--bg); margin-top: -6px; padding: 6px 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.pdays { flex: 1; min-width: 0; display: flex; gap: 2px; transition: transform .25s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
+.pdays.in-right { animation: wk-right .3s cubic-bezier(.2, .8, .2, 1); }
+.pdays.in-left { animation: wk-left .3s cubic-bezier(.2, .8, .2, 1); }
+@keyframes wk-right { from { transform: translateX(60px); opacity: 0; } }
+@keyframes wk-left { from { transform: translateX(-60px); opacity: 0; } }
 .pweek .ib { width: 32px; height: 52px; flex: none; }
 .pday { flex: 1; min-width: 0; height: 58px; border: none; background: transparent; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--muted); font-size: 11px; position: relative; padding: 0; }
 .pday b { font-size: 16px; color: var(--text); font-weight: 600; }
@@ -2204,7 +2209,7 @@ function viewSettings() {
           <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.8</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.9</p>
   </main>`;
 }
 
@@ -3456,7 +3461,7 @@ function viewPlan() {
   `<main class="stack plan">
     <div class="pweek">
       <button class="ib ghost" data-a="planWeek" data-v="-7" aria-label="${T('Vorige Woche', 'Previous week')}">${icon('chevron-left', 18)}</button>
-      ${days.map(d => `<button class="pday${d === k ? ' on' : ''}${d === t ? ' today' : ''}" data-a="planDay" data-k="${d}" aria-pressed="${d === k}"><span>${WD[wday(d)]}</span><b class="num">${ymd(d)[2]}</b>${dayBlocks(d).length ? '<i></i>' : ''}</button>`).join('')}
+      <div class="pdays${ui.planSlide ? ' in-' + ui.planSlide : ''}" id="pdays">${days.map(d => `<button class="pday${d === k ? ' on' : ''}${d === t ? ' today' : ''}" data-a="planDay" data-k="${d}" aria-pressed="${d === k}"><span>${WD[wday(d)]}</span><b class="num">${ymd(d)[2]}</b>${dayBlocks(d).length ? '<i></i>' : ''}</button>`).join('')}</div>
       <button class="ib ghost" data-a="planWeek" data-v="7" aria-label="${T('Nächste Woche', 'Next week')}">${icon('chevron-right', 18)}</button>
     </div>
     <div class="daybar"><button class="ib ghost pz" data-a="planZoom" data-v="out" aria-label="${T('Rauszoomen', 'Zoom out')}" ${H <= planFitH() ? 'disabled' : ''}>${icon('zoom-out', 18)}</button>
@@ -3600,7 +3605,7 @@ function planTimeChange(el) {
 
 const planActions = {
   planDay: el => { ui.planDate = el.dataset.k === todayK() ? null : el.dataset.k; ui.planScroll = true; render(); },
-  planWeek: el => { ui.planDate = addD(ui.planDate || todayK(), Number(el.dataset.v)); if (ui.planDate === todayK()) ui.planDate = null; ui.planScroll = true; render(); },
+  planWeek: el => shiftPlanWeek(Number(el.dataset.v)),
   planAdd: () => {
     const k = ui.planDate || todayK();
     let s = 9 * 60;
@@ -3766,6 +3771,50 @@ document.addEventListener('wheel', e => {
   clearTimeout(setPlanZoom.t);
   setPlanZoom(planH() * Math.exp(-e.deltaY / 120), focus, e.clientY, true);
   setPlanZoom.t = setTimeout(() => setPlanZoom(ui.planZoom, focus, e.clientY, false), 180);
+}, { passive: false });
+
+// ----- week strip: swipe (finger, mouse drag, trackpad) to change the week -----
+function shiftPlanWeek(days) {
+  ui.planDate = addD(ui.planDate || todayK(), days);
+  if (ui.planDate === todayK()) ui.planDate = null;
+  ui.planSlide = days > 0 ? 'right' : 'left';
+  ui.planScroll = true;
+  render();
+  ui.planSlide = null;
+  haptic('light');
+}
+let weekSwipe = null;
+document.addEventListener('pointerdown', e => {
+  if (ui.view !== 'plan' || !e.target.closest('.pweek') || e.target.closest('[data-a="planWeek"]')) return;
+  weekSwipe = { x: e.clientX, y: e.clientY, dx: 0, moved: false };
+}, { passive: true });
+document.addEventListener('pointermove', e => {
+  if (!weekSwipe) return;
+  const dx = e.clientX - weekSwipe.x, dy = e.clientY - weekSwipe.y;
+  if (!weekSwipe.moved && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) weekSwipe.moved = true;
+  if (!weekSwipe.moved) return;
+  weekSwipe.dx = dx;
+  const el = document.getElementById('pdays');
+  if (el) { el.style.transition = 'none'; el.style.transform = `translateX(${dx * 0.6}px)`; el.style.opacity = String(1 - Math.min(0.5, Math.abs(dx) / 400)); }
+}, { passive: true });
+function endWeekSwipe() {
+  if (!weekSwipe) return;
+  const w = weekSwipe; weekSwipe = null;
+  const el = document.getElementById('pdays');
+  if (!w.moved) return;
+  suppressClick = true; setTimeout(() => { suppressClick = false; }, 120);
+  if (Math.abs(w.dx) > 45) { shiftPlanWeek(w.dx < 0 ? 7 : -7); return; }
+  if (el) { el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; }
+}
+document.addEventListener('pointerup', endWeekSwipe);
+document.addEventListener('pointercancel', endWeekSwipe);
+let wheelAcc = 0, wheelLock = 0;
+document.addEventListener('wheel', e => {
+  if (ui.view !== 'plan' || e.ctrlKey || !e.target.closest('.pweek') || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+  e.preventDefault();
+  if (Date.now() < wheelLock) return;
+  wheelAcc += e.deltaX;
+  if (Math.abs(wheelAcc) > 60) { shiftPlanWeek(wheelAcc > 0 ? 7 : -7); wheelAcc = 0; wheelLock = Date.now() + 450; }
 }, { passive: false });
 
 // ---------- actions ----------
