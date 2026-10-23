@@ -913,7 +913,7 @@ const dayNum = (d, m) => (LANG === 'de' ? `${d}.${m}.` : `${m}/${d}`);
 
 // ---------- state ----------
 function blank() {
-  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', lang: '', haptics: true, habitIds: [], attrs: [], todoCats: defaultCats() }, habits: {}, scores: {}, todos: {}, plan: {}, planRep: { _t: 0, blocks: {} } };
+  return { v: 1, meta: { _t: 0, resetAt: 0, name: '', onboarded: false, theme: 'system', layout: 'list', lang: '', haptics: true, habitIds: [], attrs: [], todoCats: defaultCats(), seeds: {}, school: null }, habits: {}, scores: {}, todos: {}, plan: {}, planRep: { _t: 0, blocks: {} } };
 }
 
 // To-do categories: the four defaults keep an empty name and show a translated one
@@ -973,6 +973,8 @@ function normalize(r) {
   s.meta.layout = ['list', 'swipe', 'compact'].includes(m.layout) ? m.layout : 'list';
   s.meta.lang = ['en', 'de'].includes(m.lang) ? m.lang : '';
   s.meta.haptics = m.haptics !== false;
+  s.meta.school = m.school === true ? true : m.school === false ? false : null;
+  if (m.seeds && typeof m.seeds === 'object') for (const k in m.seeds) if (m.seeds[k]) s.meta.seeds[k] = String(m.seeds[k]).slice(0, 40);
   s.meta.attrs = Array.isArray(m.attrs) ? m.attrs.filter(a => a && a.id && a.name).map(a => ({
     id: String(a.id), name: String(a.name).slice(0, 30), color: /^#[0-9a-f]{6}$/i.test(a.color) ? a.color : '#A855F7',
   })) : [];
@@ -1070,6 +1072,7 @@ async function initCloud() {
     console.warn('Sync nicht verfügbar', e);
     if (cloud.backend) cloud.status = 'error';
   } finally {
+    try { runSeeds(); } catch (e) { console.warn(e); }
     cloud.ready = true;
     safeRender();
   }
@@ -1103,6 +1106,7 @@ function initFirebase() {
     render();
     try { await pull(); } catch (e) { console.warn('Laden fehlgeschlagen', e); cloud.status = 'error'; }
     try { startSocial(fs, user.uid); } catch (e) { console.warn('Freunde/Projekte nicht verfügbar', e); }
+    try { runSeeds(); } catch (e) { console.warn(e); }
     finally {
       cloud.ready = true;
       if (S.meta.onboarded && ui.view === 'onboarding') ui.view = 'habits';
@@ -2180,6 +2184,9 @@ function viewSettings() {
     <div class="field"><span class="label">${T('Haptisches Feedback', 'Haptic feedback')}</span>
       <div class="list"><div class="li"><span class="lt"><span>${T('Vibration beim Tippen', 'Vibrate on tap')}</span><span class="sub">${T('Funktioniert auf Android und ab iOS 18.', 'Works on Android and iOS 18 or later.')}</span></span>
         <button role="switch" class="switch" aria-checked="${S.meta.haptics !== false}" aria-label="${T('Vibration beim Tippen', 'Vibrate on tap')}" data-a="toggleHaptics"><span></span></button></div></div></div>
+    <div class="field"><span class="label">${T('Tagesplan', 'Day plan')}</span>
+      <div class="list"><div class="li"><span class="lt"><span>${T('Stundenplan & Schultag-Routine', 'Timetable & school-day routine')}</span><span class="sub">${T('Schulstunden, Schlaf und Training an Schultagen bis zu den Sommerferien 2027.', 'Lessons, sleep and training on school days until summer 2027.')}</span></span>
+        <button role="switch" class="switch sw2" aria-checked="${schoolOn()}" aria-label="${T('Stundenplan & Schultag-Routine', 'Timetable & school-day routine')}" data-a="toggleSchool"><span></span></button></div></div></div>
     ${cloud.mode === 'firebase' && cloud.user ? `<div class="field"><span class="label">${T('Konto', 'Account')}</span>
       <div class="list"><div class="li"><span class="lt"><span>${T('Angemeldet', 'Signed in')}</span><span class="sub" style="overflow-wrap:anywhere">${esc(cloud.user.email)}</span></span>
         <button class="btn soft" style="height:40px;font-size:14px;flex:none" data-a="signOut">${T('Abmelden', 'Sign out')}</button></div></div></div>` : ''}
@@ -2197,7 +2204,7 @@ function viewSettings() {
           <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.6</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.7</p>
   </main>`;
 }
 
@@ -3223,7 +3230,7 @@ const SCHOOL = {
     ],
   ],
   // Routine an Schultagen (Cem, 23.10.2026): vor Schultagen um 22:00 schlafen, an Schultagen 05:30 aufstehen,
-  // 05:30–07:30 Gym. Gym wird mit einer Gewohnheit verknüpft, deren Name "Gym" enthält (falls vorhanden).
+  // 05:30–07:30 Training (gehört zur Gewohnheit "Training"). Der Nachtschlaf gehört zur Gewohnheit "7 Stunden Schlaf".
   routine: { sleep: 22 * 60, wake: 5 * 60 + 30, gym: [5 * 60 + 30, 7 * 60 + 30] },
   // schulfreie Tage: [von, bis, Name] (inklusive)
   off: [
@@ -3296,7 +3303,7 @@ function blockInfo(b, k) {
   if (b.kind === 'habit') {
     const h = S.habits[b.ref];
     if (h && !h.archived) {
-      Object.assign(info, { title: h.name, color: h.color, icon: h.icon, linked: true, done: k <= t && !!h.log[k], sub: b.school ? T('Habit · Schultag', 'Habit · school day') : 'Habit' });
+      Object.assign(info, { title: b.label || h.name, color: b.label ? b.color : h.color, icon: b.label ? b.icon : h.icon, linked: true, done: k <= t && !!h.log[k], sub: b.label ? h.name : b.school ? T('Habit · Schultag', 'Habit · school day') : 'Habit' });
       info.canDo = k <= t;
     } else info.sub = T('Habit gelöscht', 'Habit deleted');
   } else if (b.kind === 'todo') {
@@ -3328,8 +3335,39 @@ function dayBlocks(k) {
 // plus the school-day routine: sleep until 05:30, gym 05:30–07:30, sleep from 22:00 the evening before -----
 function schoolOff(k) { const o = SCHOOL.off.find(([a, b]) => k >= a && k <= b); return o ? o[2] : ''; }
 function isSchoolDay(k) { return k >= SCHOOL.from && k <= SCHOOL.to && wday(k) < 5 && !schoolOff(k); }
-const gymHabit = () => habitList().find(h => h.type === 'build' && /gym|fitness|krafttraining/i.test(h.name)) || null;
+// Cem's timetable is personal: on for his profile (name "Cem …"), switchable in Settings
+function schoolOn() { return S.meta.school === true || (S.meta.school == null && /^cem\b/i.test((S.meta.name || '').trim())); }
+const buildHabits = () => habitList().filter(h => h.type === 'build');
+// morning training belongs to the "Training" habit
+function trainingHabit() {
+  const hs = buildHabits();
+  return hs.find(h => /^training$/i.test(h.name.trim())) || hs.find(h => /training/i.test(h.name)) || hs.find(h => /gym|fitness/i.test(h.name)) || null;
+}
+function sleepHabit() {
+  const id = (S.meta.seeds || {}).sleep7;
+  const h = id && S.habits[id];
+  if (h && !h.archived) return h;
+  return buildHabits().find(x => /schlaf|sleep/i.test(x.name)) || null;
+}
+// one-time additions for Cem: the habit "7 Stunden Schlaf" (never re-created once it existed)
+function runSeeds() {
+  if (!S.meta.onboarded || !schoolOn() || window.__NO_SEEDS) return; // __NO_SEEDS: tests only
+  S.meta.seeds = S.meta.seeds || {};
+  if (S.meta.seeds.sleep7) return;
+  const existing = Object.values(S.habits).find(h => /schlaf|sleep/i.test(h.name));
+  let id = existing && existing.id;
+  if (!id) {
+    id = 'h' + uid();
+    const t = todayK();
+    S.habits[id] = normHabit({ _t: Date.now(), id, name: '7 Stunden Schlaf', desc: T('Vor Schultagen um 22 Uhr ins Bett', 'In bed by 10 pm before school days'), icon: 'bed', color: '#6366F1', type: 'build', start: t, createdAt: t }, id);
+    S.meta.habitIds.push(id);
+    touchHabit(id);
+  }
+  S.meta.seeds.sleep7 = id;
+  touchMeta(); commit();
+}
 function schoolBlocks(k) {
+  if (!schoolOn()) return [];
   const out = [], v = SCHOOL.version, R = SCHOOL.routine;
   const gen = { ref: '', done: false, rep: true, school: true };
   const SLEEP = '#6366F1';
@@ -3337,9 +3375,11 @@ function schoolBlocks(k) {
     const wd = wday(k);
     const c = catById('school');
     const color = c ? c.color : '#38BDF8';
-    out.push({ ...gen, id: `sch${v}-wake`, s: 0, e: R.wake, kind: 'custom', title: T('Schlaf', 'Sleep'), color: SLEEP, icon: 'moon', noCheck: true });
-    const g = gymHabit();
-    out.push({ ...gen, id: `sch${v}-gym`, s: R.gym[0], e: R.gym[1], kind: g ? 'habit' : 'custom', ref: g ? g.id : '', title: 'Gym', color: '#F97316', icon: 'dumbbell' });
+    // the night's sleep belongs to this day and can be checked off as "7 Stunden Schlaf"
+    const sh = sleepHabit();
+    out.push({ ...gen, id: `sch${v}-wake`, s: 0, e: R.wake, kind: sh ? 'habit' : 'custom', ref: sh ? sh.id : '', title: T('Schlaf', 'Sleep'), label: T('Schlaf', 'Sleep'), color: SLEEP, icon: 'moon', noCheck: !sh });
+    const g = trainingHabit();
+    out.push({ ...gen, id: `sch${v}-gym`, s: R.gym[0], e: R.gym[1], kind: g ? 'habit' : 'custom', ref: g ? g.id : '', title: 'Training', label: 'Training', color: '#F97316', icon: 'dumbbell' });
     for (const [p, subj, teacher, room] of SCHOOL.week[wd] || []) {
       const [s, e] = SCHOOL.periods[p];
       out.push({ ...gen, id: `sch${v}-${wd}-${p}`, s, e, kind: 'custom', title: [subj, teacher, room].filter(Boolean).join(' · '), color, lesson: true, noCheck: true, period: p });
@@ -3422,7 +3462,7 @@ function viewPlan() {
     <div class="daybar"><button class="ib ghost pz" data-a="planZoom" data-v="out" aria-label="${T('Rauszoomen', 'Zoom out')}" ${H <= planFitH() ? 'disabled' : ''}>${icon('zoom-out', 18)}</button>
       <button class="ib ghost pz" data-a="planZoom" data-v="in" aria-label="${T('Reinzoomen', 'Zoom in')}" ${H >= PLAN_MAX ? 'disabled' : ''}>${icon('zoom-in', 18)}</button><div class="track"><div class="fill" style="width:${Math.round(planned / 1440 * 100)}%"></div></div>
       <span class="num">${list.length ? T(`${durLabel(1440 - planned)} frei`, `${durLabel(1440 - planned)} free`) + (tasks.length ? T(` · ${doneN} von ${tasks.length} erledigt`, ` · ${doneN} of ${tasks.length} done`) : '') : T('Noch nichts geplant', 'Nothing planned yet')}</span></div>
-    ${schoolOff(k) && wday(k) < 5 ? `<div class="poff">${icon('sun', 16)}<span>${esc(schoolOff(k))} · ${T('kein Unterricht', 'no school')}</span></div>` : ''}
+    ${schoolOn() && schoolOff(k) && wday(k) < 5 ? `<div class="poff">${icon('sun', 16)}<span>${esc(schoolOff(k))} · ${T('kein Unterricht', 'no school')}</span></div>` : ''}
     <div class="ptl" id="ptl" data-a="planTap" style="--ph:${H}px;height:calc(var(--ph) * 24)">
       ${hours}${gaps}${blocks}
       ${k === t ? `<div class="pnow" id="pnow" style="top:${at(nowM)}"><i></i></div>` : ''}
@@ -4116,6 +4156,7 @@ const actions = {
     lsSet(LANG_KEY, v); setLang(v); S.meta.lang = v;
     if (S.meta.onboarded) { touchMeta(); commit(); } else { saveLocal(); render(); }
   },
+  toggleSchool: () => { S.meta.school = !schoolOn(); touchMeta(); commit(); if (S.meta.school) runSeeds(); },
   toggleHaptics: () => { S.meta.haptics = S.meta.haptics === false; touchMeta(); commit(); if (S.meta.haptics) haptic('success'); },
   exportData: async () => {
     const data = JSON.stringify({ app: 'habit-tracker', version: 1, exportedAt: new Date().toISOString(), data: S }, null, 2);
