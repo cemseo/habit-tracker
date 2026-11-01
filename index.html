@@ -1418,11 +1418,13 @@ function safeRender() {
   if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) { pendingRender = true; return; }
   render();
 }
+// A sync that arrived while typing is drawn once the field is left, but only after the tap that left it has
+// landed: redrawing between "finger down" and "click" would throw that tap away (e.g. on "Speichern").
 document.addEventListener('focusout', () => {
   if (pendingRender) setTimeout(() => {
     const a = document.activeElement;
-    if (!(a && a.tagName === 'INPUT')) { pendingRender = false; render(); }
-  }, 0);
+    if (pendingRender && !(a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA'))) render();
+  }, 450);
 });
 
 function applyTheme() {
@@ -2209,7 +2211,7 @@ function viewSettings() {
           <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.9</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.10</p>
   </main>`;
 }
 
@@ -2311,12 +2313,12 @@ function todoSheetHtml() {
       ${showPick ? `<input id="te-date" class="inp" type="date" data-bind="te.due" value="${e.due}" aria-label="${T('Datum', 'Date')}">` : ''}</div>
     ${e.due ? `<div class="field"><label for="te-time" class="flabel">${T('Uhrzeit (optional)', 'Time (optional)')}</label>
       <div class="trowin"><input id="te-time" class="inp" type="time" data-bind="te.time" value="${e.time}">
-      ${e.time ? `<button class="ib" data-a="teNoTime" aria-label="${T('Uhrzeit entfernen', 'Remove time')}">${icon('x', 18)}</button>` : ''}</div></div>` : ''}
-    ${e.due && e.time ? (() => {
+      <button class="ib" id="te-notime" data-a="teNoTime" aria-label="${T('Uhrzeit entfernen', 'Remove time')}" ${e.time ? '' : 'hidden'}>${icon('x', 18)}</button></div></div>` : ''}
+    ${e.due ? (() => {
       const presets = [15, 30, 60, 120];
       const custom = e.durCustom || !presets.includes(e.dur);
       const lbl = m => m < 60 ? m + ' Min' : (m % 60 ? num(m / 60, 1) : m / 60) + ' ' + T('Std', 'h');
-      return `<div class="field"><span class="flabel">${T('Dauer im Kalender', 'Calendar duration')}</span>
+      return `<div class="field" id="te-durf" ${e.time ? '' : 'hidden'}><span class="flabel">${T('Dauer im Kalender', 'Calendar duration')}</span>
       <div class="chips wrap">${presets.map(m => `<button class="chip" data-a="teDur" data-v="${m}" aria-pressed="${!custom && e.dur === m}">${lbl(m)}</button>`).join('')}
         <button class="chip" data-a="teDur" data-v="custom" aria-pressed="${custom}">${T('Eigene', 'Custom')}</button></div>
       ${custom ? `<div class="trowin durin"><input id="te-dur-h" class="inp" type="number" inputmode="numeric" min="0" max="23" value="${Math.floor(e.dur / 60)}" aria-label="${T('Stunden', 'Hours')}"><span>${T('Std', 'h')}</span>
@@ -2452,7 +2454,7 @@ function confirmHtml() {
 
 // ---------- render ----------
 const app = document.getElementById('app');
-let lastView = null, lastOv = '', prevSwitch = null;
+let lastView = null, lastOv = '', prevSwitch = null, ovChangedAt = 0;
 const segPrev = {};
 function render() {
   pendingRender = false;
@@ -2495,6 +2497,7 @@ function render() {
   app.innerHTML = html;
   const ovKey = ui.confirm ? 'c' : ui.attrEdit ? 'a' : ui.habitMenu ? 'm' : ui.drawer ? 'd' : ui.catEdit ? 'ce' : ui.catList ? 'cl' : ui.todoEdit ? 't' : ui.projSheet ? 'p' + ui.projSheet.kind : ui.planSheet ? 'pl' + ui.planSheet.mode : '';
   if (ovKey && ovKey !== lastOv) app.querySelectorAll('.scrim, .drawer, .sheet, .dialog').forEach(e => e.classList.add('anim'));
+  if (ovKey !== lastOv) ovChangedAt = Date.now();
   lastOv = ovKey;
   if (entering) {
     const m = app.querySelector('main, .onb');
@@ -3446,7 +3449,7 @@ function viewPlan() {
   const blocks = lay.map(({ b, c, n }) => {
     const i = infos.get(b.id);
     const h = (b.e - b.s) * H / 60;
-    const small = h < 36, tiny = h < 17;
+    const small = h < 48, tiny = h < 17; // two lines (title + time) need 46px
     const w = `calc((100% - 48px) / ${n})`;
     const style = `top:${at(b.s)};height:max(12px, calc(${at(b.e - b.s)} - 2px));left:calc(48px + ${c} * ${w});width:calc(${w} - ${n > 1 ? 4 : 0}px);--c:${i.color}`;
     const chk = i.canDo && !tiny && !b.noCheck ? `<button class="pchk${i.done ? ' on' : ''}" data-a="planToggle" data-id="${b.id}" data-rep="${b.rep ? 1 : ''}" role="checkbox" aria-checked="${i.done}" aria-label="${esc(i.title)}">${icon('check', small ? 11 : 14, 3.2)}</button>` : '';
@@ -3505,7 +3508,7 @@ function planSheetHtml() {
   const close = `<button class="ib" data-a="closeOverlay" aria-label="${T('Schließen', 'Close')}">${icon('x')}</button>`;
   const times = `<div class="ptimes">
       <label class="ptm" for="ps-s"><span>${T('Von', 'From')}</span><input id="ps-s" class="inp" type="time" step="300" value="${hhmm(p.s)}"></label>
-      <label class="ptm" for="ps-e"><span>${T('Bis', 'To')}</span><input id="ps-e" class="inp" type="time" step="300" value="${hhmm(Math.min(p.e, 1439))}"></label>
+      <label class="ptm" for="ps-e"><span>${T('Bis', 'To')}</span><input id="ps-e" class="inp" type="time" step="300" value="${endVal(p.e)}"></label>
     </div>`;
   const wdName = WD_LONG[wday(k)];
   if (p.mode === 'edit') {
@@ -3567,12 +3570,12 @@ function planSheetHtml() {
     if (canSave) saveLabel = T(`„${x.title.slice(0, 22)}${x.title.length > 22 ? '…' : ''}“ einplanen`, `Plan “${x.title.slice(0, 22)}${x.title.length > 22 ? '…' : ''}”`);
     body = open.length ? groups.filter(g => g[1].length).map(([lbl, xs, cls]) => `<span class="label ${cls}" style="padding:2px 4px 0">${lbl}</span>
       <div class="plist2">${xs.slice(0, 12).map(y => { const c = catById(y.cat); return `<button class="prow2 todo${p.ref === y.id ? ' on' : ''}" data-a="planPick" data-v="${y.id}" aria-pressed="${p.ref === y.id}"><span class="ptx"><b>${esc(y.title)}</b><span>${c ? `<i class="dot" style="--c:${c.color}"></i>${esc(catName(c))}` : ''}${y.due ? `${c ? ' · ' : ''}<em class="${y.due < t ? 'late' : ''}">${esc(relDay(y.due))}</em>` : ''}${plannedIds.has(y.id) ? ` · ${T('eingeplant', 'planned')}` : ''}</span></span><i class="prd"></i></button>`; }).join('')}</div>`).join('') +
-      `<p class="hint pinfo">${icon('info', 16)}<span>${T(`Die Aufgabe bekommt ${relDay(k)} ${hhmm(p.s)} als Uhrzeit. Hakst du den Block ab, ist sie auch in deiner To-Do-Liste erledigt.`, `The task gets ${relDay(k)} ${hhmm(p.s)} as its time. Checking off the block completes it in your to-do list too.`)}</span></p>`
+      `<p class="hint pinfo">${icon('info', 16)}<span id="ps-tdh">${todoHint(p)}</span></p>`
       : `<p class="hint">${T('Keine offenen Aufgaben. Leg welche unter To-Dos an.', 'No open tasks. Add some under To-dos.')}</p>`;
   }
   return `<div class="scrim" data-a="closeOverlay"></div>
   <div class="sheet psheet" role="dialog" aria-modal="true" aria-labelledby="ps-h">
-    <div class="sheethead"><div><h2 id="ps-h">${T('Zeit verplanen', 'Plan time')}</h2><span class="hint num">${WD_LONG[wday(k)]} · ${hhmm(p.s)} – ${hhmm(p.e)}</span></div>${close}</div>
+    <div class="sheethead"><div><h2 id="ps-h">${T('Zeit verplanen', 'Plan time')}</h2><span class="hint num" id="ps-when">${whenText(p)}</span></div>${close}</div>
     ${times}
     ${seg('planTab', tab, [['custom', T('Eigenes', 'Own')], ['habit', 'Habit'], ['todo', 'To-Do']])}
     ${body}
@@ -3596,11 +3599,47 @@ function planInput(el) {
     if (b && p.mode === 'new' && p.tab === 'custom') b.disabled = !el.value.trim();
   }
 }
-function planTimeChange(el) {
-  const p = ui.planSheet; const v = toMin(el.value); if (v == null) return;
-  if (el.id === 'ps-s') { const d = p.e - p.s; p.s = Math.min(v, 1425); if (p.e <= p.s) p.e = Math.min(1440, p.s + Math.max(15, d)); }
-  else { p.e = v === 0 ? 1440 : v; if (p.e <= p.s) p.e = Math.min(1440, p.s + 15); }
-  render();
+// Time fields never re-render the sheet: on the iPhone the picker fires "change" while it is open and again when
+// it closes, which happens exactly when "Speichern" is tapped. A re-render there swallowed that tap.
+const endVal = e => e >= 1440 ? '00:00' : hhmm(e);
+const whenText = p => `${WD_LONG[wday(p.date)]} · ${hhmm(p.s)} – ${hhmm(p.e)}`;
+const todoHint = p => T(`Die Aufgabe bekommt ${relDay(p.date)} ${hhmm(p.s)} als Uhrzeit. Hakst du den Block ab, ist sie auch in deiner To-Do-Liste erledigt.`, `The task gets ${relDay(p.date)} ${hhmm(p.s)} as its time. Checking off the block completes it in your to-do list too.`);
+// "Von" moves the block (length stays), "Bis" changes its length
+function setPlanStart(p, v) {
+  const d = Math.max(15, p.e - p.s);
+  p.s = Math.max(0, Math.min(v, 1425));
+  p.e = Math.min(1440, p.s + d);
+}
+function setPlanEnd(p, v, final) {
+  const e = v === 0 ? 1440 : v;
+  if (e > p.s) { p.e = e; return; }
+  if (final) p.e = Math.min(1440, p.s + 15);
+}
+function planTimeChange(el, final) {
+  const p = ui.planSheet; if (!p) return;
+  const v = toMin(el.value); if (v == null) return;
+  if (el.id === 'ps-s') setPlanStart(p, v); else setPlanEnd(p, v, final);
+  refreshPlanTimes(final ? null : el);
+}
+// write the current times into the open sheet without touching anything else (the field being edited is skipped)
+function refreshPlanTimes(skip) {
+  const p = ui.planSheet; if (!p) return;
+  const s = document.getElementById('ps-s'), e = document.getElementById('ps-e');
+  if (s && s !== skip && toMin(s.value) !== p.s) s.value = hhmm(p.s);
+  if (e && e !== skip && (toMin(e.value) === 0 ? 1440 : toMin(e.value)) !== p.e) e.value = endVal(p.e);
+  const w = document.getElementById('ps-when'); if (w) w.textContent = whenText(p);
+  const t = document.getElementById('ps-tdh'); if (t) t.textContent = todoHint(p);
+}
+// right before saving: take whatever the fields show, even if the browser never sent an event for it
+function syncPlanSheet() {
+  const p = ui.planSheet; if (!p) return;
+  const t = document.getElementById('ps-title'); if (t) p.title = t.value;
+  const s0 = p.s, e0 = p.e;
+  const sv = toMin((document.getElementById('ps-s') || {}).value), ev = toMin((document.getElementById('ps-e') || {}).value);
+  if (sv != null && sv !== s0) p.s = Math.max(0, Math.min(sv, 1425));
+  if (ev != null && (ev === 0 ? 1440 : ev) !== e0) p.e = ev === 0 ? 1440 : ev;
+  else if (p.s !== s0) p.e = Math.min(1440, p.s + Math.max(15, e0 - s0));
+  if (p.e <= p.s) p.e = Math.min(1440, p.s + Math.max(15, e0 - s0));
 }
 
 const planActions = {
@@ -3642,6 +3681,7 @@ const planActions = {
   },
   planSave: () => {
     const p = ui.planSheet; if (!p) return;
+    syncPlanSheet();
     const k = p.date;
     if (p.mode === 'edit') {
       const b = findBlock(k, p.id, p.rep); if (!b) return;
@@ -4101,7 +4141,13 @@ const actions = {
   teCat: el => { const e = ui.todoEdit; e.cat = e.cat === el.dataset.v ? '' : el.dataset.v; render(); },
   saveTodo: () => {
     const e = ui.todoEdit;
-    if (!e || !e.title.trim()) return;
+    if (!e) return;
+    // take what the fields show, even if the browser never sent an event for it
+    const ti = document.getElementById('te-title'); if (ti) e.title = ti.value;
+    const tt = document.getElementById('te-time'); if (tt) e.time = /^\d{2}:\d{2}$/.test(tt.value) ? tt.value : '';
+    const td = document.getElementById('te-date'); if (td && isKey(td.value)) e.due = td.value;
+    if (document.getElementById('te-dur-h')) readDur();
+    if (!e.title.trim()) return;
     const id = e.id || 't' + uid();
     const prev = S.todos[id];
     S.todos[id] = normTodo({ ...(prev || { createdAt: Date.now() }), title: e.title.trim(), due: e.due, time: e.due ? e.time : '', cat: e.cat, dur: e.dur }, id);
@@ -4402,6 +4448,10 @@ document.addEventListener('contextmenu', e => {
 document.addEventListener('click', e => {
   if (e.target && e.target.closest && e.target.closest('[data-haptic]')) return;
   if (suppressClick) { suppressClick = false; e.preventDefault(); e.stopPropagation(); return; }
+  // double tap guard: right after a sheet opened or closed, a second tap must not hit what is now under the finger
+  // (e.g. "Block löschen" in a sheet that just slid up, or the timeline behind a sheet that just closed)
+  const guard = window.__TAP_GUARD != null ? window.__TAP_GUARD : 300;
+  if (e.detail && Date.now() - ovChangedAt < guard) { e.preventDefault(); e.stopPropagation(); }
 }, true);
 
 document.addEventListener('click', e => {
@@ -4421,6 +4471,11 @@ document.addEventListener('click', e => {
     if (n) { const items = [n]; let x = n.nextElementSibling; while (x && items.length < 6) { items.push(x); x = x.nextElementSibling; } items.forEach(it => { it.classList.remove('fx-in'); void it.offsetWidth; it.classList.add('fx-in'); setTimeout(() => it.classList.remove('fx-in'), 450); }); }
   }
 });
+// show/hide the duration row in place (no re-render while the time picker is open)
+function teTimeShown() {
+  const on = !!(ui.todoEdit && ui.todoEdit.time);
+  ['te-durf', 'te-notime'].forEach(id => { const n = document.getElementById(id); if (n) n.hidden = !on; });
+}
 function readDur() {
   const h = Math.max(0, Math.min(23, Math.round(Number(document.getElementById('te-dur-h')?.value) || 0)));
   const m = Math.max(0, Math.min(59, Math.round(Number(document.getElementById('te-dur-m')?.value) || 0)));
@@ -4431,6 +4486,7 @@ document.addEventListener('input', e => {
   if ((el.id === 'te-dur-h' || el.id === 'te-dur-m') && ui.todoEdit) { readDur(); return; }
   if (el.dataset && el.dataset.sbind) { socialInput(el); return; }
   if (el.dataset && el.dataset.pbind) { planInput(el); return; }
+  if ((el.id === 'ps-s' || el.id === 'ps-e') && ui.planSheet) { planTimeChange(el, false); return; }
   const b = el.dataset && el.dataset.bind;
   if (!b) return;
   const v = el.value;
@@ -4449,7 +4505,7 @@ document.addEventListener('input', e => {
     ui.attrEdit.name = v; const s = document.getElementById('save-attr'); if (s) s.disabled = !v.trim();
   } else if (b === 'qa') { ui.qa = v; const g = document.getElementById('qa-go'); if (g) g.disabled = !v.trim(); }
   else if (b === 'te.title') { ui.todoEdit.title = v; const s = document.getElementById('te-save'); if (s) s.disabled = !v.trim(); }
-  else if (b === 'te.time') { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(v) ? v : ''; }
+  else if (b === 'te.time') { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(v) ? v : ''; teTimeShown(); }
   else if (b === 'catEdit.name') { ui.catEdit.name = v; const s = document.getElementById('save-cat'); if (s) s.disabled = !v.trim(); }
   else if (b === 'auth.email') { ui.auth.email = v; }
   else if (b === 'auth.pw') { ui.auth.pw = v; }
@@ -4461,8 +4517,8 @@ document.addEventListener('change', e => {
   const el = e.target;
   if (el.id === 'te-date' && ui.todoEdit) { ui.todoEdit.due = isKey(el.value) ? el.value : ''; ui.todoEdit.pick = !!ui.todoEdit.due; if (!ui.todoEdit.due) ui.todoEdit.time = ''; el.blur(); render(); }
   if ((el.id === 'te-dur-h' || el.id === 'te-dur-m') && ui.todoEdit) readDur();
-  if (el.id === 'te-time' && ui.todoEdit) { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(el.value) ? el.value : ''; render(); }
-  if ((el.id === 'ps-s' || el.id === 'ps-e') && ui.planSheet) planTimeChange(el);
+  if (el.id === 'te-time' && ui.todoEdit) { ui.todoEdit.time = /^\d{2}:\d{2}$/.test(el.value) ? el.value : ''; teTimeShown(); }
+  if ((el.id === 'ps-s' || el.id === 'ps-e') && ui.planSheet) planTimeChange(el, true);
   if (el.id === 'photo-file' && el.files && el.files[0]) { setPhoto(el.files[0]); el.value = ''; }
   if (el.id === 'set-name') {
     const v = el.value.trim();
