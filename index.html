@@ -1091,7 +1091,7 @@ function initFirebase() {
   const fs = firebase.firestore();
   auth.onAuthStateChanged(async user => {
     if (!user) {
-      stopSocial();
+      stopSocial(); stopLive();
       cloud.user = null; cloud.backend = null; cloud.authState = 'signedOut'; cloud.ready = true; cloud.status = 'local';
       render();
       return;
@@ -1109,7 +1109,9 @@ function initFirebase() {
     cloud.authState = 'signedIn'; cloud.ready = false; cloud.status = 'syncing';
     if (!S.meta.onboarded && !ui.onboardName && user.email) ui.onboardName = '';
     render();
-    try { await pull(); } catch (e) { console.warn('Laden fehlgeschlagen', e); cloud.status = 'error'; }
+    startLive(items);
+    try { await live.ready; await pull(); } catch (e) { console.warn('Laden fehlgeschlagen', e); cloud.status = 'error'; }
+    live.waiting = false;
     try { startSocial(fs, user.uid); } catch (e) { console.warn('Freunde/Projekte nicht verfügbar', e); }
     try { runSeeds(); } catch (e) { console.warn(e); }
     finally {
@@ -1130,9 +1132,41 @@ async function retry(fn) {
     throw e;
   }
 }
-async function pull() {
+// ---------- live sync (Firebase): what another device changes shows up here within a second ----------
+// The listener keeps a copy of all cloud docs; a new snapshot with something newer than the local state is merged
+// with the same newest-wins rules as a normal pull. Own writes come back with the same _t and are ignored.
+const live = { unsub: null, docs: null, ready: Promise.resolve(false), waiting: false, timer: 0, hiddenAt: 0 };
+function docT(id) {
+  const t = x => (x && x._t) || 0;
+  if (id === 'meta') return t(S.meta);
+  if (id.startsWith('habit-')) return t(S.habits[id.slice(6)]);
+  if (id.startsWith('scores-')) return t(S.scores[id.slice(7)]);
+  if (id.startsWith('todo-')) return t(S.todos[id.slice(5)]);
+  if (id === 'plan-repeat') return t(S.planRep);
+  if (id.startsWith('plan-')) return t(S.plan[id.slice(5)]);
+  return Infinity;
+}
+function startLive(items) {
+  stopLive();
+  let done;
+  live.waiting = true;
+  live.ready = new Promise(r => { done = r; setTimeout(() => r(false), 8000); });
+  live.unsub = items.onSnapshot(snap => {
+    if (snap.metadata && snap.metadata.fromCache) return; // only what the server confirmed
+    live.docs = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+    if (live.waiting) { done(true); return; } // the first full copy is used by the start-up pull
+    const news = live.docs.some(d => d.data && (Number(d.data._t) || 0) > docT(d.id))
+      || live.docs.some(d => d.id === 'meta' && d.data && (Number(d.data.resetAt) || 0) !== (S.meta.resetAt || 0));
+    if (!news) return;
+    clearTimeout(live.timer);
+    live.timer = setTimeout(() => { if (!flushing) pull().catch(e => console.warn(e)); else live.timer = setTimeout(() => pull().catch(() => {}), 600); }, 150);
+  }, e => { console.warn('Live-Sync aus', e); live.unsub = null; live.docs = null; done(false); });
+}
+function stopLive() { if (live.unsub) { try { live.unsub(); } catch (e) { /* ignore */ } } live.unsub = null; live.docs = null; clearTimeout(live.timer); }
+
+async function pull(opts) {
   if (!cloud.backend) return;
-  const docs = await retry(() => cloud.backend.list());
+  const docs = live.docs && !(opts && opts.fresh) ? live.docs : await retry(() => cloud.backend.list());
   const raw = { meta: null, habits: {}, scores: {}, todos: {}, plan: {}, planRep: null };
   let any = false;
   for (const d of docs) {
@@ -1152,6 +1186,9 @@ async function pull() {
     const allIds = Array.from(new Set([...(raw.meta.habitIds || []), ...Object.keys(raw.habits)]));
     const R = normalize({ meta: { ...raw.meta, habitIds: allIds }, habits: raw.habits, scores: raw.scores, todos: raw.todos, plan: raw.plan, planRep: raw.planRep || undefined });
     R.meta.habitIds = (raw.meta.habitIds || []).filter(id => R.habits[id]);
+    // a habit doc that is newer than the meta without it was just created on another device: keep it, the meta follows
+    const metaT = Number(raw.meta._t) || 0;
+    for (const id of Object.keys(R.habits)) if (!R.meta.habitIds.includes(id) && (R.habits[id]._t || 0) > metaT) delete R.habits[id];
     const orphan = Object.keys(R.habits).filter(id => !R.meta.habitIds.includes(id));
     merge(R, orphan);
   }
@@ -1180,7 +1217,7 @@ function merge(R, orphanRemote) {
     habits[id] = w;
     if (w === l && w !== r) dirty.add('h:' + id);
   }
-  for (const id in R.habits) if (!M.habitIds.includes(id)) pendingDeletes.add('habit-' + id);
+  for (const id in R.habits) if (!M.habitIds.includes(id) && (R.habits[id]._t || 0) <= (M._t || 0)) pendingDeletes.add('habit-' + id);
   for (const id of orphanRemote || []) pendingDeletes.add('habit-' + id);
   const scores = {};
   for (const y of new Set([...Object.keys(L.scores), ...Object.keys(R.scores)])) {
@@ -1248,7 +1285,7 @@ async function flush() {
   let failed = [];
   try {
     while (dirty.size || pendingDeletes.size) {
-      const items = [...dirty]; dirty.clear();
+      const items = [...dirty].sort((a, b) => (b === 'meta') - (a === 'meta')); dirty.clear();
       const dels = [...pendingDeletes]; pendingDeletes.clear();
       cloud.status = 'syncing'; renderStatus();
       for (let i = 0; i < items.length; i++) {
@@ -1281,8 +1318,9 @@ async function wipeRemoteExcept(keep) {
   } catch (e) { console.warn(e); }
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (cloud.backend) flush(); return; }
-  if (cloud.backend && !dirty.size && !flushing) pull().catch(() => {});
+  if (document.hidden) { live.hiddenAt = Date.now(); if (cloud.backend) flush(); return; }
+  const away = Date.now() - (live.hiddenAt || Date.now());
+  if (cloud.backend && !dirty.size && !flushing && (!live.unsub || away > 10 * 60000)) pull({ fresh: true }).catch(() => {});
   else safeRender();
 });
 
@@ -2211,7 +2249,7 @@ function viewSettings() {
           <button class="ib" style="width:40px;height:40px;color:var(--danger)" data-a="deleteHabit" data-id="${h.id}" aria-label="${T('Endgültig löschen', 'Delete for good')}: ${esc(h.name)}">${icon('trash-2', 17)}</button></span></div>`).join('')}</div>`
         : `<p class="hint" style="margin:0 4px">${T('Archivierte Gewohnheiten erscheinen hier. Ihr Verlauf bleibt erhalten.', 'Archived habits show up here. Their history is kept.')}</p>`}</div>
     <button class="btn danger block" data-a="resetAll">${T('Alle Daten löschen', 'Delete all data')}</button>
-    <p class="hint" style="text-align:center;margin:0">Version 1.10</p>
+    <p class="hint" style="text-align:center;margin:0">Version 1.11</p>
   </main>`;
 }
 
